@@ -5,7 +5,6 @@ export const profile = {
     "Junior at UIUC studying Computer Science & Mathematics. I build high-performance systems and full-stack applications, with experience ranging from FPGA hardware acceleration and custom memory allocators to Kubernetes infrastructure and AI tools.",
   location: "Champaign, IL / Chicago, IL",
   email: "s.aryan0327@gmail.com",
-  phone: "331-269-6519",
   socials: {
     github: "https://github.com/geneticglitch1",
     githubAlt: "https://github.com/geneticglitch",

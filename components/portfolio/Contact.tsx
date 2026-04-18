@@ -9,11 +9,6 @@ const ROWS = [
     href: `mailto:${profile.email}`,
   },
   {
-    path: "/proc/self/phone",
-    value: profile.phone,
-    href: `tel:${profile.phone.replace(/[^\d+]/g, "")}`,
-  },
-  {
     path: "/proc/self/github",
     value: "github.com/geneticglitch1",
     href: profile.socials.github,
