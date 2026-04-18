@@ -77,6 +77,34 @@ export const projects: Project[] = [
     links: { github: "https://github.com/geneticglitch1/EnvSync" },
   },
   {
+    slug: "gpt-2-cuda",
+    name: "GPT-2 CUDA Inference Engine",
+    year: "2026",
+    lang: ["CUDA", "C++"],
+    size: "L",
+    addr: "0x7ff0a000c000",
+    bytes: "0x8000",
+    category: "ai",
+    tagline: "High-performance forward pass of GPT-2 built entirely from scratch in CUDA.",
+    description:
+      "Engineered a highly optimized, complete forward pass (inference) of OpenAI's GPT-2 model using raw C++ CUDA. Specifically built custom GPU kernels for all transformer layers to maximize NVIDIA Streaming Multiprocessor occupancy and minimize global memory latency.",
+    highlights: [
+      "Built custom GPU kernels for the Encoder, LayerNorm, Multi-Head Self-Attention (with causal masking), Feed-Forward Networks, and GeLU activations from scratch without utilizing high-level PyTorch abstractions.",
+      "Engineered deep performance tuning including joint shared memory and register tiling for MatMul, tensor-core TF32 utilization, cuBLAS integration, and highly parallelized warp-level reductions.",
+      "Implemented cutting-edge architectural optimizations including a custom FlashAttention mechanism for IO-aware tiling, autoregressive KV-Caching for O(1) text generation, and CUTLASS device GEMM templates with fused epilogues to maximize memory bandwidth.",
+      "Thoroughly profiled and optimized memory access patterns (coalescing, data swizzling) using Nsight Systems and Nsight Compute, achieving massive speedups over reference CPU baselines."
+    ],
+    stack: [
+      "CUDA",
+      "C++",
+      "Nsight Systems",
+      "Nsight Compute",
+      "CUTLASS",
+      "NVIDIA A40"
+    ],
+    links: { note: "ECE 408 — private per UIUC honor code" },
+  },
+  {
     slug: "schema",
     name: "Schema",
     year: "2026",

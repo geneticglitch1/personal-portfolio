@@ -23,9 +23,9 @@ const serif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: `${profile.name} — Systems Engineer`,
+  title: `${profile.name} Portfolio`,
   description: profile.summary,
-  metadataBase: new URL("https://aryan.dev"),
+  metadataBase: new URL("https://aryan-singh.dev"),
   openGraph: {
     title: `${profile.name} — Systems Engineer`,
     description: profile.tagline,
