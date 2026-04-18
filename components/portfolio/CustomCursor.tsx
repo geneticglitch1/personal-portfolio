@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export function CustomCursor() {
   const [mounted, setMounted] = useState(false);
+  const [isTouchPrimary, setIsTouchPrimary] = useState(false);
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
@@ -18,6 +19,10 @@ export function CustomCursor() {
 
   useEffect(() => {
     setMounted(true);
+
+    const touchPrimary = window.matchMedia("(pointer: coarse)").matches;
+    setIsTouchPrimary(touchPrimary);
+    if (touchPrimary) return;
 
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
@@ -56,14 +61,16 @@ export function CustomCursor() {
     };
   }, [cursorX, cursorY]);
 
-  if (!mounted) return null;
+  if (!mounted || isTouchPrimary) return null;
 
   // We hide default cursor globally and render ours
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: `
-        html, body, a, button, [role="button"], p, h1, h2, h3, h4, span, div { 
-          cursor: none !important; 
+        @media (hover: hover) and (pointer: fine) {
+          html, body, a, button, [role="button"] {
+            cursor: none !important;
+          }
         }
       `}} />
       <motion.div

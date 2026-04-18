@@ -45,13 +45,20 @@ pipeline {
         }
         success {
             echo 'Build SUCCESS ✔'
-            githubNotify context: 'Jenkins CI', status: 'SUCCESS'
+            // Attempt to update GitHub commit status using an available method
+            step([
+                $class: 'GitHubCommitStatusSetter',
+                contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'Jenkins CI'],
+                statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build succeeded', state: 'SUCCESS']]]
+            ])
         }
         failure {
-
             echo 'Build FAILED ❌'
-            githubNotify context: 'Jenkins CI', status: 'FAILURE'
-
+            step([
+                $class: 'GitHubCommitStatusSetter',
+                contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'Jenkins CI'],
+                statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed', state: 'FAILURE']]]
+            ])
         }
     }
 }

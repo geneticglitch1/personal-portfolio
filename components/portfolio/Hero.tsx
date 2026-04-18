@@ -56,13 +56,7 @@ export function Hero() {
           {profile.tagline}
         </motion.p>
 
-        <motion.p 
-          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.9, duration: 1 }}
-          className="mt-5 max-w-[42rem] text-[15px] md:text-[17px] leading-[1.55] text-[color:var(--color-bone-2)]"
-        >
-          {/* {profile.summary} */}
-        </motion.p>
-
+      
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 1 }}
           className="mt-10 flex flex-wrap gap-3 font-mono text-[11px] uppercase tracking-[0.2em]"
