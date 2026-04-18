@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { profile } from "@/content/profile";
 
 export function About() {
@@ -10,19 +11,22 @@ export function About() {
       className="relative px-6 md:px-12 pt-32 pb-24 border-t hairline"
     >
       <div className="grid grid-cols-12 gap-x-6 gap-y-10">
-        <div className="col-span-12 md:col-span-3">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+          className="col-span-12 md:col-span-3"
+        >
           <div className="sticky top-28 flex items-start gap-4">
             <span className="mono-meta leading-none pt-1.5">01</span>
             <span className="eyebrow">About / Education</span>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="col-span-12 md:col-span-9 md:col-start-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }}
+          className="col-span-12 md:col-span-9 md:col-start-5"
+        >
           <p className="display text-[clamp(1.75rem,3.2vw,3rem)] leading-[1.06] text-[color:var(--color-bone)] max-w-[36ch]">
-            Sophomore at UIUC building at the boundary where hardware,
-            software, and network meet — FPGAs, zero-knowledge vaults,
-            self-hosted Kubernetes, semantic search, and a memory allocator
-            that beat glibc.
+            {profile.summary}
           </p>
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-10">
@@ -67,7 +71,7 @@ export function About() {
               </ul>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

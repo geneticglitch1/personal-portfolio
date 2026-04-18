@@ -12,6 +12,8 @@ import { Contact } from "./Contact";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
 import { useApp } from "@/lib/store";
+import { CustomCursor } from "./CustomCursor";
+import { BackgroundGlow } from "./BackgroundGlow";
 
 const navLinks = [
   { id: "about",      label: "About",      num: "01" },
@@ -161,7 +163,7 @@ function Footer() {
           <span>·</span>
           <span>heap resident: 0x{total.toString(16)}</span>
           <span>·</span>
-          <span>built in a basement in champaign</span>
+          <span>built in a basement in chicago</span>
         </div>
         <div className="col-span-12 md:col-span-6 font-mono text-[11px] text-[color:var(--color-muted)] uppercase tracking-[0.2em] md:text-right">
           © 2026 Aryan Singh ·{" "}
@@ -187,6 +189,8 @@ function Footer() {
 export function Portfolio() {
   return (
     <main className="relative overflow-x-hidden">
+      <CustomCursor />
+      <BackgroundGlow />
       <LenisProvider />
       <ActiveSectionHost />
       <Nav />

@@ -19,6 +19,12 @@
   --color-free:     #1e1e2e;    /* free block */
   --color-split:    #6aa2ff;    /* split / inspected */
   --color-danger:   #ff6a6a;
+
+  /* Infrastructure accents */
+  --color-green:    #4ade80;    /* live node / healthy */
+  --color-cf:       #f38020;    /* Cloudflare orange */
+  --color-k3s:      #326ce5;    /* Kubernetes blue */
+  --color-purple:   #a78bfa;    /* extra accent */
 }
 
 :root { color-scheme: dark; }
