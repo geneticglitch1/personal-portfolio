@@ -44,21 +44,19 @@ pipeline {
             sh 'docker image prune -f'
         }
         success {
-            echo 'Build SUCCESS ✔'
-            // Attempt to update GitHub commit status using an available method
-            step([
-                $class: 'GitHubCommitStatusSetter',
-                contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'Jenkins CI'],
-                statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build succeeded', state: 'SUCCESS']]]
-            ])
-        }
-        failure {
-            echo 'Build FAILED ❌'
-            step([
-                $class: 'GitHubCommitStatusSetter',
-                contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'Jenkins CI'],
-                statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed', state: 'FAILURE']]]
-            ])
-        }
+
+        echo 'Build SUCCESS ✔'
+
+        setGitHubPullRequestStatus state: 'SUCCESS'
+
+    }
+
+    failure {
+
+        echo 'Build FAILED ❌'
+
+        setGitHubPullRequestStatus state: 'FAILURE'
+
+    }
     }
 }
