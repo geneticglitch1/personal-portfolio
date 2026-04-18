@@ -31,30 +31,58 @@ export function BackgroundGlow() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[-1] bg-[color:var(--color-ink)]">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[-1]">
+      {/* Mesh-like color field for richer purple/blue atmosphere */}
+      <motion.div
+        className="absolute inset-[-18%] blur-[120px] opacity-45 mix-blend-screen"
+        style={{
+          background:
+            "conic-gradient(from 220deg at 50% 50%, rgba(168, 85, 247, 0.55), rgba(59, 130, 246, 0.32), rgba(236, 72, 153, 0.45), rgba(168, 85, 247, 0.55))",
+        }}
+        animate={{
+          rotate: [0, 18, 0],
+          scale: [1, 1.08, 1],
+          opacity: [0.34, 0.5, 0.34],
+        }}
+        transition={{
+          duration: 22,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
       {/* Interactive Deep Purple Flare - follows mouse fluidly */}
       <motion.div
-        className="absolute w-[45vw] h-[45vw] rounded-full blur-[140px] opacity-30"
+        className="absolute w-[45vw] h-[45vw] rounded-full blur-[96px] opacity-90 mix-blend-screen"
         style={{
           x: springX,
           y: springY,
           translateX: "-50%",
           translateY: "-50%",
-          background: "radial-gradient(circle, var(--color-purple) 0%, transparent 60%)",
+          background: "radial-gradient(circle, #a855f7 0%, transparent 70%)",
+        }}
+        animate={{
+          scale: [1, 1.08, 1],
+          opacity: [0.72, 0.95, 0.72],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
         }}
       />
 
       {/* Floating Ambient Deep Blue Glow */}
       <motion.div
-        className="absolute -top-[10%] -right-[10%] w-[50vw] h-[50vw] rounded-full blur-[140px] opacity-20"
+        className="absolute -top-[10%] -right-[10%] w-[50vw] h-[50vw] rounded-full blur-[92px] opacity-80 mix-blend-screen"
         style={{
-          background: "radial-gradient(circle, var(--color-split) 0%, transparent 60%)",
+          background: "radial-gradient(circle, #3b82f6 0%, transparent 70%)",
         }}
         animate={{
           x: [0, -70, 0],
           y: [0, 50, 0],
-          scale: [1, 1.15, 1],
-          opacity: [0.15, 0.25, 0.15],
+          scale: [1, 1.25, 1],
+          opacity: [0.6, 0.8, 0.6],
         }}
         transition={{
           duration: 15,
@@ -65,15 +93,15 @@ export function BackgroundGlow() {
 
       {/* Floating Ambient Amber Glow */}
       <motion.div
-        className="absolute -bottom-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full blur-[160px] opacity-[0.12]"
+        className="absolute -bottom-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full blur-[110px] opacity-75 mix-blend-screen"
         style={{
-          background: "radial-gradient(circle, var(--color-alloc) 0%, transparent 60%)",
+          background: "radial-gradient(circle, #f59e0b 0%, transparent 70%)",
         }}
         animate={{
           x: [0, 60, 0],
           y: [0, -60, 0],
           scale: [1, 1.2, 1],
-          opacity: [0.1, 0.15, 0.1],
+          opacity: [0.5, 0.7, 0.5],
         }}
         transition={{
           duration: 18,
@@ -85,12 +113,13 @@ export function BackgroundGlow() {
       
       {/* Center anchor cosmic pink/purple flare to map it all together */}
       <motion.div
-        className="absolute top-[30%] left-[30%] w-[55vw] h-[55vw] rounded-full blur-[160px] opacity-20"
+        className="absolute top-[30%] left-[30%] w-[55vw] h-[55vw] rounded-full blur-[108px] opacity-80 mix-blend-screen"
         style={{
-          background: "radial-gradient(circle, #e879f9 0%, transparent 50%)",
+          background: "radial-gradient(circle, #ec4899 0%, transparent 60%)",
         }}
         animate={{
-          scale: [1, 1.25, 1],
+          scale: [1, 1.35, 1],
+          opacity: [0.6, 0.9, 0.6],
         }}
         transition={{
           duration: 20,

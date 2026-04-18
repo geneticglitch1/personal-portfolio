@@ -5,29 +5,38 @@
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-serif), ui-serif, Georgia, serif;
 
-  --color-ink:      #07070d;
-  --color-ink-2:    #0b0b14;
-  --color-ink-3:    #12121f;
-  --color-bone:     #ece9e0;
-  --color-bone-2:   #c9c5b7;
-  --color-muted:    #6d6d80;
-  --color-hairline: #1e1e2e;
+  --color-ink:      #090813;
+  --color-ink-2:    #121024;
+  --color-ink-3:    #1d1734;
+  --color-bone:     #f7f4ff;
+  --color-bone-2:   #e8defc;
+  --color-muted:    #b7acd9;
+  --color-hairline: #352b52;
 
   /* Allocator accents */
   --color-alloc:    #e6a655;    /* newly allocated block (amber) */
   --color-alloc-2:  #f2c98a;    /* hot/recent */
   --color-free:     #1e1e2e;    /* free block */
-  --color-split:    #6aa2ff;    /* split / inspected */
+  --color-split:    #78abff;    /* split / inspected */
   --color-danger:   #ff6a6a;
 
   /* Infrastructure accents */
   --color-green:    #4ade80;    /* live node / healthy */
   --color-cf:       #f38020;    /* Cloudflare orange */
   --color-k3s:      #326ce5;    /* Kubernetes blue */
-  --color-purple:   #a78bfa;    /* extra accent */
+  --color-purple:   #c084fc;    /* extra accent */
 }
 
 :root { color-scheme: dark; }
+
+@keyframes ambient-pan {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+  }
+  100% {
+    background-position: 14% 8%, 86% 12%, 46% 88%, 0% 0%;
+  }
+}
 
 * {
   -webkit-font-smoothing: antialiased;
@@ -36,17 +45,23 @@
 }
 
 html, body {
-  background: var(--color-ink);
+  background:
+    radial-gradient(90vw 90vh at 12% 10%, rgba(192, 132, 252, 0.26), transparent 62%),
+    radial-gradient(85vw 85vh at 88% 16%, rgba(99, 102, 241, 0.24), transparent 64%),
+    radial-gradient(70vw 70vh at 50% 110%, rgba(236, 72, 153, 0.16), transparent 70%),
+    var(--color-ink);
+  background-attachment: fixed;
   color: var(--color-bone);
   font-family: var(--font-sans);
   overscroll-behavior: none;
+  animation: ambient-pan 22s ease-in-out infinite alternate;
 }
 
 /* Thin scroll bar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--color-ink); }
-::-webkit-scrollbar-thumb { background: rgba(236,233,224,0.12); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(236,233,224,0.22); }
+::-webkit-scrollbar-thumb { background: rgba(232, 222, 252, 0.24); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232, 222, 252, 0.42); }
 
 /* Selection */
 ::selection {
@@ -82,6 +97,7 @@ html.lenis, html.lenis body { height: auto; }
   line-height: 0.95;
   font-feature-settings: "liga" 1, "dlig" 1, "kern" 1;
   font-optical-sizing: auto;
+  text-shadow: 0 0 20px rgba(192, 132, 252, 0.2);
 }
 
 .mono-meta {
@@ -89,7 +105,7 @@ html.lenis, html.lenis body { height: auto; }
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: color-mix(in srgb, var(--color-muted) 82%, white 18%);
 }
 
 .eyebrow {
@@ -97,7 +113,7 @@ html.lenis, html.lenis body { height: auto; }
   font-size: 11px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: color-mix(in srgb, var(--color-muted) 82%, white 18%);
 }
 
 /* Focus ring */

@@ -23,6 +23,24 @@ const navLinks = [
   { id: "contact",    label: "Contact",    num: "05" },
 ];
 
+const sectionReveal = {
+  hidden: {
+    opacity: 0,
+    y: 44,
+    filter: "blur(9px)",
+  },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.85,
+      delay,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  }),
+};
+
 function Nav() {
   const { scrollY, scrollYProgress } = useScroll();
   const [scrolled, setScrolled] = useState(false);
@@ -142,6 +160,27 @@ function ActiveSectionHost() {
   return null;
 }
 
+function RevealBlock({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.18 }}
+      variants={sectionReveal}
+      custom={delay}
+      style={{ willChange: "transform, opacity, filter" }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function Footer() {
   const total = projects.reduce((a, p) => {
     const b = parseInt(p.bytes, 16);
@@ -194,13 +233,32 @@ export function Portfolio() {
       <LenisProvider />
       <ActiveSectionHost />
       <Nav />
-      <Hero />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Contact />
-      <Footer />
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={sectionReveal}
+        custom={0.02}
+      >
+        <Hero />
+      </motion.div>
+      <RevealBlock delay={0.05}>
+        <About />
+      </RevealBlock>
+      <RevealBlock delay={0.08}>
+        <Experience />
+      </RevealBlock>
+      <RevealBlock delay={0.11}>
+        <Projects />
+      </RevealBlock>
+      <RevealBlock delay={0.14}>
+        <Skills />
+      </RevealBlock>
+      <RevealBlock delay={0.17}>
+        <Contact />
+      </RevealBlock>
+      <RevealBlock delay={0.2}>
+        <Footer />
+      </RevealBlock>
     </main>
   );
 }

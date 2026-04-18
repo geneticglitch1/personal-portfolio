@@ -44,10 +44,14 @@ pipeline {
             sh 'docker image prune -f'
         }
         success {
-            echo 'Build and deployment successful!'
+            echo 'Build SUCCESS ✔'
+            githubNotify context: 'Jenkins CI', status: 'SUCCESS'
         }
         failure {
-            echo 'Build or deployment failed.'
+
+            echo 'Build FAILED ❌'
+            githubNotify context: 'Jenkins CI', status: 'FAILURE'
+
         }
     }
 }
