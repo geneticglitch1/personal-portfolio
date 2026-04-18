@@ -47,6 +47,7 @@ pipeline {
             echo 'Build SUCCESS ✔'
             step([
                 $class: 'GitHubCommitStatusSetter',
+                reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/geneticglitch1/personal-portfolio'],
                 contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'Jenkins CI'],
                 statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build succeeded', state: 'SUCCESS']]]
             ])
@@ -55,6 +56,7 @@ pipeline {
             echo 'Build FAILED ❌'
             step([
                 $class: 'GitHubCommitStatusSetter',
+                reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/geneticglitch1/personal-portfolio'],
                 contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'Jenkins CI'],
                 statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed', state: 'FAILURE']]]
             ])
