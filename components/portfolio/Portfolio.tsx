@@ -14,6 +14,8 @@ import { projects } from "@/content/projects";
 import { useApp } from "@/lib/store";
 import { CustomCursor } from "./CustomCursor";
 import { BackgroundGlow } from "./BackgroundGlow";
+import { SelfHostedBanner } from "./SelfHostedBanner";
+import { Homelab } from "./Homelab";
 
 const navLinks = [
   { id: "about",      label: "About",      num: "01" },
@@ -26,15 +28,15 @@ const navLinks = [
 const sectionReveal = {
   hidden: {
     opacity: 0,
-    y: 44,
-    filter: "blur(9px)",
+    y: 36,
+    // no blur — animating filter on full-width sections forces
+    // the browser to rasterize every section as a texture
   },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     transition: {
-      duration: 0.85,
+      duration: 0.75,
       delay,
       ease: [0.22, 1, 0.36, 1],
     },
@@ -57,7 +59,7 @@ function Nav() {
   return (
     <>
       <motion.header
-        className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-12 h-14"
+        className="fixed top-8 inset-x-0 z-50 flex items-center justify-between px-6 md:px-12 h-14"
         style={{
           background: scrolled ? "rgba(7,7,13,0.78)" : "transparent",
           backdropFilter: scrolled ? "blur(14px) saturate(1.3)" : "none",
@@ -125,7 +127,7 @@ function Nav() {
       </motion.header>
 
       <motion.div
-        className="fixed top-14 inset-x-0 h-[1.5px] z-50 origin-left bg-[color:var(--color-alloc)]"
+        className="fixed top-[5.5rem] inset-x-0 h-[1.5px] z-50 origin-left bg-[color:var(--color-alloc)]"
         style={{ scaleX: progressScale }}
       />
     </>
@@ -174,7 +176,8 @@ function RevealBlock({
       viewport={{ once: true, amount: 0.18 }}
       variants={sectionReveal}
       custom={delay}
-      style={{ willChange: "transform, opacity, filter" }}
+      // no will-change here — pre-allocating compositing layers for every
+      // section wastes GPU memory. Framer Motion handles promotion at animate time.
     >
       {children}
     </motion.div>
@@ -230,6 +233,7 @@ export function Portfolio() {
     <main className="relative overflow-x-hidden">
       <CustomCursor />
       <BackgroundGlow />
+      <SelfHostedBanner />
       <LenisProvider />
       <ActiveSectionHost />
       <Nav />
@@ -257,6 +261,9 @@ export function Portfolio() {
         <Contact />
       </RevealBlock>
       <RevealBlock delay={0.2}>
+        <Homelab />
+      </RevealBlock>
+      <RevealBlock delay={0.22}>
         <Footer />
       </RevealBlock>
     </main>

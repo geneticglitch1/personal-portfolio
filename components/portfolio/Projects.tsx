@@ -22,8 +22,16 @@ const sizeLabel: Record<Project["size"], string> = {
   S: "0x1000",
 };
 
+// Each tier has its own accent color
+const sizeColor: Record<Project["size"], string> = {
+  L: "var(--color-alloc)",  // amber  — large / flagship
+  M: "var(--color-split)",  // blue   — medium
+  S: "var(--color-green)",  // green  — small / utility
+};
+
 function BlockBar({ size }: { size: Project["size"] }) {
   const cells = sizeCells[size];
+  const color = sizeColor[size];
   return (
     <div
       className={`${sizeWidths[size]} h-6 flex gap-[2px] items-stretch shrink-0`}
@@ -34,9 +42,7 @@ function BlockBar({ size }: { size: Project["size"] }) {
           key={i}
           className="flex-1 block"
           style={{
-            background: `color-mix(in srgb, var(--color-alloc) ${
-              60 + (i / cells) * 35
-            }%, transparent)`,
+            background: `color-mix(in srgb, ${color} ${55 + (i / cells) * 40}%, transparent)`,
           }}
         />
       ))}

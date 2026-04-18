@@ -161,6 +161,17 @@ export function HeapStrip() {
     // seed a few allocations so the first frame isn't empty
     for (let i = 0; i < 12; i++) blocks = allocate(blocks);
 
+    // Pause RAF when canvas is offscreen — saves CPU while user scrolls away
+    let visible = true;
+    const visObs = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) raf = requestAnimationFrame(loop);
+      },
+      { threshold: 0 },
+    );
+    visObs.observe(canvas);
+
     const loop = (t: number) => {
       const dt = t - lastFrame;
       lastFrame = t;
@@ -176,12 +187,13 @@ export function HeapStrip() {
       }
 
       draw(ctx, blocks, canvas.clientWidth, canvas.clientHeight);
-      raf = requestAnimationFrame(loop);
+      if (visible) raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      visObs.disconnect();
     };
   }, []);
 

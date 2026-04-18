@@ -29,13 +29,9 @@
 
 :root { color-scheme: dark; }
 
-@keyframes ambient-pan {
-  0% {
-    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
-  }
-  100% {
-    background-position: 14% 8%, 86% 12%, 46% 88%, 0% 0%;
-  }
+/* BackgroundGlow rotation — transform only, GPU-composited */
+@keyframes bg-glow-spin {
+  to { transform: rotate(360deg); }
 }
 
 * {
@@ -45,16 +41,16 @@
 }
 
 html, body {
+  /* Static gradient — no animation, no background-attachment: fixed.
+     Both cause constant repaints that kill scroll performance. */
   background:
     radial-gradient(90vw 90vh at 12% 10%, rgba(192, 132, 252, 0.26), transparent 62%),
     radial-gradient(85vw 85vh at 88% 16%, rgba(99, 102, 241, 0.24), transparent 64%),
     radial-gradient(70vw 70vh at 50% 110%, rgba(236, 72, 153, 0.16), transparent 70%),
     var(--color-ink);
-  background-attachment: fixed;
   color: var(--color-bone);
   font-family: var(--font-sans);
   overscroll-behavior: none;
-  animation: ambient-pan 22s ease-in-out infinite alternate;
 }
 
 body {
@@ -63,8 +59,6 @@ body {
 
 @media (hover: none) and (pointer: coarse) {
   html, body {
-    background-attachment: scroll;
-    animation: none;
     overscroll-behavior-y: auto;
   }
 }

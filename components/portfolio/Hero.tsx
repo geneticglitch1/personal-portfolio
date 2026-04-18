@@ -8,7 +8,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-[100svh] flex flex-col pt-24"
+      className="relative min-h-[100svh] flex flex-col pt-[5.5rem]"
     >
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
