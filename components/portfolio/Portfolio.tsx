@@ -205,7 +205,7 @@ function Footer() {
           <span>·</span>
           <span>heap resident: 0x{total.toString(16)}</span>
           <span>·</span>
-          <span>built in a basement in chicago</span>
+          <span>built in a basement in oswego</span>
         </div>
         <div className="col-span-12 md:col-span-6 font-mono text-[11px] text-[color:var(--color-muted)] uppercase tracking-[0.2em] md:text-right">
           © 2026 Aryan Singh ·{" "}
