@@ -6,10 +6,29 @@ import { useEffect } from "react";
 export function LenisProvider() {
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isTouchPrimary = window.matchMedia("(pointer: coarse)").matches;
+    const desktopPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const shouldUseLenis = desktopPointer && !prefersReduced;
 
-    // Native scrolling is more reliable on touch devices.
-    if (prefersReduced || isTouchPrimary) return;
+    const clearLenisClasses = () => {
+      document.documentElement.classList.remove(
+        "lenis",
+        "lenis-smooth",
+        "lenis-stopped",
+        "lenis-scrolling"
+      );
+      document.body.classList.remove(
+        "lenis",
+        "lenis-smooth",
+        "lenis-stopped",
+        "lenis-scrolling"
+      );
+    };
+
+    // Keep native scrolling for anything that is not a desktop-like pointer.
+    if (!shouldUseLenis) {
+      clearLenisClasses();
+      return;
+    }
 
     const lenis = new Lenis({
       lerp: 0.09,
@@ -32,6 +51,7 @@ export function LenisProvider() {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", onResize);
       lenis.destroy();
+        clearLenisClasses();
     };
   }, []);
 

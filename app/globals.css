@@ -50,16 +50,30 @@ html, body {
     var(--color-ink);
   color: var(--color-bone);
   font-family: var(--font-sans);
-  overscroll-behavior: none;
+  overflow-y: auto;
+  overscroll-behavior: auto;
 }
 
 body {
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (hover: none) and (pointer: coarse) {
+@media (hover: hover) and (pointer: fine) {
   html, body {
-    overscroll-behavior-y: auto;
+    overscroll-behavior: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  html, body {
+    overscroll-behavior: auto;
+  }
+
+  html.lenis,
+  html.lenis body,
+  .lenis.lenis-stopped {
+    overflow: auto !important;
   }
 }
 
