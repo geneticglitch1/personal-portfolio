@@ -6,7 +6,7 @@ import { LenisProvider } from "./LenisProvider";
 import { Hero } from "./Hero";
 import { About } from "./About";
 import { Experience } from "./Experience";
-import { Projects } from "./Projects";
+import { Projects } from "@/components/portfolio/Projects";
 import { Skills } from "./Skills";
 import { Contact } from "./Contact";
 import { profile } from "@/content/profile";
@@ -171,7 +171,7 @@ function RevealBlock({
 }) {
   return (
     <motion.div
-      initial="hidden"
+      initial={false}
       whileInView="visible"
       viewport={{ once: true, amount: 0.18 }}
       variants={sectionReveal}
@@ -238,7 +238,7 @@ export function Portfolio() {
       <ActiveSectionHost />
       <Nav />
       <motion.div
-        initial="hidden"
+        initial={false}
         animate="visible"
         variants={sectionReveal}
         custom={0.02}
