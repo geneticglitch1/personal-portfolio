@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         // Define your Docker image name and tag
-        IMAGE_NAME = 'personal-portfolio'
+        IMAGE_NAME = 'aryan-personal-portfolio'
         IMAGE_TAG = "${env.BUILD_ID}"
-        CONTAINER_NAME = 'portfolio-app'
+        CONTAINER_NAME = 'aryan-portfolio-app'
         PORT = '3999'
     }
 
