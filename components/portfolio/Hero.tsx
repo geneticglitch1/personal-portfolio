@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { profile } from "@/content/profile";
-import { HeapStrip } from "./HeapStrip";
 
 export function Hero() {
   return (
@@ -10,60 +9,59 @@ export function Hero() {
       id="home"
       className="relative min-h-[100svh] flex flex-col pt-[5.5rem]"
     >
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="relative z-10 flex items-center justify-between px-6 md:px-12 text-[10px] font-mono uppercase tracking-[0.2em] text-[color:var(--color-muted)]"
+        transition={{ duration: 0.9, ease: "easeOut" }}
+        className="relative z-10 flex items-center justify-between px-6 md:px-12 text-[10px] font-mono uppercase tracking-[0.22em] text-[color:var(--color-muted)]"
       >
-        <div className="flex items-center gap-4">
-          <span>Champaign · Chicago · Illinois</span>
-          <span className="hidden md:inline opacity-50">/</span>
-          <span className="hidden md:inline">40.1° N</span>
+        <div className="flex items-center gap-3">
+          <span>{profile.location}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span
-            className="inline-block w-1.5 h-1.5 rounded-full bg-[color:var(--color-alloc)]"
-            style={{ boxShadow: "0 0 10px var(--color-alloc)" }}
-          />
-          heap live
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline">Portfolio · Issue 02 · 2026</span>
         </div>
       </motion.div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
-        className="relative z-10 flex-1 flex flex-col justify-center md:justify-end px-6 md:px-12 pb-10 md:pb-12 pt-16 md:pt-0"
+        transition={{ duration: 1.1, delay: 0.15, ease: "easeOut" }}
+        className="relative z-10 flex-1 flex flex-col justify-center md:justify-end px-6 md:px-12 pb-16 md:pb-20 pt-16 md:pt-0"
       >
-        <motion.div 
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.9 }}
           className="eyebrow mb-6"
         >
-          SYS / 0x01 · PORTFOLIO.HEAP
+          Aryan Singh · Portfolio
         </motion.div>
-        <h1 className="display text-[clamp(4.5rem,16vw,14rem)] text-[color:var(--color-bone)]">
+
+        <h1 className="display text-[clamp(4rem,15vw,13rem)] text-[color:var(--color-bone)]">
           Aryan
           <br />
           Singh
-          <span className="caret" aria-hidden />
         </h1>
 
-        <motion.p 
-          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 1 }}
-          className="mt-6 font-mono text-[12px] md:text-[13px] uppercase tracking-[0.22em] text-[color:var(--color-bone-2)]"
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.9 }}
+          className="mt-8 max-w-[60ch] text-[color:var(--color-bone-2)] text-[clamp(1.05rem,1.4vw,1.25rem)] leading-[1.55]"
         >
           {profile.tagline}
         </motion.p>
 
-      
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 1 }}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.85, duration: 0.9 }}
           className="mt-10 flex flex-wrap gap-3 font-mono text-[11px] uppercase tracking-[0.2em]"
         >
           <a
             href="#projects"
-            className="px-4 py-2.5 border hairline-strong rounded-full text-[color:var(--color-bone)] hover:bg-[color:var(--color-alloc)] hover:border-[color:var(--color-alloc)] hover:text-[color:var(--color-ink)] transition-colors"
+            className="px-4 py-2.5 border hairline-strong rounded-full text-[color:var(--color-bone)] hover:bg-[color:var(--color-bone)] hover:text-[color:var(--color-ink)] transition-colors"
           >
             View Work →
           </a>
@@ -83,15 +81,12 @@ export function Hero() {
       </motion.div>
 
       <div className="relative z-10 border-t hairline">
-        <div className="px-6 md:px-12 py-3 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.22em] text-[color:var(--color-muted)]">
-          <span>heap · 0x7ff0a0001000 · 256 cells</span>
+        <div className="px-6 md:px-12 py-4 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.22em] text-[color:var(--color-muted)]">
+          <span>Computer Science & Mathematics · UIUC</span>
           <span className="hidden md:inline">
-            first-fit · address-sorted free list · coalescing
+            Self-hosted · K3s · Cloudflare mTLS
           </span>
-          <span className="md:hidden">first-fit · coalescing</span>
-        </div>
-        <div className="h-[18vh] min-h-[120px] max-h-[220px] border-t hairline">
-          <HeapStrip />
+          <span className="md:hidden">Self-hosted on K3s</span>
         </div>
       </div>
     </section>

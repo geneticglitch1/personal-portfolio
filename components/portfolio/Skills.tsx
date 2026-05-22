@@ -2,17 +2,11 @@
 
 import { profile } from "@/content/profile";
 
-const CATEGORY_KEY: Record<string, string> = {
-  Languages: "languages",
-  Frameworks: "frameworks",
-  Databases: "databases",
-  "AI / ML": "ai_ml",
-  Infrastructure: "infrastructure",
-  Tools: "tools",
-};
-
 export function Skills() {
-  const entries = Object.entries(profile.skills) as [string, readonly string[]][];
+  const entries = Object.entries(profile.skills) as [
+    string,
+    readonly string[],
+  ][];
 
   return (
     <section
@@ -23,71 +17,30 @@ export function Skills() {
         <div className="col-span-12 md:col-span-3">
           <div className="sticky top-28 flex items-start gap-4">
             <span className="mono-meta leading-none pt-1.5">04</span>
-            <span className="eyebrow">Stack / typedef</span>
+            <span className="eyebrow">Stack</span>
           </div>
         </div>
 
         <div className="col-span-12 md:col-span-9 md:col-start-5">
-          <div className="font-mono text-[12px] md:text-[13px] leading-[1.9] text-[color:var(--color-bone-2)] bg-[color:var(--color-ink-2)]/60 border hairline rounded-lg p-6 md:p-8 overflow-x-auto">
-            <div className="text-[color:var(--color-muted)]">
-              {"/* ~/include/aryan.h — skills, ordered by depth */"}
-            </div>
-            <div className="mt-4">
-              <span className="text-[color:var(--color-alloc)]">typedef</span>{" "}
-              <span className="text-[color:var(--color-alloc)]">struct</span>{" "}
-              {"{"}
-            </div>
+          <h2 className="display text-[clamp(2rem,4vw,3.4rem)] leading-[1.06] text-[color:var(--color-bone)] max-w-[26ch]">
+            The tools I reach for, ordered by depth.
+          </h2>
 
-            {entries.map(([group, items]) => {
-              const key =
-                CATEGORY_KEY[group] ??
-                group.toLowerCase().replace(/\W+/g, "_");
-              return (
-                <div key={group} className="mt-3 pl-6">
-                  <div className="text-[color:var(--color-muted)]">
-                    {"/* "}
-                    {group}
-                    {" */"}
-                  </div>
-                  <div className="mt-1">
-                    <span className="text-[color:var(--color-split)]">
-                      const char* const
-                    </span>{" "}
-                    <span className="text-[color:var(--color-bone)]">
-                      {key}
-                    </span>
-                    <span className="text-[color:var(--color-muted)]">
-                      [{items.length}]
-                    </span>{" "}
-                    = {"{"}
-                  </div>
-                  <div className="pl-6 flex flex-wrap gap-x-1 gap-y-0.5">
-                    {items.map((item, i) => (
-                      <span key={item}>
-                        <span className="text-[color:var(--color-alloc-2)]">
-                          &quot;{item}&quot;
-                        </span>
-                        {i < items.length - 1 && (
-                          <span className="text-[color:var(--color-muted)]">
-                            ,{" "}
-                          </span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                  <div>{"};"}</div>
-                </div>
-              );
-            })}
-
-            <div className="mt-4">
-              {"} "}
-              <span className="text-[color:var(--color-bone)]">
-                aryan_skills_t
-              </span>
-              ;
-            </div>
-          </div>
+          <dl className="mt-16 space-y-12">
+            {entries.map(([group, items]) => (
+              <div
+                key={group}
+                className="grid grid-cols-12 gap-x-4 gap-y-3 pb-12 border-b hairline last:border-b-0"
+              >
+                <dt className="col-span-12 md:col-span-3 small-caps pt-1">
+                  {group}
+                </dt>
+                <dd className="col-span-12 md:col-span-9 text-[15px] md:text-[16px] leading-[1.85] text-[color:var(--color-bone-2)]">
+                  {items.join(", ")}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </section>

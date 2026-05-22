@@ -1,20 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useScroll, useMotionValueEvent, useSpring } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useMotionValueEvent,
+  useSpring,
+} from "framer-motion";
 import { LenisProvider } from "./LenisProvider";
 import { Hero } from "./Hero";
 import { About } from "./About";
 import { Experience } from "./Experience";
 import { Projects } from "@/components/portfolio/Projects";
 import { Skills } from "./Skills";
+import { Awards } from "./Awards";
 import { Contact } from "./Contact";
 import { profile } from "@/content/profile";
-import { projects } from "@/content/projects";
 import { useApp } from "@/lib/store";
 import { CustomCursor } from "./CustomCursor";
 import { BackgroundGlow } from "./BackgroundGlow";
-import { SelfHostedBanner } from "./SelfHostedBanner";
 import { Homelab } from "./Homelab";
 
 const navLinks = [
@@ -22,16 +26,13 @@ const navLinks = [
   { id: "experience", label: "Experience", num: "02" },
   { id: "projects",   label: "Work",       num: "03" },
   { id: "skills",     label: "Stack",      num: "04" },
-  { id: "contact",    label: "Contact",    num: "05" },
+  { id: "awards",     label: "Awards",     num: "05" },
+  { id: "homelab",    label: "Infra",      num: "06" },
+  { id: "contact",    label: "Contact",    num: "07" },
 ];
 
 const sectionReveal = {
-  hidden: {
-    opacity: 0,
-    y: 36,
-    // no blur — animating filter on full-width sections forces
-    // the browser to rasterize every section as a texture
-  },
+  hidden: { opacity: 0, y: 32 },
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
@@ -59,9 +60,9 @@ function Nav() {
   return (
     <>
       <motion.header
-        className="fixed top-8 inset-x-0 z-50 flex items-center justify-between px-6 md:px-12 h-14"
+        className="fixed top-6 inset-x-0 z-50 flex items-center justify-between px-6 md:px-12 h-14"
         style={{
-          background: scrolled ? "rgba(7,7,13,0.78)" : "transparent",
+          background: scrolled ? "rgba(10,9,19,0.78)" : "transparent",
           backdropFilter: scrolled ? "blur(14px) saturate(1.3)" : "none",
           borderBottom: scrolled
             ? "1px solid var(--color-hairline)"
@@ -71,17 +72,15 @@ function Nav() {
         }}
       >
         <a
-          href="#home"
+          href="/#home"
           className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em] text-[color:var(--color-bone-2)] hover:text-[color:var(--color-bone)] transition-colors"
         >
-          <span
-            className="inline-block w-1.5 h-1.5 rounded-full bg-[color:var(--color-alloc)]"
-            style={{ boxShadow: "0 0 8px var(--color-alloc)" }}
-          />
-          <span>AS</span>
+          <span className="display text-[18px] leading-none text-[color:var(--color-bone)]">
+            AS
+          </span>
           <span className="text-[color:var(--color-muted)]">/</span>
           <span className="text-[color:var(--color-muted)] hidden sm:inline">
-            aryan.singh
+            aryan singh
           </span>
         </a>
 
@@ -91,7 +90,7 @@ function Nav() {
             return (
               <a
                 key={id}
-                href={`#${id}`}
+                href={`/#${id}`}
                 className="relative px-3 py-1.5 text-[10px] font-mono uppercase tracking-[0.22em] transition-colors"
               >
                 {isActive && (
@@ -120,15 +119,15 @@ function Nav() {
 
         <a
           href={profile.resume}
-          className="text-[10px] font-mono uppercase tracking-[0.22em] border hairline rounded-full px-3.5 py-1.5 text-[color:var(--color-bone-2)] hover:text-[color:var(--color-ink)] hover:bg-[color:var(--color-alloc)] hover:border-[color:var(--color-alloc)] transition-colors"
+          className="text-[10px] font-mono uppercase tracking-[0.22em] border hairline rounded-full px-3.5 py-1.5 text-[color:var(--color-bone-2)] hover:text-[color:var(--color-ink)] hover:bg-[color:var(--color-bone)] hover:border-[color:var(--color-bone)] transition-colors"
         >
           Résumé ↓
         </a>
       </motion.header>
 
       <motion.div
-        className="fixed top-[5.5rem] inset-x-0 h-[1.5px] z-50 origin-left bg-[color:var(--color-alloc)]"
-        style={{ scaleX: progressScale }}
+        className="fixed top-[5rem] inset-x-0 h-[1px] z-50 origin-left bg-[color:var(--color-bone)]"
+        style={{ scaleX: progressScale, opacity: 0.6 }}
       />
     </>
   );
@@ -137,7 +136,16 @@ function Nav() {
 function useActiveSection() {
   const setActiveSection = useApp((s) => s.setActiveSection);
   useEffect(() => {
-    const ids = ["home", "about", "experience", "projects", "skills", "contact"];
+    const ids = [
+      "home",
+      "about",
+      "experience",
+      "projects",
+      "skills",
+      "awards",
+      "homelab",
+      "contact",
+    ];
     const sections = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => !!el);
@@ -176,8 +184,6 @@ function RevealBlock({
       viewport={{ once: true, amount: 0.18 }}
       variants={sectionReveal}
       custom={delay}
-      // no will-change here — pre-allocating compositing layers for every
-      // section wastes GPU memory. Framer Motion handles promotion at animate time.
     >
       {children}
     </motion.div>
@@ -185,42 +191,42 @@ function RevealBlock({
 }
 
 function Footer() {
-  const total = projects.reduce((a, p) => {
-    const b = parseInt(p.bytes, 16);
-    return a + (isNaN(b) ? 0 : b);
-  }, 0);
   return (
-    <footer className="relative px-6 md:px-12 py-10 border-t hairline">
+    <footer className="relative px-6 md:px-12 py-14 border-t hairline">
       <div className="grid grid-cols-12 gap-4 items-end">
-        <div className="col-span-12 md:col-span-6 font-mono text-[11px] text-[color:var(--color-muted)] uppercase tracking-[0.2em] flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span
-            className="inline-flex items-center gap-2 text-[color:var(--color-bone-2)]"
-          >
-            <span
-              className="inline-block w-1.5 h-1.5 rounded-full bg-[color:var(--color-alloc)]"
-              style={{ boxShadow: "0 0 8px var(--color-alloc)" }}
-            />
-            k3s · 6 nodes · 99.9% uptime
+        <div className="col-span-12 md:col-span-8 small-caps flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className="text-[color:var(--color-bone-2)]">
+            © 2026 Aryan Singh
           </span>
           <span>·</span>
-          <span>heap resident: 0x{total.toString(16)}</span>
+          <a href="#homelab" className="hover:text-[color:var(--color-bone)] transition-colors">
+            Self-hosted on K3s
+          </a>
           <span>·</span>
-          <span>built in a basement in oswego</span>
+          <span>Set in Instrument Serif &amp; Inter</span>
         </div>
-        <div className="col-span-12 md:col-span-6 font-mono text-[11px] text-[color:var(--color-muted)] uppercase tracking-[0.2em] md:text-right">
-          © 2026 Aryan Singh ·{" "}
+        <div className="col-span-12 md:col-span-4 small-caps md:text-right flex flex-wrap md:justify-end items-center gap-x-4 gap-y-2">
           <a
-            href="https://github.com/geneticglitch1"
-            className="hover:text-[color:var(--color-bone)]"
+            href={profile.socials.github}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="hover:text-[color:var(--color-bone)] transition-colors"
           >
-            github
-          </a>{" "}
-          ·{" "}
+            GitHub
+          </a>
           <a
             href={profile.socials.linkedin}
-            className="hover:text-[color:var(--color-bone)]"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="hover:text-[color:var(--color-bone)] transition-colors"
           >
-            linkedin
+            LinkedIn
+          </a>
+          <a
+            href={`mailto:${profile.email}`}
+            className="hover:text-[color:var(--color-bone)] transition-colors"
+          >
+            Email
           </a>
         </div>
       </div>
@@ -233,7 +239,6 @@ export function Portfolio() {
     <main className="relative overflow-x-hidden">
       <CustomCursor />
       <BackgroundGlow />
-      <SelfHostedBanner />
       <LenisProvider />
       <ActiveSectionHost />
       <Nav />
@@ -245,27 +250,14 @@ export function Portfolio() {
       >
         <Hero />
       </motion.div>
-      <RevealBlock delay={0.05}>
-        <About />
-      </RevealBlock>
-      <RevealBlock delay={0.08}>
-        <Experience />
-      </RevealBlock>
-      <RevealBlock delay={0.11}>
-        <Projects />
-      </RevealBlock>
-      <RevealBlock delay={0.14}>
-        <Skills />
-      </RevealBlock>
-      <RevealBlock delay={0.17}>
-        <Contact />
-      </RevealBlock>
-      <RevealBlock delay={0.2}>
-        <Homelab />
-      </RevealBlock>
-      <RevealBlock delay={0.22}>
-        <Footer />
-      </RevealBlock>
+      <RevealBlock delay={0.05}><About /></RevealBlock>
+      <RevealBlock delay={0.08}><Experience /></RevealBlock>
+      <RevealBlock delay={0.11}><Projects /></RevealBlock>
+      <RevealBlock delay={0.14}><Skills /></RevealBlock>
+      <RevealBlock delay={0.16}><Awards /></RevealBlock>
+      <RevealBlock delay={0.18}><Homelab /></RevealBlock>
+      <RevealBlock delay={0.2}><Contact /></RevealBlock>
+      <RevealBlock delay={0.22}><Footer /></RevealBlock>
     </main>
   );
 }

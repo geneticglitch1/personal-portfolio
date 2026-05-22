@@ -5,31 +5,34 @@
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-serif), ui-serif, Georgia, serif;
 
-  --color-ink:      #090813;
-  --color-ink-2:    #121024;
-  --color-ink-3:    #1d1734;
+  /* Editorial palette */
+  --color-ink:      #0a0913;
+  --color-ink-2:    #14121f;
+  --color-ink-3:    #1c192c;
   --color-bone:     #f7f4ff;
-  --color-bone-2:   #e8defc;
-  --color-muted:    #b7acd9;
-  --color-hairline: #352b52;
+  --color-bone-2:   #d9d2ec;
+  --color-muted:    #8e85a8;
+  --color-hairline: #2a253d;
 
-  /* Allocator accents */
-  --color-alloc:    #e6a655;    /* newly allocated block (amber) */
-  --color-alloc-2:  #f2c98a;    /* hot/recent */
-  --color-free:     #1e1e2e;    /* free block */
-  --color-split:    #78abff;    /* split / inspected */
+  /* Single accent — used sparingly */
+  --color-accent:   #e6a655;
   --color-danger:   #ff6a6a;
 
-  /* Infrastructure accents */
-  --color-green:    #4ade80;    /* live node / healthy */
-  --color-cf:       #f38020;    /* Cloudflare orange */
-  --color-k3s:      #326ce5;    /* Kubernetes blue */
-  --color-purple:   #c084fc;    /* extra accent */
+  /* Infrastructure-only accents (Homelab NetworkMap) */
+  --color-green:    #4ade80;
+  --color-cf:       #f38020;
+  --color-k3s:      #6c8cff;
+
+  /* Legacy aliases (kept until callers fully migrate) */
+  --color-alloc:    var(--color-accent);
+  --color-alloc-2:  #f2c98a;
+  --color-split:    #78abff;
+  --color-purple:   #c084fc;
+  --color-free:     #1e1e2e;
 }
 
 :root { color-scheme: dark; }
 
-/* BackgroundGlow rotation — transform only, GPU-composited */
 @keyframes bg-glow-spin {
   to { transform: rotate(360deg); }
 }
@@ -41,12 +44,9 @@
 }
 
 html, body {
-  /* Static gradient — no animation, no background-attachment: fixed.
-     Both cause constant repaints that kill scroll performance. */
   background:
-    radial-gradient(90vw 90vh at 12% 10%, rgba(192, 132, 252, 0.26), transparent 62%),
-    radial-gradient(85vw 85vh at 88% 16%, rgba(99, 102, 241, 0.24), transparent 64%),
-    radial-gradient(70vw 70vh at 50% 110%, rgba(236, 72, 153, 0.16), transparent 70%),
+    radial-gradient(80vw 80vh at 12% 8%, rgba(192, 132, 252, 0.08), transparent 60%),
+    radial-gradient(70vw 70vh at 88% 14%, rgba(99, 102, 241, 0.07), transparent 64%),
     var(--color-ink);
   color: var(--color-bone);
   font-family: var(--font-sans);
@@ -60,36 +60,27 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  html, body {
-    overscroll-behavior: none;
-  }
+  html, body { overscroll-behavior: none; }
 }
 
 @media (hover: none), (pointer: coarse) {
-  html, body {
-    overscroll-behavior: auto;
-  }
+  html, body { overscroll-behavior: auto; }
 
   html.lenis,
   html.lenis body,
-  .lenis.lenis-stopped {
-    overflow: auto !important;
-  }
+  .lenis.lenis-stopped { overflow: auto !important; }
 }
 
-/* Thin scroll bar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--color-ink); }
-::-webkit-scrollbar-thumb { background: rgba(232, 222, 252, 0.24); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(232, 222, 252, 0.42); }
+::-webkit-scrollbar-thumb { background: rgba(232, 222, 252, 0.20); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232, 222, 252, 0.38); }
 
-/* Selection */
 ::selection {
-  background: var(--color-alloc);
+  background: var(--color-accent);
   color: var(--color-ink);
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -99,25 +90,21 @@ body {
   }
 }
 
-/* Lenis */
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-/* Hairline utilities */
 .hairline        { border-color: var(--color-hairline); }
-.hairline-strong { border-color: color-mix(in srgb, var(--color-bone) 20%, transparent); }
+.hairline-strong { border-color: color-mix(in srgb, var(--color-bone) 18%, transparent); }
 
-/* Editorial display rendering */
 .display {
   font-family: var(--font-serif);
-  font-weight: 300;
-  letter-spacing: -0.035em;
-  line-height: 0.95;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
   font-feature-settings: "liga" 1, "dlig" 1, "kern" 1;
   font-optical-sizing: auto;
-  text-shadow: 0 0 20px rgba(192, 132, 252, 0.2);
 }
 
 .mono-meta {
@@ -125,7 +112,7 @@ html.lenis, html.lenis body { height: auto; }
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-muted) 82%, white 18%);
+  color: color-mix(in srgb, var(--color-muted) 90%, white 10%);
 }
 
 .eyebrow {
@@ -133,35 +120,63 @@ html.lenis, html.lenis body { height: auto; }
   font-size: 11px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-muted) 82%, white 18%);
+  color: color-mix(in srgb, var(--color-muted) 88%, white 12%);
 }
 
-/* Focus ring */
+.small-caps {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.spread-intro {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--color-bone);
+}
+
+.pull-quote {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
+}
+
+.body-prose {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.72;
+  color: var(--color-bone-2);
+}
+
+.body-prose p + p { margin-top: 1.1em; }
+
+.hero-metric-value {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 5.5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-bone);
+}
+
+.hero-metric-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
 :focus-visible {
-  outline: 1.5px solid var(--color-alloc);
+  outline: 1.5px solid var(--color-accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
-
-/* Caret blink (terminal prompt) */
-@keyframes caret-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-.caret {
-  display: inline-block;
-  width: 0.04em;
-  height: 0.74em;
-  background: var(--color-alloc);
-  vertical-align: baseline;
-  margin-left: 0.06em;
-  transform: translateY(0.02em);
-  animation: caret-blink 1.05s steps(1) infinite;
-}
-
-/* Heap block pulse — used once per allocation */
-@keyframes alloc-pulse {
-  0% { filter: brightness(1.6); }
-  100% { filter: brightness(1); }
-}
-.alloc-pulse { animation: alloc-pulse 600ms ease-out 1; }
