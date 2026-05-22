@@ -64,9 +64,9 @@ export const projects: Project[] = [
     pullQuote:
       "Encrypted on-device with keys derived via Argon2id, sealed with AES-GCM, and sent to a server that only ever sees ciphertext.",
     body: [
-      "Every vault is encrypted client-side before it leaves the developer's machine. I derive keys from the user's passphrase with Argon2id (tuned for ~250 ms on commodity hardware) and seal the resulting ciphertext with AES-GCM. The server stores opaque blobs, an access-control table, and nothing else — I built no admin override and no plaintext recovery path.",
-      "I wrote a Rust CLI that gives developers a git-like workflow for secrets: `envsync push`, `envsync pull`, `envsync diff`, `envsync rollback`. Login uses an OAuth2 device-code flow with automatic token refresh, so the CLI never asks for a password directly. Snapshot history is per-project, so an accidental rotation is one command away from being undone.",
-      "I designed a deterministic conflict-resolution protocol with per-project access scopes, so teams can share a vault without trusting any central authority to mediate edits. Production runs through a Jenkins pipeline I wrote that builds and tests the Next.js frontend, packages the Rust CLI binaries, and rolls out to my K3s cluster on every push to main.",
+      "Everything is encrypted on your machine before it leaves. Your passphrase derives a key through Argon2id (tuned to ~250 ms — slow enough to make brute force painful), then AES-GCM seals the actual secrets. The server only ever sees ciphertext. There is no admin override and no \"forgot password\" — if you lose your passphrase, your vault is gone, and that's the point.",
+      "The Rust CLI works the way `git` works: `envsync push`, `pull`, `diff`, `rollback`. Login is OAuth2 device code with auto-refresh, so the CLI never sees your password. Every project keeps its own snapshot history, so undoing a bad rotation is one command.",
+      "Conflict resolution is deterministic so two teammates editing the same vault never end up in a different state. Per-project scopes mean a leaked token only blows up one vault, not everything. The whole thing builds + tests + deploys to my K3s cluster on every push, through a Jenkins pipeline.",
     ],
     stack: [
       "Rust",
@@ -156,10 +156,10 @@ export const projects: Project[] = [
       "Six-node Kubernetes on Proxmox, 99.9% uptime, fully behind mTLS Cloudflare tunnels with zero exposed public IPs.",
     heroMetric: { value: "99.9%", label: "Measured uptime across 12 months" },
     body: [
-      "I run K3s across six VMs on a Proxmox hypervisor, hosting LLM inference endpoints, PostgreSQL, vector stores, internal CI services, photo storage, document storage, and this portfolio. I deploy workloads through a GitOps workflow on Fleet, so the cluster state always matches a versioned manifest in Git.",
-      "I hardened the networking on purpose. OPNsense runs my perimeter firewall with WAN/LAN policy, Suricata IDS/IPS, and CrowdSec for adaptive blocking. The cluster never exposes a public IP — I let Cloudflare mTLS tunnels be the only ingress path, which means the underlying infrastructure is invisible from the open internet.",
-      "I keep persistent state on Longhorn, distributed across three physical nodes with synchronous replication. A single node failure doesn't lose data and doesn't interrupt the workloads using the volume. WireGuard handles my administrative remote access on top of all of this.",
-      "Build and deploy run through Jenkins pipelines I wrote that produce Docker images, push them to GHCR, and roll them out as zero-downtime rolling deploys onto the cluster. Manual intervention is my exception, not my path.",
+      "Six VMs on Proxmox, K3s on top, and everything I ship runs on it — LLM inference, Postgres, vector stores, CI runners, photo storage, document storage, this portfolio. Deploys go through Fleet, so what's running matches what's in Git.",
+      "The network is intentionally paranoid. OPNsense at the edge, Suricata for IDS, CrowdSec for adaptive blocking. Nothing has a public IP — the only way in is a Cloudflare mTLS tunnel, which means port scans of my home address find nothing.",
+      "Longhorn replicates persistent volumes across three nodes synchronously. If a node dies in the middle of the night I find out in the morning because nothing actually broke. WireGuard handles my own remote access.",
+      "Deploys go through Jenkins. It builds a Docker image, pushes to GHCR, and does a zero-downtime rolling restart on the cluster. I almost never touch it manually.",
     ],
     stack: [
       "K3s",
@@ -212,16 +212,16 @@ export const projects: Project[] = [
     year: "2025",
     category: "fullstack",
     tagline:
-      "I built a multi-modal journaling app that reads your face, looks at your calendar, and writes you a daily reflection.",
+      "A journaling app that reads your face, checks your calendar, and writes you a reflection that actually fits your day.",
     intro:
-      "I helped build a web app designed to produce uncannily specific daily reflections. It reads emotion from the user's webcam in real time, pulls events from their Google Calendar, and fuses both signals through a RAG pipeline I designed to generate prompts that actually feel like they understand the day.",
+      "We wanted reflection prompts that feel like they know what kind of day you had. So the app watches your face on the webcam, reads your calendar, and uses both to write you something more specific than \"how are you feeling?\". I built the AI side of it on a 15-person team.",
     pullQuote:
-      "I got the computer-vision microservice under 100 ms per frame — fast enough that the camera feed feels live, not laggy.",
+      "Got the vision service down to under 100 ms per frame. The camera feed feels live, not laggy.",
     body: [
-      "I worked inside a 15-person cross-functional engineering team across the full product lifecycle. I owned the architecture and delivery of the AI surface area: how the model gets the right context, how that context turns into a prompt, and how the response gets back to the UI without feeling latent.",
-      "I built the reflection layer as a retrieval-augmented generation pipeline on top of Claude 3.5 Sonnet. I fuse mood ratings, captured facial expressions, and scheduled calendar events into structured insights, then ask the model to write a reflection prompt grounded in that context rather than a generic one.",
-      "I broke vision out into its own microservice — a FastAPI process with MediaPipe and OpenCV — that produces gesture and facial-emotion classifications under 100 ms per frame. I designed it for real-time use, so the UI can show the user what the system thinks it sees without breaking the loop.",
-      "I owned the CI/CD strategy end-to-end: Jenkins pipelines I wrote build the Next.js frontend, the FastAPI vision service, and the orchestration backend, then deploy dockerized images to the K3s cluster behind the scenes.",
+      "I owned the AI layer end to end: getting the right context into the model, turning that context into a prompt the model could actually use, and getting the response back to the UI without it feeling slow.",
+      "The reflection prompts come out of a RAG pipeline on top of Claude 3.5 Sonnet. It pulls together your mood ratings, what your face did during the day, and what was actually on your calendar, then asks Claude to write a prompt grounded in that — not a generic \"reflect on your day.\"",
+      "Vision lives in its own FastAPI service running MediaPipe and OpenCV. Sub-100 ms per frame, so the UI can show you what the model thinks it's seeing without the loop ever stalling.",
+      "I also handled CI/CD: Jenkins builds the Next.js frontend, the vision service, and the backend on every push, then rolls them out to my K3s cluster as Docker images.",
     ],
     stack: [
       "TypeScript",
@@ -244,16 +244,16 @@ export const projects: Project[] = [
     year: "2025",
     category: "ai",
     tagline:
-      "I ran ML on millions of Chicago municipal records to surface the neighborhoods most underserved by city services.",
+      "Ran ML on millions of Chicago city records to find which neighborhoods are most underserved.",
     intro:
-      "I built a machine-learning system that predicts which Chicago neighborhoods most need municipal attention by analyzing millions of records from the Chicago Data Portal — combined with spatial statistics and an interactive geospatial dashboard I shipped on top.",
+      "The Chicago Data Portal has years of 311 calls, crime reports, and service records sitting in public — I wanted to see if you could point at a neighborhood and predict whether it was getting its fair share of city services. Turns out yes, and the answer is sometimes uncomfortable.",
     pullQuote:
-      "I trained XGBoost and Random Forest classifiers on millions of municipal records, then validated them against a PySAL spatial-cluster analysis of crime and traffic data.",
+      "XGBoost and Random Forest on millions of municipal records, cross-checked against PySAL spatial clusters of crime and traffic incidents.",
     body: [
-      "I trained XGBoost and Random Forest classifiers on a multi-million-row corpus of municipal records to identify underserved communities with high precision and recall. My features combined reported incidents, response times, and demographic geography.",
-      "I built the data pipeline to pull live updates from the Chicago Data Portal through a NumPy + Pandas ETL flow, so the dashboard and the models are always current. Cached intermediate stages keep the refresh cheap.",
-      "I layered PySAL spatial analysis on top of the model output to detect geographic clusters of crime and traffic incidents — the dashboard renders these as interactive Plotly + Mapbox layers inside a Streamlit shell, so a policy reader can see where my model's confidence and the ground truth agree.",
-      "I shipped the deliverable as something actionable: I turned complex municipal datasets into clear visual evidence for equitable service allocation.",
+      "I trained XGBoost and Random Forest on a few million rows of city records — reported incidents, response times, demographic geography — and got high precision and recall on \"is this neighborhood underserved.\"",
+      "The data pipeline pulls live updates from the Chicago Data Portal through a NumPy + Pandas ETL. Cached intermediate stages keep refreshes cheap, so the dashboard isn't stale and the models retrain on something current.",
+      "On top of the model, I added a PySAL spatial pass that finds geographic clusters of crime and traffic incidents — so you can visually check where the model's prediction lines up with the actual ground truth. The whole thing renders as a Streamlit dashboard with Plotly and Mapbox layers.",
+      "The point wasn't a paper. It was making the data clear enough that someone who allocates city services could look at the map and see where the gaps are.",
     ],
     stack: [
       "Python",

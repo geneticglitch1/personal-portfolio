@@ -72,12 +72,12 @@ export const profile = {
       period: "May 2025 – August 2025",
       location: "Chicago, IL",
       headline:
-        "I designed an FPGA-offloaded batch job scheduler that doubled production throughput.",
+        "I moved the OS job scheduler onto an FPGA. Throughput doubled.",
       bullets: [
-        "I architected a high-performance pipeline that offloads OS-level job scheduling onto a Xilinx Alveo U55C FPGA using Vitis HLS and modern C++, freeing the host CPU from kernel-level resource management.",
-        "I doubled system throughput by building a host memory-mapping interface that gave the host and FPGA shared physical memory, eliminating redundant host-to-device copies on production workloads.",
-        "I engineered a multi-threaded C++ data pipeline — Writer, Reader, and Logger threads backed by mutex-locked queues and lock-free circular buffers — that kept dual free-running kernels saturated with zero idle time.",
-        "I designed deterministic hardware scheduling for on-chip task-queue management, bypassing OS scheduler bottlenecks so high-priority dispatches resolve with microsecond latency.",
+        "Took the job scheduler off the CPU and put it on a Xilinx Alveo U55C FPGA. The CPU had been burning cycles doing the thing it was supposed to be managing — once the FPGA owned scheduling, the host could actually do work.",
+        "Killed the double-copy between host and FPGA by sharing physical memory between them. Throughput doubled because we stopped paying for transfers we didn't need.",
+        "Wrote a three-thread C++ pipeline — Writer, Reader, Logger — that kept two FPGA kernels fed at all times. Lock-free ring buffers on the hot path, mutexes for the rest. The kernels never sat idle.",
+        "Moved the task queue into hardware so high-priority jobs don't wait on the OS scheduler. Latency dropped to microseconds.",
       ],
     },
   ],
