@@ -30,11 +30,11 @@ const awards: readonly Award[] = [
 
 export const profile = {
   name: "Aryan Singh",
-  shortBio: "CS + Math at UIUC. I build systems that go fast.",
+  shortBio: "Junior at UIUC. C, CUDA, and the cluster in my basement.",
   tagline:
-    "I write low-level systems code, ship full-stack products, and run the six-node K3s cluster every one of them lives on.",
+    "Junior at UIUC studying CS + Math. Mostly C, CUDA, and the K3s cluster in my basement.",
   summary:
-    "I'm a junior at the University of Illinois Urbana-Champaign studying Computer Science and Mathematics. I write CUDA kernels and memory allocators on weekdays, ship full-stack products on weekends, and keep the self-hosted K3s cluster behind all of it running at 99.9%.",
+    "I'm a junior at UIUC studying CS + Math. I work on two kinds of problems: code that has to be fast, and infrastructure that has to not go down. This site is hosted on the second one.",
   location: "Champaign, IL · Chicago, IL",
   email: "asing271@illinois.edu",
   socials: {
