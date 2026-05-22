@@ -20,6 +20,7 @@ import { useApp } from "@/lib/store";
 import { CustomCursor } from "./CustomCursor";
 import { BackgroundGlow } from "./BackgroundGlow";
 import { Homelab } from "./Homelab";
+import { Marquee } from "./Marquee";
 
 const navLinks = [
   { id: "about",      label: "About",      num: "01" },
@@ -60,10 +61,10 @@ function Nav() {
   return (
     <>
       <motion.header
-        className="fixed top-6 inset-x-0 z-50 flex items-center justify-between px-6 md:px-12 h-14"
+        className="fixed top-4 inset-x-0 z-50 flex items-center justify-between px-6 md:px-12 h-14"
         style={{
-          background: scrolled ? "rgba(10,9,19,0.78)" : "transparent",
-          backdropFilter: scrolled ? "blur(14px) saturate(1.3)" : "none",
+          background: scrolled ? "rgba(7,7,13,0.78)" : "transparent",
+          backdropFilter: scrolled ? "blur(16px) saturate(1.3)" : "none",
           borderBottom: scrolled
             ? "1px solid var(--color-hairline)"
             : "1px solid transparent",
@@ -73,14 +74,17 @@ function Nav() {
       >
         <a
           href="/#home"
-          className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em] text-[color:var(--color-bone-2)] hover:text-[color:var(--color-bone)] transition-colors"
+          className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em] text-[color:var(--color-bone-2)] hover:text-[color:var(--color-bone)] transition-colors group"
         >
-          <span className="display text-[18px] leading-none text-[color:var(--color-bone)]">
-            AS
-          </span>
-          <span className="text-[color:var(--color-muted)]">/</span>
-          <span className="text-[color:var(--color-muted)] hidden sm:inline">
-            aryan singh
+          <span
+            className="inline-block w-2 h-2 rounded-full"
+            style={{
+              background: "var(--color-accent)",
+              boxShadow: "0 0 10px var(--color-accent)",
+            }}
+          />
+          <span className="display text-[18px] leading-none text-[color:var(--color-bone)] group-hover:text-[color:var(--color-accent-hot)] transition-colors">
+            Aryan Singh
           </span>
         </a>
 
@@ -96,7 +100,11 @@ function Nav() {
                 {isActive && (
                   <motion.span
                     layoutId="nav-pill"
-                    className="absolute inset-0 rounded-full bg-[color:var(--color-ink-3)] border hairline-strong"
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: "color-mix(in srgb, var(--color-accent) 18%, transparent)",
+                      border: "1px solid color-mix(in srgb, var(--color-accent) 50%, transparent)",
+                    }}
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
@@ -107,7 +115,13 @@ function Nav() {
                       : "text-[color:var(--color-muted)] hover:text-[color:var(--color-bone-2)]"
                   }`}
                 >
-                  <span className="text-[color:var(--color-muted)] mr-1.5">
+                  <span
+                    className={`mr-1.5 ${
+                      isActive
+                        ? "text-[color:var(--color-accent-hot)]"
+                        : "text-[color:var(--color-muted)]"
+                    }`}
+                  >
                     {num}
                   </span>
                   {label}
@@ -119,15 +133,19 @@ function Nav() {
 
         <a
           href={profile.resume}
-          className="text-[10px] font-mono uppercase tracking-[0.22em] border hairline rounded-full px-3.5 py-1.5 text-[color:var(--color-bone-2)] hover:text-[color:var(--color-ink)] hover:bg-[color:var(--color-bone)] hover:border-[color:var(--color-bone)] transition-colors"
+          className="text-[10px] font-mono uppercase tracking-[0.22em] rounded-full px-4 py-2 text-[color:var(--color-ink)] bg-[color:var(--color-accent)] hover:bg-[color:var(--color-accent-hot)] transition-colors"
         >
           Résumé ↓
         </a>
       </motion.header>
 
       <motion.div
-        className="fixed top-[5rem] inset-x-0 h-[1px] z-50 origin-left bg-[color:var(--color-bone)]"
-        style={{ scaleX: progressScale, opacity: 0.6 }}
+        className="fixed top-[4.5rem] inset-x-0 h-[2px] z-50 origin-left"
+        style={{
+          scaleX: progressScale,
+          background:
+            "linear-gradient(90deg, var(--color-accent), var(--color-magenta), var(--color-cyan))",
+        }}
       />
     </>
   );
@@ -199,7 +217,7 @@ function Footer() {
             © 2026 Aryan Singh
           </span>
           <span>·</span>
-          <a href="#homelab" className="hover:text-[color:var(--color-bone)] transition-colors">
+          <a href="#homelab" className="hover:text-[color:var(--color-accent-hot)] transition-colors">
             Self-hosted on K3s
           </a>
           <span>·</span>
@@ -252,10 +270,49 @@ export function Portfolio() {
       </motion.div>
       <RevealBlock delay={0.05}><About /></RevealBlock>
       <RevealBlock delay={0.08}><Experience /></RevealBlock>
+      <Marquee
+        items={[
+          "Selected Work",
+          "15 projects",
+          "Systems",
+          "ML",
+          "Hardware",
+          "Infrastructure",
+        ]}
+        speed={45}
+        accent="var(--color-accent)"
+      />
       <RevealBlock delay={0.11}><Projects /></RevealBlock>
       <RevealBlock delay={0.14}><Skills /></RevealBlock>
+      <Marquee
+        items={[
+          "CUDA",
+          "Rust",
+          "K3s",
+          "Next.js",
+          "FastAPI",
+          "PyTorch",
+          "TypeScript",
+          "C++",
+          "PostgreSQL",
+        ]}
+        speed={55}
+        reverse
+        accent="var(--color-magenta)"
+      />
       <RevealBlock delay={0.16}><Awards /></RevealBlock>
       <RevealBlock delay={0.18}><Homelab /></RevealBlock>
+      <Marquee
+        items={[
+          "Available for Summer 2026",
+          "Systems",
+          "ML Infrastructure",
+          "Full-Stack",
+          "Let's build something",
+        ]}
+        speed={50}
+        accent="var(--color-accent-hot)"
+      />
       <RevealBlock delay={0.2}><Contact /></RevealBlock>
       <RevealBlock delay={0.22}><Footer /></RevealBlock>
     </main>

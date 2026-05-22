@@ -5,29 +5,40 @@
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-serif), ui-serif, Georgia, serif;
 
-  /* Editorial palette */
-  --color-ink:      #0a0913;
-  --color-ink-2:    #14121f;
-  --color-ink-3:    #1c192c;
+  /* Editorial dark + bold accents */
+  --color-ink:      #07070d;
+  --color-ink-2:    #11111d;
+  --color-ink-3:    #1a1a2c;
   --color-bone:     #f7f4ff;
   --color-bone-2:   #d9d2ec;
   --color-muted:    #8e85a8;
   --color-hairline: #2a253d;
 
-  /* Single accent — used sparingly */
-  --color-accent:   #e6a655;
-  --color-danger:   #ff6a6a;
+  /* Primary accent — electric violet */
+  --color-accent:        #8a6bff;
+  --color-accent-hot:    #b69bff;
+  --color-accent-deep:   #5b3df0;
 
-  /* Infrastructure-only accents (Homelab NetworkMap) */
+  /* Secondary accent — vivid amber, used sparingly */
+  --color-amber:         #ffaa3c;
+
+  /* Bright surfaces */
+  --color-cyan:          #6df1ff;
+  --color-magenta:       #ff5cf2;
+  --color-lime:          #c5ff5c;
+
+  --color-danger:        #ff6a6a;
+
+  /* Infrastructure-only accents */
   --color-green:    #4ade80;
   --color-cf:       #f38020;
   --color-k3s:      #6c8cff;
 
-  /* Legacy aliases (kept until callers fully migrate) */
+  /* Legacy aliases (back-compat for any remaining callers) */
   --color-alloc:    var(--color-accent);
-  --color-alloc-2:  #f2c98a;
-  --color-split:    #78abff;
-  --color-purple:   #c084fc;
+  --color-alloc-2:  var(--color-amber);
+  --color-split:    var(--color-k3s);
+  --color-purple:   var(--color-accent);
   --color-free:     #1e1e2e;
 }
 
@@ -35,6 +46,16 @@
 
 @keyframes bg-glow-spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes marquee-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes draw-line {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 * {
@@ -45,8 +66,9 @@
 
 html, body {
   background:
-    radial-gradient(80vw 80vh at 12% 8%, rgba(192, 132, 252, 0.08), transparent 60%),
-    radial-gradient(70vw 70vh at 88% 14%, rgba(99, 102, 241, 0.07), transparent 64%),
+    radial-gradient(70vw 70vh at 12% 6%, rgba(138, 107, 255, 0.14), transparent 60%),
+    radial-gradient(60vw 60vh at 90% 12%, rgba(109, 241, 255, 0.08), transparent 64%),
+    radial-gradient(60vw 60vh at 50% 110%, rgba(255, 92, 242, 0.08), transparent 70%),
     var(--color-ink);
   color: var(--color-bone);
   font-family: var(--font-sans);
@@ -73,8 +95,13 @@ body {
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--color-ink); }
-::-webkit-scrollbar-thumb { background: rgba(232, 222, 252, 0.20); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(232, 222, 252, 0.38); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--color-accent), var(--color-accent-deep));
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, var(--color-accent-hot), var(--color-accent));
+}
 
 ::selection {
   background: var(--color-accent);
@@ -101,10 +128,25 @@ html.lenis, html.lenis body { height: auto; }
 .display {
   font-family: var(--font-serif);
   font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 1.02;
+  letter-spacing: -0.028em;
+  line-height: 1.0;
   font-feature-settings: "liga" 1, "dlig" 1, "kern" 1;
   font-optical-sizing: auto;
+}
+
+.display-grad {
+  background: linear-gradient(
+    100deg,
+    var(--color-bone) 0%,
+    var(--color-bone) 38%,
+    var(--color-accent-hot) 62%,
+    var(--color-accent) 90%
+  );
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .mono-meta {
@@ -164,7 +206,14 @@ html.lenis, html.lenis body { height: auto; }
   font-size: clamp(2.6rem, 5.5vw, 4.5rem);
   line-height: 1;
   letter-spacing: -0.03em;
-  color: var(--color-bone);
+  background: linear-gradient(
+    180deg,
+    var(--color-bone) 0%,
+    color-mix(in srgb, var(--color-bone) 76%, var(--color-accent-hot) 24%) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .hero-metric-label {
@@ -173,6 +222,25 @@ html.lenis, html.lenis body { height: auto; }
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-muted);
+}
+
+.accent-rule {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-accent) 50%,
+    transparent 100%
+  );
+  height: 1px;
+  width: 100%;
+}
+
+.dot-grid {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-bone) 14%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
 }
 
 :focus-visible {

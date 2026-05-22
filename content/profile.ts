@@ -9,20 +9,20 @@ const awards: readonly Award[] = [
   {
     title: "CS 341 Malloc Performance Contest — 1st of 400",
     detail:
-      "Custom memory allocator outperformed both stock glibc and the optimized glibc baseline on the official benchmark suite.",
+      "My custom memory allocator outscored both stock glibc and the optimized glibc baseline on the official benchmark suite.",
     year: "2025",
     link: "/projects/malloc",
   },
   {
     title: "UIUC Capture-the-Flag (CTF) Competition — 4th of 25+ teams",
     detail:
-      "Binary exploitation, reverse engineering, cryptography, and web tracks.",
+      "I played binary exploitation, reverse engineering, cryptography, and web — and we placed 4th.",
     year: "2025",
   },
   {
     title: "Science Olympiad Robot Tour — 5th of 50 regional teams",
     detail:
-      "Best-performing team in the school. Autonomous maze navigation on a Raspberry Pi Pico.",
+      "I built the best-performing team's robot at our school. Autonomous maze navigation on a Raspberry Pi Pico.",
     year: "2024",
     link: "/projects/robot-tour",
   },
@@ -30,10 +30,11 @@ const awards: readonly Award[] = [
 
 export const profile = {
   name: "Aryan Singh",
+  shortBio: "CS + Math at UIUC. I build systems that go fast.",
   tagline:
-    "Computer Science & Mathematics at UIUC. Builds high-throughput systems, ML infrastructure, and the K3s cluster that runs it all.",
+    "I write low-level systems code, ship full-stack products, and run the six-node K3s cluster every one of them lives on.",
   summary:
-    "Aryan studies Computer Science and Mathematics at the University of Illinois Urbana-Champaign. He writes low-level systems code, ships full-stack products, and operates the self-hosted Kubernetes cluster that his projects live on.",
+    "I'm a junior at the University of Illinois Urbana-Champaign studying Computer Science and Mathematics. I write CUDA kernels and memory allocators on weekdays, ship full-stack products on weekends, and keep the self-hosted K3s cluster behind all of it running at 99.9%.",
   location: "Champaign, IL · Chicago, IL",
   email: "asing271@illinois.edu",
   socials: {
@@ -71,12 +72,12 @@ export const profile = {
       period: "May 2025 – August 2025",
       location: "Chicago, IL",
       headline:
-        "Designed an FPGA-offloaded batch job scheduler that doubled production throughput.",
+        "I designed an FPGA-offloaded batch job scheduler that doubled production throughput.",
       bullets: [
-        "Architected a high-performance pipeline that offloads OS-level job scheduling onto a Xilinx Alveo U55C FPGA using Vitis HLS and modern C++, freeing the host CPU from kernel-level resource management.",
-        "Doubled system throughput by building a host memory-mapping interface that gave the host and FPGA shared physical memory, eliminating redundant host-to-device copies on production workloads.",
-        "Engineered a multi-threaded C++ data pipeline — Writer, Reader, Logger threads backed by mutex-locked queues and lock-free circular buffers — that kept dual free-running kernels saturated with zero idle time.",
-        "Designed deterministic hardware scheduling for on-chip task-queue management, bypassing OS scheduler bottlenecks so high-priority dispatches resolve with microsecond latency.",
+        "I architected a high-performance pipeline that offloads OS-level job scheduling onto a Xilinx Alveo U55C FPGA using Vitis HLS and modern C++, freeing the host CPU from kernel-level resource management.",
+        "I doubled system throughput by building a host memory-mapping interface that gave the host and FPGA shared physical memory, eliminating redundant host-to-device copies on production workloads.",
+        "I engineered a multi-threaded C++ data pipeline — Writer, Reader, and Logger threads backed by mutex-locked queues and lock-free circular buffers — that kept dual free-running kernels saturated with zero idle time.",
+        "I designed deterministic hardware scheduling for on-chip task-queue management, bypassing OS scheduler bottlenecks so high-priority dispatches resolve with microsecond latency.",
       ],
     },
   ],
