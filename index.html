@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Portfolio — Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+<style>
+/* ════════════════════════════════════════════════════════════════════════
+   PORTFOLIO — ARCHIVE
+   A records-office catalogue brought to life. Placeholders only.
+   ════════════════════════════════════════════════════════════════════════ */
+:root{
+  --sans: 'Space Grotesk', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --serif: 'Newsreader', Georgia, serif;
+
+  --paper:  #DDD6C4;   /* board / desk            */
+  --paper-2:#D3CBB6;   /* recessed panel          */
+  --card:   #F7F2E7;   /* index card / manila lt   */
+  --kraft:  #E7DDC6;   /* folder / kraft           */
+  --ink:    #221E18;
+  --ink-2:  #4A4338;
+  --dim:    rgba(34,30,24,0.52);
+  --faint:  rgba(34,30,24,0.34);
+  --line:   rgba(34,30,24,0.16);
+  --line-2: rgba(34,30,24,0.09);
+  --accent: #BE3A2B;   /* stamp red               */
+  --accent-d:#9A2C20;
+  --seal:   #2E5E4E;   /* a single muted secondary ink for variety */
+
+  --mx: clamp(18px, 5vw, 84px);
+  --maxw: 1380px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+*{ box-sizing: border-box; }
+html, body{ margin: 0; padding: 0; }
+html.lenis, html.lenis body{ height: auto; }
+.lenis.lenis-smooth{ scroll-behavior: auto !important; }
+.lenis.lenis-stopped{ overflow: hidden; }
+
+body{
+  font-family: var(--sans); background: var(--paper); color: var(--ink);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  overflow-x: hidden; line-height: 1.55;
+  background-image: radial-gradient(rgba(34,30,24,0.055) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+}
+/* paper grain */
+body::before{
+  content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.55; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/></svg>");
+}
+a{ color: inherit; text-decoration: none; }
+button{ font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+::selection{ background: var(--accent); color: var(--card); }
+:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+.wrap{ position: relative; z-index: 1; width: min(100% - 2*var(--mx), var(--maxw)); margin-inline: auto; }
+
+/* ── shared type bits ──────────────────────────────────────────────────── */
+.lbl{ font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); font-weight: 500; }
+.lbl b{ color: var(--ink); font-weight: 700; }
+.lbl.red{ color: var(--accent-d); }
+
+h2{ margin: 0; font-family: var(--sans); font-weight: 700; letter-spacing: -0.025em; text-transform: uppercase; }
+
+/* perforation strip */
+.perf{ height: 0; border-top: 2px dashed var(--line); position: relative; }
+
+/* rubber stamp */
+.stamp{
+  display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-weight: 700;
+  font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  border: 2px solid var(--accent); padding: 5px 10px; border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(190,58,43,0.18);
+}
+.stamp.seal{ color: var(--seal); border-color: var(--seal); box-shadow: inset 0 0 0 1px rgba(46,94,78,0.18); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   FILING-TAB NAV (sticky)
+   ════════════════════════════════════════════════════════════════════════ */
+.tabnav{
+  position: sticky; top: 0; z-index: 80; background: color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.tabnav .row{ display: flex; align-items: stretch; gap: 0; width: min(100% - 2*var(--mx), var(--maxw)); margin-inline: auto; }
+.tabnav .home{ display: flex; align-items: center; gap: 9px; padding-right: 20px; border-right: 1px solid var(--line); }
+.tabnav .home .seal-dot{ width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(190,58,43,0.16); }
+.tabnav .home b{ font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.tabnav .tabs{ display: flex; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.tabnav .tabs::-webkit-scrollbar{ display: none; }
+.tabnav a.tab{
+  position: relative; padding: 13px clamp(10px,1.4vw,18px); white-space: nowrap;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
+  display: flex; align-items: center; gap: 7px; transition: color 0.3s var(--ease), background 0.3s var(--ease);
+}
+.tabnav a.tab .n{ color: var(--faint); }
+.tabnav a.tab:hover{ color: var(--ink); background: rgba(34,30,24,0.04); }
+.tabnav a.tab[aria-current="true"]{ color: var(--accent-d); }
+.tabnav a.tab[aria-current="true"]::after{ content:""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); }
+@media (max-width: 720px){ .tabnav .home b{ display: none; } .tabnav a.tab .n{ display: none; } }
+
+/* progress hairline */
+.progress{ position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 90; background: transparent; }
+.progress i{ display: block; height: 100%; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   SECTION SCAFFOLD
+   ════════════════════════════════════════════════════════════════════════ */
+section{ position: relative; }
+.sec{ padding-block: clamp(64px, 11vh, 150px); }
+.sechead{ display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 18px;
+  border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: clamp(28px,5vh,56px); }
+.sechead .h-left{ display: flex; flex-direction: column; gap: 10px; }
+.sechead h2{ font-size: clamp(1.7rem, 4vw, 3.1rem); line-height: 0.94; }
+.sechead .h-right{ text-align: right; display: flex; flex-direction: column; gap: 5px; }
+.sechead .wipe{ display: inline-block; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   HERO — FILE HEADER
+   ════════════════════════════════════════════════════════════════════════ */
+.hero{ padding-top: clamp(30px,6vh,64px); padding-bottom: clamp(40px,8vh,90px); }
+.folder{
+  position: relative; background:
+    linear-gradient(var(--card), var(--card));
+  border: 1px solid var(--line); border-radius: 4px;
+  box-shadow: 0 30px 70px -30px rgba(34,30,24,0.4), 0 2px 0 rgba(255,255,255,0.5) inset;
+  padding: clamp(26px,4vw,52px);
+}
+/* folder tab */
+.folder .filetab{
+  position: absolute; top: -26px; left: clamp(24px,4vw,52px); height: 28px; padding: 0 22px 0 18px;
+  background: var(--kraft); border: 1px solid var(--line); border-bottom: 0;
+  border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 9px;
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2);
+  transform-origin: bottom left;
+}
+.folder .filetab::after{ content:""; position: absolute; right: -14px; bottom: -1px; width: 14px; height: 28px;
+  background: var(--kraft); border-right: 1px solid var(--line); transform: skewX(22deg); transform-origin: bottom; border-radius: 0 6px 0 0; }
+.hero-topmeta{ display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: clamp(20px,3vh,34px); border-bottom: 1px dashed var(--line); margin-bottom: clamp(22px,3.5vh,40px); }
+.hero-name{ position: relative; font-family: var(--sans); font-weight: 700; line-height: 0.82;
+  font-size: clamp(3rem, 11vw, 9.5rem); letter-spacing: -0.04em; margin: 0; text-transform: uppercase; }
+.hero-name .ln{ display: block; overflow: hidden; }
+.hero-name .ln > span{ display: inline-block; will-change: transform; }
+.hero-stamp{
+  position: absolute; right: clamp(0px,2vw,30px); top: clamp(-6px,-1vh,-10px);
+  font-family: var(--mono); font-weight: 700; font-size: clamp(0.7rem,1.1vw,0.92rem); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); border: 2.5px solid var(--accent);
+  padding: 9px 13px; border-radius: 4px; transform: rotate(-8deg);
+  box-shadow: inset 0 0 0 1px rgba(190,58,43,0.2); line-height: 1.1; text-align: center;
+}
+.hero-stamp small{ display: block; font-size: 0.62em; letter-spacing: 0.18em; opacity: 0.85; margin-top: 2px; }
+.hero-foot{ display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(20px,4vw,60px); align-items: end; margin-top: clamp(26px,4vh,48px); }
+.hero-foot .lead{ font-family: var(--serif); font-size: clamp(1.15rem,1.9vw,1.6rem); line-height: 1.32; color: var(--ink); max-width: 34ch; }
+.hero-foot .specs{ display: flex; flex-direction: column; gap: 9px; }
+.hero-foot .specs .r{ display: flex; justify-content: space-between; gap: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line-2); font-family: var(--mono); font-size: 0.72rem; }
+.hero-foot .specs .r .k{ color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.hero-foot .specs .r .v{ color: var(--ink); font-weight: 500; }
+.scrollcue{ display: inline-flex; align-items: center; gap: 10px; margin-top: clamp(26px,4vh,46px); font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+.scrollcue .arw{ color: var(--accent); display: inline-block; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   01 — SELECTED WORK (draggable card board)
+   ════════════════════════════════════════════════════════════════════════ */
+.board{ position: relative; }
+.board-help{ display: flex; justify-content: flex-end; margin-bottom: 14px; }
+.cards{ position: relative; height: 600px; }
+@media (max-width: 1100px){ .cards{ height: 700px; } }
+.card{
+  position: absolute; width: clamp(250px, 25vw, 330px); background: var(--card);
+  border: 1px solid var(--line); border-radius: 3px; cursor: grab; will-change: transform;
+  box-shadow: 0 18px 40px -14px rgba(34,30,24,0.42), 0 2px 5px rgba(34,30,24,0.12);
+}
+.card:active{ cursor: grabbing; }
+.card .punch{ position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 30px; height: 14px;
+  border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; background: var(--paper); }
+.card .chead{ display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px dashed var(--line); }
+.card .chead .cno{ font-family: var(--mono); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.1em; }
+.card .chead .cyear{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; color: var(--dim); }
+.card .cbody{ padding: 16px 15px 18px; }
+.card .ctitle{ font-family: var(--sans); font-weight: 700; font-size: 1.5rem; line-height: 1.02; letter-spacing: -0.025em; margin: 0 0 12px; }
+.card .cdesc{ font-size: 0.86rem; line-height: 1.45; color: var(--ink-2); margin: 0 0 16px; }
+.card .cmetric{ display: inline-flex; align-items: baseline; gap: 7px; white-space: nowrap; border: 1.5px solid var(--accent); color: var(--accent);
+  padding: 5px 10px; transform: rotate(-2deg); border-radius: 3px; margin-bottom: 16px; box-shadow: inset 0 0 0 1px rgba(190,58,43,0.16); }
+.card .cmetric .v{ font-family: var(--mono); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.card .cmetric .l{ font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.card .ctags{ display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+.card .ctags span{ font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--line); padding: 3px 7px; border-radius: 2px; color: var(--dim); }
+.card .cfoot{ border-top: 1px solid var(--line-2); padding-top: 12px; }
+.card .openbtn{ display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 2px; transition: gap 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease); }
+.card .openbtn:hover{ color: var(--accent-d); border-color: var(--accent); gap: 12px; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   02 — INDEX (accession ledger)
+   ════════════════════════════════════════════════════════════════════════ */
+.ledger{ border-top: 1.5px solid var(--ink); }
+.lrow{ display: block; border-bottom: 1px solid var(--line); cursor: pointer; }
+.lhead{ display: grid; grid-template-columns: 120px 90px 1fr 180px 40px; gap: 18px; align-items: center;
+  padding-block: clamp(14px,2.2vh,22px); transition: padding-left 0.45s var(--ease), background 0.4s var(--ease); }
+.lrow:hover .lhead{ padding-left: clamp(10px,1.4vw,20px); background: rgba(34,30,24,0.03); }
+.lacc{ font-family: var(--mono); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--accent-d); }
+.lyear{ font-family: var(--mono); font-size: 0.72rem; color: var(--dim); }
+.lname{ font-family: var(--sans); font-weight: 600; font-size: clamp(1.1rem,2vw,1.55rem); letter-spacing: -0.02em; transition: color 0.35s var(--ease); }
+.lrow:hover .lname{ color: var(--accent-d); }
+.lcat{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.larr{ justify-self: end; color: var(--faint); transition: transform 0.4s var(--ease), color 0.35s var(--ease); }
+.lrow:hover .larr{ color: var(--accent); transform: translateX(4px); }
+.lmore{ display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease); }
+.lmore > div{ overflow: hidden; }
+.lrow:hover .lmore, .lrow:focus-within .lmore{ grid-template-rows: 1fr; }
+.lmore-in{ display: grid; grid-template-columns: 210px 1fr; gap: 18px; padding-bottom: clamp(16px,2.4vh,24px); }
+.lmore-in p{ margin: 0; color: var(--ink-2); max-width: 60ch; }
+.lmore-in .lt{ display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.lmore-in .lt span{ font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--line); padding: 3px 7px; border-radius: 2px; color: var(--dim); }
+@media (max-width: 720px){ .lhead{ grid-template-columns: 84px 1fr; } .lyear,.lcat,.larr{ display: none; } .lmore-in{ grid-template-columns: 1fr; } }
+
+/* marquee divider */
+.marquee{ overflow: hidden; border-block: 1.5px solid var(--ink); padding-block: 16px; background: var(--kraft); }
+.mtrack{ display: flex; width: max-content; will-change: transform; }
+.mtrack span{ font-family: var(--sans); font-weight: 700; font-size: clamp(1.3rem,2.4vw,2rem); text-transform: uppercase; letter-spacing: -0.01em; padding-inline: 0.5em; white-space: nowrap; color: var(--ink); }
+.mtrack .st{ color: var(--accent); padding-inline: 0.4em; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   03 — EXPERIENCE (personnel record)
+   ════════════════════════════════════════════════════════════════════════ */
+.record{ background: var(--card); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 16px 40px -22px rgba(34,30,24,0.4); overflow: hidden; }
+.record + .record{ margin-top: 26px; }
+.record-top{ display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 18px clamp(18px,3vw,30px); background: var(--kraft); border-bottom: 1px solid var(--line); }
+.record-top .ro{ font-family: var(--sans); font-weight: 700; font-size: clamp(1.3rem,2.4vw,1.9rem); letter-spacing: -0.02em; }
+.record-top .rmeta{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); text-align: right; line-height: 1.7; }
+.record-body{ display: grid; grid-template-columns: 210px 1fr; gap: clamp(18px,3vw,40px); padding: clamp(20px,3vw,34px); }
+.record-body .rcol-l{ display: flex; flex-direction: column; gap: 14px; }
+.record-field{ display: flex; flex-direction: column; gap: 4px; }
+.record-field .k{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+.record-field .v{ font-family: var(--mono); font-size: 0.8rem; color: var(--ink); }
+.record-head-line{ font-family: var(--serif); font-size: clamp(1.3rem,2.4vw,1.95rem); line-height: 1.18; letter-spacing: -0.01em; margin: 0 0 18px; max-width: 26ch; }
+.record-bullets{ list-style: none; margin: 0; padding: 0; }
+.record-bullets li{ display: grid; grid-template-columns: 2.2em 1fr; gap: 8px; padding-block: 12px; border-top: 1px solid var(--line-2); color: var(--ink-2); max-width: 64ch; }
+.record-bullets li .bn{ font-family: var(--mono); font-size: 0.66rem; color: var(--accent-d); padding-top: 0.3em; }
+@media (max-width: 720px){ .record-body{ grid-template-columns: 1fr; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   04 — SKILLS (specimen drawers)
+   ════════════════════════════════════════════════════════════════════════ */
+.drawers{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 980px){ .drawers{ grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px){ .drawers{ grid-template-columns: 1fr; } }
+.drawer{ background: var(--card); border: 1px solid var(--line); border-radius: 3px; padding: 18px 18px 20px; position: relative;
+  box-shadow: 0 10px 26px -18px rgba(34,30,24,0.4); transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.drawer:hover{ transform: translateY(-3px); box-shadow: 0 18px 34px -18px rgba(34,30,24,0.46); }
+.drawer .pull{ position: absolute; top: 14px; right: 14px; width: 26px; height: 6px; border-radius: 4px; background: var(--line); }
+.drawer .dno{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; color: var(--faint); }
+.drawer .dlabel{ font-family: var(--sans); font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; margin: 6px 0 14px; }
+.drawer .dtags{ display: flex; flex-wrap: wrap; gap: 6px; }
+.drawer .dtags span{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.04em; color: var(--ink-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px 10px; transition: border-color 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease); }
+.drawer .dtags span:hover{ border-color: var(--accent); color: var(--accent-d); transform: translateY(-2px); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   05 — AWARDS (sealed certificates)
+   ════════════════════════════════════════════════════════════════════════ */
+.awards{ border-top: 1.5px solid var(--ink); }
+.award{ display: grid; grid-template-columns: 56px 1fr auto 90px; gap: clamp(14px,2vw,28px); align-items: center;
+  padding-block: clamp(18px,2.6vh,28px); border-bottom: 1px solid var(--line); transition: padding-left 0.4s var(--ease); }
+.award:hover{ padding-left: clamp(8px,1.2vw,18px); }
+.award .seal-ico{ width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--seal); display: grid; place-items: center;
+  font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.04em; color: var(--seal); text-align: center; line-height: 1; box-shadow: inset 0 0 0 3px rgba(46,94,78,0.1); }
+.award .atitle{ font-family: var(--sans); font-weight: 600; font-size: clamp(1.15rem,2.2vw,1.7rem); letter-spacing: -0.02em; }
+.award .adetail{ font-family: var(--serif); color: var(--ink-2); max-width: 38ch; font-size: 0.98rem; }
+.award .ayear{ justify-self: end; font-family: var(--mono); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--accent-d); }
+@media (max-width: 720px){ .award{ grid-template-columns: 40px 1fr auto; } .award .adetail{ grid-column: 2 / -1; grid-row: 2; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   06 — ABOUT (pinned card)
+   ════════════════════════════════════════════════════════════════════════ */
+.about-grid{ display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(24px,4vw,64px); align-items: start; }
+.about-para{ font-family: var(--serif); font-size: clamp(1.4rem,2.6vw,2.2rem); line-height: 1.32; letter-spacing: -0.005em; color: var(--ink); text-wrap: pretty; }
+.about-para .w{ color: var(--faint); transition: color 0.1s linear; }
+.about-para .w.lit{ color: var(--ink); }
+html:not(.motion) .about-para .w{ color: var(--ink); }
+.about-card{ position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 3px; padding: 22px;
+  box-shadow: 0 18px 40px -22px rgba(34,30,24,0.42); transform: rotate(1.2deg); }
+.about-card .pin{ position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d8584a, var(--accent-d)); box-shadow: 0 4px 8px rgba(34,30,24,0.4); }
+.about-card .ach{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px dashed var(--line); }
+.about-meta{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.about-meta .cell .k{ font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); display: block; margin-bottom: 3px; }
+.about-meta .cell .v{ font-family: var(--mono); font-size: 0.82rem; color: var(--ink); }
+.about-members{ margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.about-members .ml{ font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); margin-right: 4px; }
+.about-members span.tg{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.04em; border: 1px solid var(--line); padding: 3px 8px; border-radius: 2px; color: var(--ink-2); }
+@media (max-width: 820px){ .about-grid{ grid-template-columns: 1fr; } .about-card{ transform: none; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   07 — CONTACT (mailing label) + FOOTER
+   ════════════════════════════════════════════════════════════════════════ */
+.contact{ padding-block: clamp(70px,12vh,170px) clamp(34px,5vh,60px); }
+.contact-head{ font-family: var(--sans); font-weight: 700; font-size: clamp(2.6rem,9vw,7.5rem); line-height: 0.84; letter-spacing: -0.04em; text-transform: uppercase; margin: 0 0 clamp(30px,5vh,56px); }
+.contact-head .ln{ display: block; overflow: hidden; }
+.contact-head .ln > span{ display: inline-block; }
+.maillabel{ background: var(--card); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 20px 44px -24px rgba(34,30,24,0.42);
+  display: grid; grid-template-columns: 1fr auto; overflow: hidden; }
+.maillabel .ml-l{ padding: clamp(22px,3.4vw,38px); }
+.maillabel .ml-rows{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.c-link{ display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; background: var(--card); transition: background 0.3s var(--ease); }
+.c-link:hover{ background: var(--kraft); }
+.c-link .k{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+.c-link .v{ font-family: var(--sans); font-weight: 600; font-size: 1.1rem; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; }
+.c-link:hover .v{ color: var(--accent-d); }
+.maillabel .ml-r{ width: clamp(120px,16vw,200px); border-left: 1px dashed var(--line); display: grid; place-items: center; padding: 20px; background: var(--kraft); }
+.postmark{ width: clamp(96px,12vw,150px); aspect-ratio: 1; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent);
+  display: grid; place-items: center; text-align: center; transform: rotate(-11deg); box-shadow: inset 0 0 0 5px rgba(190,58,43,0.08); }
+.postmark div{ font-family: var(--mono); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.5; }
+.postmark .big{ font-size: 0.84rem; letter-spacing: 0.16em; }
+.footline{ display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: clamp(40px,7vh,80px); padding-top: 20px; border-top: 1px solid var(--line); }
+@media (max-width: 720px){ .maillabel{ grid-template-columns: 1fr; } .maillabel .ml-rows{ grid-template-columns: 1fr; } .maillabel .ml-r{ border-left: 0; border-top: 1px dashed var(--line); } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   DOSSIER — detail overlay (manila folder)
+   ════════════════════════════════════════════════════════════════════════ */
+.dossier{ position: fixed; inset: 0; z-index: 200; background: rgba(34,30,24,0.46); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  opacity: 0; visibility: hidden; display: grid; place-items: end center; }
+.dossier.open{ visibility: visible; opacity: 1; }
+.dossier-sheet{ position: relative; width: min(100%, 1100px); height: min(94vh, 100%); background: var(--card); border: 1px solid var(--line);
+  border-radius: 10px 10px 0 0; box-shadow: 0 -30px 80px -20px rgba(0,0,0,0.5); overflow-y: auto; transform: translateY(100%); will-change: transform; }
+.dossier.open .dossier-sheet{ transform: translateY(0); }
+.dossier-tab{ position: absolute; top: -28px; left: 40px; height: 30px; padding: 0 24px 0 20px; background: var(--kraft); border: 1px solid var(--line); border-bottom: 0; border-radius: 9px 9px 0 0; display: flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+.dossier-bar{ position: sticky; top: 0; z-index: 4; display: flex; justify-content: space-between; align-items: center;
+  padding: 16px clamp(22px,4vw,46px); background: color-mix(in srgb, var(--card) 90%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.dossier-bar .closebtn{ display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
+.dossier-bar .closebtn:hover{ color: var(--accent-d); }
+.dossier-bar .pn{ display: flex; gap: 18px; }
+.dossier-bar .pn button{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.dossier-bar .pn button:hover{ color: var(--ink); }
+.dossier-body{ padding: clamp(28px,5vw,60px) clamp(22px,4vw,46px) clamp(50px,8vh,100px); }
+.da-top{ display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: baseline; padding-bottom: 18px; border-bottom: 1px dashed var(--line); margin-bottom: clamp(22px,3.5vh,40px); }
+.da-title{ font-family: var(--sans); font-weight: 700; font-size: clamp(2.2rem,5.5vw,4.4rem); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; margin: 0 0 clamp(18px,3vh,30px); }
+.da-metricrow{ display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: clamp(26px,4vh,48px); }
+.da-metric{ display: inline-flex; align-items: baseline; gap: 9px; border: 2.5px solid var(--accent); color: var(--accent); padding: 9px 14px; border-radius: 4px; transform: rotate(-1.5deg); box-shadow: inset 0 0 0 1px rgba(190,58,43,0.18); }
+.da-metric .v{ font-family: var(--mono); font-weight: 700; font-size: clamp(1.4rem,2.6vw,2.1rem); font-variant-numeric: tabular-nums; }
+.da-metric .l{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.da-intro{ font-family: var(--serif); font-size: clamp(1.2rem,2vw,1.55rem); line-height: 1.4; color: var(--ink); max-width: 60ch; margin: 0 0 clamp(30px,5vh,56px); }
+.da-quote{ margin: clamp(30px,5vh,56px) 0; padding-left: clamp(18px,3vw,34px); border-left: 3px solid var(--accent); }
+.da-quote blockquote{ margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(1.5rem,3.4vw,2.6rem); line-height: 1.22; letter-spacing: -0.01em; text-wrap: balance; }
+.da-quote .w{ color: var(--faint); transition: color 0.1s linear; }
+.da-quote .w.lit{ color: var(--ink); }
+html:not(.motion) .da-quote .w{ color: var(--ink); }
+.da-quote cite{ display: block; margin-top: 16px; font-family: var(--mono); font-style: normal; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.da-cols{ display: grid; grid-template-columns: 1fr 240px; gap: clamp(24px,4vw,56px); align-items: start; }
+.da-body{ display: flex; flex-direction: column; gap: 20px; color: var(--ink-2); font-size: 1.06rem; line-height: 1.62; }
+.da-side{ display: flex; flex-direction: column; gap: 22px; position: sticky; top: 80px; }
+.da-side .blk .k{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); display: block; margin-bottom: 9px; }
+.da-stack{ display: flex; flex-wrap: wrap; gap: 6px; }
+.da-stack span{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid var(--line); padding: 4px 9px; border-radius: 2px; color: var(--ink-2); }
+.da-links{ display: flex; flex-direction: column; gap: 8px; }
+.da-links a{ font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; width: fit-content; }
+.da-links a:hover{ color: var(--accent-d); border-color: var(--accent); }
+.da-foot{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: clamp(40px,6vh,70px); padding-top: 22px; border-top: 1px solid var(--line); }
+.da-foot .nav{ cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+.da-foot .nav.next{ text-align: right; align-items: flex-end; }
+.da-foot .nav .k{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.da-foot .nav .t{ font-family: var(--sans); font-weight: 700; font-size: clamp(1.2rem,2vw,1.6rem); letter-spacing: -0.02em; }
+.da-foot .nav:hover .t{ color: var(--accent-d); }
+@media (max-width: 720px){ .da-cols{ grid-template-columns: 1fr; } .da-side{ position: static; } .da-foot{ grid-template-columns: 1fr; } .da-foot .nav.next{ text-align: left; align-items: flex-start; } }
+
+/* ── reveal base states (motion on) ── */
+html.motion [data-rise]{ opacity: 0; transform: translateY(24px); will-change: transform, opacity; }
+html.motion [data-fade]{ opacity: 0; }
+html.motion .wipe{ clip-path: inset(0 0 110% 0); }
+
+/* ════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  html [data-rise], html [data-fade]{ opacity: 1 !important; transform: none !important; }
+  html .wipe{ clip-path: none !important; }
+  .about-para .w, .da-quote .w{ color: var(--ink) !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<!-- ══ FILING-TAB NAV ════════════════════════════════════════════════════ -->
+<nav class="tabnav" aria-label="Sections">
+  <div class="row">
+    <a class="home" href="#top"><span class="seal-dot"></span><b>Archive</b></a>
+    <div class="tabs">
+      <a class="tab" href="#work"><span class="n">01</span> Work</a>
+      <a class="tab" href="#index"><span class="n">02</span> Index</a>
+      <a class="tab" href="#experience"><span class="n">03</span> Experience</a>
+      <a class="tab" href="#skills"><span class="n">04</span> Skills</a>
+      <a class="tab" href="#awards"><span class="n">05</span> Awards</a>
+      <a class="tab" href="#about"><span class="n">06</span> About</a>
+      <a class="tab" href="#contact"><span class="n">07</span> Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+  <header class="hero sec" data-screen-label="Hero" style="padding-top:clamp(46px,7vh,80px)">
+    <div class="wrap">
+      <div class="folder" data-folder>
+        <div class="filetab" data-rise>Personal File № 001</div>
+        <div class="hero-topmeta">
+          <span class="lbl">Accession <b>PORT-2026-001</b></span>
+          <span class="lbl">Classification <b>CS + Math · UIUC</b></span>
+          <span class="lbl">Est. <b>2027</b></span>
+        </div>
+
+        <h1 class="hero-name" id="heroName">
+          <span class="ln"><span>Aryan</span></span>
+          <span class="ln"><span>Singh</span></span>
+          <span class="hero-stamp" data-stamp>Portfolio<small>Vol. 01</small></span>
+        </h1>
+
+        <div class="hero-foot">
+          <p class="lead" data-rise>Software where performance is the point — and the infrastructure to run it reliably.</p>
+          <div class="specs">
+            <div class="r" data-rise><span class="k">Discipline</span><span class="v">Systems · CUDA · Infrastructure</span></div>
+            <div class="r" data-rise><span class="k">Location</span><span class="v">Champaign · Chicago, IL</span></div>
+            <div class="r" data-rise><span class="k">Status</span><span class="v">Open to 2026 internships</span></div>
+          </div>
+        </div>
+      </div>
+      <a class="scrollcue" href="#work" data-fade><span class="arw">↓</span> Open catalogue</a>
+    </div>
+  </header>
+
+  <!-- ══ 01 SELECTED WORK ══════════════════════════════════════════════ -->
+  <section class="sec" id="work" data-screen-label="Selected work">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="h-left">
+          <span class="lbl red">01 / Catalogue</span>
+          <h2 class="wipe">Selected work</h2>
+        </div>
+        <div class="h-right"><span class="lbl">04 records</span><span class="lbl">Drag to browse</span></div>
+      </div>
+      <div class="board">
+        <div class="cards" id="cards"><!-- cards injected --></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- marquee -->
+  <div class="marquee" aria-hidden="true"><div class="mtrack" id="marquee"></div></div>
+
+  <!-- ══ 02 INDEX ══════════════════════════════════════════════════════ -->
+  <section class="sec" id="index" data-screen-label="Index">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="h-left">
+          <span class="lbl red">02 / Accession ledger</span>
+          <h2 class="wipe">Full index</h2>
+        </div>
+        <div class="h-right"><span class="lbl">Hover a row</span></div>
+      </div>
+      <div class="ledger" id="ledger"><!-- rows injected --></div>
+    </div>
+  </section>
+
+  <!-- ══ 03 EXPERIENCE ═════════════════════════════════════════════════ -->
+  <section class="sec" id="experience" data-screen-label="Experience">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="h-left">
+          <span class="lbl red">03 / Personnel record</span>
+          <h2 class="wipe">Experience</h2>
+        </div>
+        <div class="h-right"><span class="lbl">Form E-03</span></div>
+      </div>
+
+      <article class="record" data-rise>
+        <div class="record-top">
+          <div class="ro">University of Illinois Chicago</div>
+          <div class="rmeta">Systems Engineer<br>May 2025 — August 2025</div>
+        </div>
+        <div class="record-body">
+          <div class="rcol-l">
+            <div class="record-field"><span class="k">Location</span><span class="v">Chicago, IL</span></div>
+            <div class="record-field"><span class="k">Type</span><span class="v">Internship</span></div>
+            <div class="record-field"><span class="k">Ref.</span><span class="v">EXP-01</span></div>
+          </div>
+          <div class="rcol-r">
+            <p class="record-head-line">Moved the OS job scheduler onto an FPGA. Throughput doubled.</p>
+            <ul class="record-bullets">
+              <li><span class="bn">01</span><span>Moved scheduling off the CPU and onto a Xilinx Alveo U55C FPGA. With the FPGA owning the scheduler, the host CPU stopped burning cycles managing the work it could be doing.</span></li>
+              <li><span class="bn">02</span><span>Removed the host–FPGA double-copy by sharing physical memory between them; throughput doubled once those redundant transfers were gone.</span></li>
+              <li><span class="bn">03</span><span>Built a three-thread C++ pipeline — Writer, Reader, Logger — keeping two FPGA kernels fed continuously: lock-free ring buffers on the hot path, mutexes elsewhere.</span></li>
+              <li><span class="bn">04</span><span>Moved the task queue into hardware so high-priority jobs bypass the OS scheduler, dropping latency to microseconds.</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ 04 SKILLS ═════════════════════════════════════════════════════ -->
+  <section class="sec" id="skills" data-screen-label="Skills">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="h-left">
+          <span class="lbl red">04 / Specimen drawers</span>
+          <h2 class="wipe">Capabilities</h2>
+        </div>
+        <div class="h-right"><span class="lbl">06 groups</span></div>
+      </div>
+      <div class="drawers" id="drawers"><!-- drawers injected --></div>
+    </div>
+  </section>
+
+  <!-- ══ 05 AWARDS ═════════════════════════════════════════════════════ -->
+  <section class="sec" id="awards" data-screen-label="Awards">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="h-left">
+          <span class="lbl red">05 / Seals &amp; honors</span>
+          <h2 class="wipe">Recognition</h2>
+        </div>
+        <div class="h-right"><span class="lbl">03 entries</span></div>
+      </div>
+      <div class="awards">
+        <div class="award" data-rise>
+          <span class="seal-ico" data-seal>1st</span>
+          <span class="atitle">CS 341 Malloc Performance Contest</span>
+          <span class="adetail">Top of ~400 submissions — outscored both stock and optimized glibc.</span>
+          <span class="ayear">2025</span>
+        </div>
+        <div class="award" data-rise>
+          <span class="seal-ico" data-seal>4th</span>
+          <span class="atitle">UIUC Capture-the-Flag (CTF)</span>
+          <span class="adetail">Binary exploitation, reversing, crypto, and web — 4th of 25+ teams.</span>
+          <span class="ayear">2025</span>
+        </div>
+        <div class="award" data-rise>
+          <span class="seal-ico" data-seal>5th</span>
+          <span class="atitle">Science Olympiad — Robot Tour</span>
+          <span class="adetail">Autonomous Pi Pico maze robot; 5th of 50 regional teams.</span>
+          <span class="ayear">2024</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 06 ABOUT ══════════════════════════════════════════════════════ -->
+  <section class="sec" id="about" data-screen-label="About">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="h-left">
+          <span class="lbl red">06 / Biographical note</span>
+          <h2 class="wipe">About</h2>
+        </div>
+      </div>
+      <div class="about-grid">
+        <p class="about-para" data-words>Computer Science and Mathematics student at the University of Illinois, graduating May 2027. The work splits in two: software where performance is the point — memory allocators, CUDA kernels, OS schedulers — and the infrastructure to run it reliably. Everything here runs on a self-managed Kubernetes cluster.</p>
+        <aside class="about-card" data-rise>
+          <span class="pin"></span>
+          <div class="ach">Record card — biographical</div>
+          <div class="about-meta">
+            <div class="cell"><span class="k">School</span><span class="v">UIUC</span></div>
+            <div class="cell"><span class="k">Degree</span><span class="v">B.S. CS &amp; Mathematics</span></div>
+            <div class="cell"><span class="k">GPA</span><span class="v">3.89</span></div>
+            <div class="cell"><span class="k">Date</span><span class="v">May 2027</span></div>
+          </div>
+          <div class="about-members">
+            <span class="ml">Memberships</span>
+            <span class="tg">ACM at UIUC</span><span class="tg">SIGCHI</span><span class="tg">SIG AIDA</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 CONTACT ════════════════════════════════════════════════════ -->
+  <section class="contact" id="contact" data-screen-label="Contact">
+    <div class="wrap">
+      <span class="lbl red" data-fade>07 / Correspondence</span>
+      <h2 class="contact-head" style="margin-top:14px">
+        <span class="ln"><span>Request</span></span>
+        <span class="ln"><span>access.</span></span>
+      </h2>
+      <div class="maillabel" data-rise>
+        <div class="ml-l">
+          <div class="ml-rows">
+            <a class="c-link" href="mailto:asing271@illinois.edu"><span class="k">Email</span><span class="v">asing271@illinois.edu →</span></a>
+            <a class="c-link" href="https://github.com/geneticglitch1" target="_blank" rel="noopener"><span class="k">GitHub</span><span class="v">@geneticglitch1 →</span></a>
+            <a class="c-link" href="https://linkedin.com/in/aryan-singh06" target="_blank" rel="noopener"><span class="k">LinkedIn</span><span class="v">/in/aryan-singh06 →</span></a>
+            <a class="c-link" href="public/resume.pdf" target="_blank" rel="noopener"><span class="k">Résumé</span><span class="v">resume.pdf →</span></a>
+          </div>
+        </div>
+        <div class="ml-r">
+          <div class="postmark"><div><span class="big">2026</span><br>Champaign · IL<br>Aryan Singh</div></div>
+        </div>
+      </div>
+      <div class="footline">
+        <span class="lbl">© 2026 · Aryan Singh</span>
+        <span class="lbl">Archive edition · Vol. 01</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ DOSSIER OVERLAY ════════════════════════════════════════════════════ -->
+<div class="dossier" id="dossier" role="dialog" aria-modal="true" aria-label="Project dossier" data-screen-label="Project dossier">
+  <div class="dossier-sheet" id="dossierSheet">
+    <span class="dossier-tab">Dossier</span>
+    <div class="dossier-bar">
+      <button class="closebtn" id="dossierClose">← Close file</button>
+      <div class="pn">
+        <button id="dossierPrev">← Prev</button>
+        <button id="dossierNext">Next →</button>
+      </div>
+    </div>
+    <div class="dossier-body">
+      <div class="da-top">
+        <span class="lbl" id="daAcc">Accession · 00 / 04</span>
+        <span class="lbl">Classification · Selected</span>
+      </div>
+      <h1 class="da-title" id="daTitle">Project title</h1>
+      <div class="da-metricrow" id="daMetricRow">
+        <span class="da-metric"><span class="v" id="daMetric">00×</span><span class="l" id="daMetricLabel">Headline metric</span></span>
+        <span class="stamp seal">Verified</span>
+      </div>
+      <p class="da-intro" id="daIntro">An intro paragraph slot.</p>
+
+      <div class="da-quote">
+        <blockquote data-words id="daQuote">A pulled blockquote.</blockquote>
+        <cite id="daCite">— Pull quote</cite>
+      </div>
+
+      <div class="da-cols">
+        <div class="da-body" id="daBody">
+          <p>A body paragraph slot.</p>
+        </div>
+        <aside class="da-side">
+          <div class="blk"><span class="k">Stack</span><div class="da-stack" id="daStack"><span>Tool</span></div></div>
+          <div class="blk"><span class="k">Links</span><div class="da-links" id="daLinks"><a href="#">GitHub →</a></div></div>
+          <div class="blk"><span class="k">Year</span><div class="da-stack"><span id="daYear">YYYY</span></div></div>
+        </aside>
+      </div>
+
+      <div class="da-foot">
+        <div class="nav prev" id="daFootPrev"><span class="k">← Previous record</span><span class="t">Project title</span></div>
+        <div class="nav next" id="daFootNext"><span class="k">Next record →</span><span class="t">Project title</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════════════════
+   DATA (placeholders)
+   ════════════════════════════════════════════════════════════════════════ */
+const PROJECTS = [
+  {
+    name:"High-Performance Custom Memory Allocator", year:"2025", cat:"Systems",
+    desc:"A malloc written from scratch in C — faster than glibc.",
+    line:"A from-scratch malloc/calloc/realloc/free in C, tuned to outperform the glibc allocator on the CS 341 benchmark.",
+    metric:"1 / 400", count:400, dec:0, pre:"1 / ", suf:"", mlabel:"CS 341 Malloc Contest",
+    tags:["C","POSIX","sbrk"],
+    intro:"A complete dynamic memory allocator written in C on top of sbrk, implementing the full malloc/calloc/realloc/free interface. The goal was to match, then exceed, the highly optimized glibc allocator that ships with every Linux machine — measured on the CS 341 benchmark suite.",
+    quote:"Scored 122.6 on the shared benchmark against the optimized glibc baseline's 114.91 — the top result among roughly 400 submissions.",
+    body:[
+      "The contest ran every student's allocator against glibc on a workload mix designed to expose fragmentation, alignment, and locality bugs. Submissions were ranked by a single score combining runtime and resident memory.",
+      "Block metadata lives in a header immediately before each payload, so the free list walks without an external index. The list stays address-sorted, which makes coalescing O(1) at free time: a returning block checks its two physical neighbors in constant time and merges in place.",
+      "Splitting is fragmentation-aware — rather than serving any block large enough for the request, the allocator favors blocks that leave a useful-sized remainder, falling back to exact-fit when none exists. realloc grows in place whenever the right-hand neighbor is free, avoiding the copy a naive implementation performs.",
+      "The final design held up under both small-allocation churn and large mixed workloads — a practical exercise in cache lines, branch prediction, and the cost of a single conditional on a hot path."
+    ],
+    stack:["C","POSIX","sbrk","glibc benchmark suite"],
+    links:{ note:"UIUC honor code — source is private" }
+  },
+  {
+    name:"GPT-2 Inference Engine — from Scratch in CUDA", year:"2026", cat:"AI / ML",
+    desc:"Every GPT-2 layer hand-written in CUDA, then tuned hard.",
+    line:"A complete GPT-2 forward pass written in raw CUDA, tuned from 249 ms to 10 ms per pass.",
+    metric:"24.2×", count:24.2, dec:1, pre:"", suf:"×", mlabel:"Forward-pass speedup",
+    tags:["CUDA","C++17","CUTLASS"],
+    intro:"Every layer of OpenAI's GPT-2 (124 M parameters) implemented in raw C++/CUDA — no PyTorch, no high-level abstractions. The aim: make a 12-layer transformer fast enough to be interesting on a single A40.",
+    quote:"The end-to-end forward pass dropped from 249.8 ms to 10.3 ms — a 24.2× speedup. Per-token generation reached a 117× peak via KV caching.",
+    body:[
+      "The reference implementation was a naive Python port at ~250 ms per forward pass on an A40. The CUDA version targets the same numeric output through custom kernels for every transformer block: encoder, LayerNorm, multi-head self-attention with causal masking, feed-forward, and GeLU activations.",
+      "Performance work focused on three layers of the memory hierarchy. Shared-memory and register tiling move matmul operands close to the SMs; tensor-core TF32 math handles the bulk of the arithmetic; cuBLAS picks up the cases where a hand-written kernel would lose to the vendor library. Warp-level reductions keep softmax and LayerNorm tight.",
+      "Attention uses a FlashAttention-style IO-aware tile schedule, keeping the working set in shared memory instead of streaming through HBM on every step. Autoregressive generation wraps a KV cache that turns the O(n²) attention cost into O(n) per new token — the source of the 117× peak per-token speedup at large batch sizes.",
+      "CUTLASS device GEMM templates with fused epilogues collapse chains of small ops into single launches, cutting kernel-launch latency in the inner loop. Every optimization — coalescing, bank-conflict-free swizzles, warp-stall removal — was measured under Nsight Systems and Nsight Compute before being kept, rather than guessed at."
+    ],
+    stack:["CUDA","C++17","CUTLASS","Tensor Cores (Ampere)","FlashAttention","cuBLAS","Nsight Systems","Nsight Compute","NCSA Delta · A40"],
+    links:{ note:"ECE 408 — source private per UIUC honor code" }
+  },
+  {
+    name:"High-Availability K3s Home Lab Cluster", year:"2024 — present", cat:"Infrastructure",
+    desc:"A six-node Kubernetes cluster at home — it serves this site.",
+    line:"Six K3s nodes at home — every project on this site runs on them.",
+    metric:"99.9%", count:99.9, dec:1, pre:"", suf:"%", mlabel:"Uptime · 12 months",
+    tags:["K3s","Proxmox","Cloudflare"],
+    intro:"A private cloud built from scratch at home. Every AI, ML, and systems project on this site runs on it, behind networking the projects themselves never have to think about.",
+    quote:"Six-node Kubernetes on Proxmox, 99.9% uptime, fully behind mTLS Cloudflare tunnels with zero exposed public IPs.",
+    body:[
+      "Six VMs on Proxmox, K3s on top, and everything here runs on it — LLM inference, Postgres, vector stores, CI runners, photo and document storage, this portfolio. Deploys go through Fleet, so what's running matches what's in Git.",
+      "The network is intentionally paranoid: OPNsense at the edge, Suricata for IDS, CrowdSec for adaptive blocking. Nothing has a public IP — the only way in is a Cloudflare mTLS tunnel, so a port scan of the home address finds nothing.",
+      "Longhorn replicates persistent volumes synchronously across three nodes. A node failing overnight surfaces the next morning, because nothing actually broke. WireGuard handles remote access.",
+      "Deploys go through Jenkins: build a Docker image, push to GHCR, and do a zero-downtime rolling restart on the cluster — rarely touched by hand."
+    ],
+    stack:["K3s","Proxmox","OPNsense","Cloudflare Tunnels","Suricata","CrowdSec","WireGuard","Longhorn","Traefik","Fleet","Jenkins"],
+    links:{}
+  },
+  {
+    name:"Autonomous Maze Solver — Robot Tour", year:"2024", cat:"Hardware",
+    desc:"A dual-core Pi Pico robot that solves mazes on its own.",
+    line:"A dual-core Raspberry Pi Pico robot that placed 5th of 50 at the UIUC State Science Olympiad.",
+    metric:"5 / 50", count:50, dec:0, pre:"5 / ", suf:"", mlabel:"State Science Olympiad",
+    tags:["C / C++","Pi Pico","Sensors"],
+    intro:"A robot that autonomously navigates a complex maze using pre-programmed distances and turns — hard because the cheap motors and sensors available bring none of the precision the task requires.",
+    quote:"\"Integration hell\" went away once every sensor got its own CPU core — Core 0 ran the primary loop while Core 1 fielded secondary interrupts.",
+    body:[
+      "The Pi Pico's dual cores were the unlock. An initial attempt multiplexed every sensor onto a single core and kept crashing under interrupt load. Splitting the work — Core 0 owning the primary loop, Core 1 owning secondary sensor interrupts — made the contention disappear.",
+      "Cheap yellow DC motors have enough backlash and inertia to overshoot any naive angle-based rotation. A dynamic rotation algorithm fixed it: a turn terminates only once the gyro reads the target angle and angular velocity falls to zero, hitting precise headings on a surface with unpredictable friction.",
+      "Command sequences are pre-compiled through a C preprocessor pass that converts authored command arrays into a format the main loop consumes directly, keeping the hot path branch-free."
+    ],
+    stack:["C / C++","Raspberry Pi Pico","LM393 light encoders","HC-SR04 ultrasonic","TB6612 motor driver","MP1584 regulator","HC-05 Bluetooth"],
+    links:{ github:"https://github.com/geneticglitch/Autonomous-self-driving-robot" }
+  },
+  {
+    name:"EnvSync", year:"2026", cat:"Full Stack",
+    line:"A zero-knowledge secret manager for teams that have stopped trusting Slack with their API keys.",
+    tags:["Rust","Spring Boot","AES-GCM"],
+    intro:"A full-stack platform that versions, diffs, and syncs .env files across machines and teammates — designed so the server is mathematically incapable of reading any secret it stores.",
+    quote:"Encrypted on-device with keys derived via Argon2id, sealed with AES-GCM, and sent to a server that only ever sees ciphertext.",
+    body:[
+      "Everything is encrypted on the client before it leaves. A passphrase derives a key through Argon2id (tuned to ~250 ms, slow enough to make brute force painful), then AES-GCM seals the secrets. The server only ever sees ciphertext. There is no admin override and no password reset — losing the passphrase means losing the vault, by design.",
+      "The Rust CLI works the way git does: envsync push, pull, diff, rollback. Login is OAuth2 device-code with auto-refresh, so the CLI never sees the password. Each project keeps its own snapshot history, making a bad rotation a one-command undo.",
+      "Conflict resolution is deterministic, so two teammates editing the same vault never diverge. Per-project scopes mean a leaked token compromises one vault, not everything. Every push builds, tests, and deploys to a K3s cluster through a Jenkins pipeline."
+    ],
+    stack:["Rust","Cobra","Next.js","Spring Boot","PostgreSQL","Argon2id","AES-GCM","Keycloak","MinIO","Jenkins"],
+    links:{ github:"https://github.com/geneticglitch1/EnvSync" }
+  },
+  {
+    name:"Schema — AI Document Search", year:"2026", cat:"AI / ML",
+    line:"A retrieval-augmented document search engine that grounds LLM answers in a private PDF library.",
+    tags:["FastAPI","pgvector","CUDA"],
+    intro:"An end-to-end RAG pipeline that lets a language model recall and cite passages from a user's private library instead of hallucinating around them. It ingests typed and handwritten PDFs, embeds them with Instructor-XL, and retrieves with re-ranking on top of pgvector.",
+    quote:"Surfaced 80–90% relevant passages on real 800-page documents — enough context for downstream LLMs to ground their answers in the source.",
+    body:[
+      "The ingestion pipeline runs asynchronously, routing each PDF to one of two extractors: PyMuPDF for typed text, TrOCR for scanned or handwritten pages. Both paths converge on a sentence-aware chunker with overlapping windows, preserving semantic boundaries across chunk edges.",
+      "Embeddings batch 64 chunks at a time against hkunlp/instructor-xl on CUDA, keeping GPU utilization high during bulk ingestion. Vectors land in Actian Vector — chosen for hybrid filtering — with the original chunk metadata stored alongside.",
+      "Retrieval combines vector similarity with a re-ranking layer, so the passages returned to the LLM are actually relevant rather than merely nearest in latent space. Validation ran on real 800-page reference documents across multiple domains, where it consistently surfaced the right passages.",
+      "The backend is a FastAPI service with Supabase JWT auth and user-scoped filtering on every query. Deletes cascade across PostgreSQL, the filesystem, and the vector store, so revoking a document removes it everywhere."
+    ],
+    stack:["FastAPI","React","Supabase","Actian Vector","pgvector","PyMuPDF","TrOCR","Instructor-XL","CUDA"],
+    links:{}
+  },
+  {
+    name:"AI-Powered Digital Journaling Platform", year:"2025", cat:"Full Stack",
+    line:"A journaling app that reads your face, checks your calendar, and writes a reflection that fits the day you actually had.",
+    tags:["Next.js","FastAPI","Claude"],
+    intro:"The idea: reflection prompts that feel like they know what kind of day you had. The app watches your face on the webcam, reads your calendar, and uses both to write you something more specific than \"how are you feeling?\" The AI layer was built as one part of a 15-person team project.",
+    quote:"The vision service runs under 100 ms per frame, so the camera feed feels live, not laggy.",
+    body:[
+      "The AI layer, owned end to end: getting the right context into the model, turning it into a prompt the model could actually use, and returning the response to the UI without it feeling slow.",
+      "Reflection prompts come out of a RAG pipeline on top of Claude 3.5 Sonnet. It combines mood ratings, what the webcam read during the day, and what was on the calendar, then asks Claude for a prompt grounded in that — not a generic \"reflect on your day.\"",
+      "Vision lives in its own FastAPI service running MediaPipe and OpenCV — sub-100 ms per frame, so the UI can show what the model thinks it sees without the loop stalling.",
+      "CI/CD runs through Jenkins: it builds the Next.js frontend, the vision service, and the backend on every push, then rolls them out to a K3s cluster as Docker images."
+    ],
+    stack:["TypeScript","Next.js","Python","FastAPI","MediaPipe","OpenCV","Claude 3.5 Sonnet","PostgreSQL","Docker","Jenkins","K3s"],
+    links:{}
+  },
+  {
+    name:"Pathway to Improved Cities — Urban Analytics", year:"2025", cat:"AI / ML",
+    line:"ML on millions of Chicago city records to find which neighborhoods are most underserved.",
+    tags:["Python","XGBoost","PySAL"],
+    intro:"The Chicago Data Portal has years of 311 calls, crime reports, and service records sitting in public. The question: can you point at a neighborhood and predict whether it gets its fair share of city services? The answer is yes — and sometimes uncomfortable.",
+    quote:"XGBoost and Random Forest on millions of municipal records, cross-checked against PySAL spatial clusters of crime and traffic incidents.",
+    body:[
+      "XGBoost and Random Forest trained on a few million rows of city records — reported incidents, response times, demographic geography — reaching high precision and recall on whether a neighborhood is underserved.",
+      "The data pipeline pulls live updates from the Chicago Data Portal through a NumPy + Pandas ETL. Cached intermediate stages keep refreshes cheap, so the dashboard stays current and the models retrain on recent data.",
+      "On top of the model, a PySAL spatial pass finds geographic clusters of crime and traffic incidents, making it possible to check visually where predictions line up with ground truth. The whole thing renders as a Streamlit dashboard with Plotly and Mapbox layers.",
+      "The point wasn't a paper. It was making the data clear enough that someone who allocates city services could look at the map and see where the gaps are."
+    ],
+    stack:["Python","Pandas","NumPy","XGBoost","Random Forest","PySAL","GeoPandas","Streamlit","Plotly","Mapbox"],
+    links:{}
+  },
+  {
+    name:"Nonstop Networking", year:"2025", cat:"Systems",
+    line:"A non-blocking, epoll-driven client–server in C that handles any number of connections without threads.",
+    tags:["C","epoll","TCP"],
+    intro:"An asynchronous, event-driven server in C that uses epoll and non-blocking I/O to handle any number of concurrent clients with a single thread and a per-connection state machine.",
+    quote:"One thread, one reactor, one state machine per connection — partial reads and writes resume exactly where the last EAGAIN left them.",
+    body:[
+      "The reactor is a single-threaded epoll loop. Every connection has a state machine that remembers exactly where the last read or write stopped, so a half-received request or a partial response continues correctly on the next epoll wake-up. No thread-per-connection, no busy waiting.",
+      "The wire format is a custom binary protocol for GET, PUT, DELETE, and LIST over TCP, with explicit error codes and length prefixes. Framing edge cases — short reads, write blocking mid-response, abrupt client close — are handled at the state-machine level rather than papered over with retries."
+    ],
+    stack:["C","epoll","POSIX sockets","non-blocking I/O"],
+    links:{ note:"UIUC honor code — source is private" }
+  },
+  {
+    name:"Parallel Make", year:"2025", cat:"Systems",
+    line:"A multi-threaded make(1) that respects DAG dependencies and parallelizes everything else.",
+    tags:["C","pthreads","DAG"],
+    intro:"A multi-threaded build system in C that parses a Makefile into a dependency DAG and dispatches worker threads to execute rules in dependency order — the same contract make -j honors, implemented from scratch.",
+    quote:"A thread pool guarded by condition variables on the ready queue wakes workers only when a new rule becomes runnable — so idle CPUs never busy-wait.",
+    body:[
+      "The DAG builder rejects cycles before scheduling begins. The thread-pool executor uses condition variables on the ready queue, so workers sleep when there's nothing to do and wake exactly when a new rule's dependencies are satisfied.",
+      "Failure handling is the interesting part: when a rule fails, the failure has to propagate up the DAG without leaking threads or leaving half-built targets behind. Cancellation walks the DAG, marks unreachable targets, and joins workers cleanly."
+    ],
+    stack:["C","pthreads","mutex / cond vars","DAG scheduling"],
+    links:{ note:"UIUC honor code — source is private" }
+  },
+  {
+    name:"sshell — POSIX Shell", year:"2025", cat:"Systems",
+    line:"A UNIX-like shell with pipes, redirection, and logical operators.",
+    tags:["C","POSIX","signals"],
+    intro:"A POSIX shell with complex argument parsing, background processes, logical operators, and file redirection — most of what sh does, minus the scripting language.",
+    quote:"A hand-written tokenizer and parser handle quoted arguments, pipes, && / || / ;, and < / > / >> redirection — no grammar libraries.",
+    body:[
+      "Tokenization and parsing are hand-written, keeping the binary small and dependencies at zero. Quoted arguments, multi-stage pipelines, conditional sequences, and file redirection all flow through one expression tree.",
+      "Process management is straightforward fork / execvp / waitpid, with explicit signal handling for Ctrl-C and Ctrl-Z so the shell isn't killed by signals meant for its children. Background processes report completion asynchronously without clobbering the prompt currently being typed."
+    ],
+    stack:["C","POSIX","fork / exec / wait","signals"],
+    links:{ note:"UIUC honor code — source is private" }
+  },
+  {
+    name:"Finding Filesystems", year:"2025", cat:"Systems",
+    line:"An ext2 on-disk inode parser that walks raw filesystem bytes.",
+    tags:["C","ext2"],
+    intro:"A tool that walks a raw ext2 filesystem image: parses the superblock, traverses inode and block-group descriptor tables, and reconstructs the directory tree without relying on the kernel's filesystem support.",
+    quote:"It resolves inode → block mappings through direct, singly-indirect, and doubly-indirect pointers — straight off the disk bytes.",
+    body:[
+      "Reading a real filesystem from scratch is an exercise in believing what's on disk rather than what a diagram says. The parser reads the superblock, walks block-group descriptors, and resolves inodes through the full pointer hierarchy.",
+      "The directory hierarchy is rebuilt from on-disk dir_entry records, so a corrupted entry produces a useful error instead of a silent miss."
+    ],
+    stack:["C","ext2","on-disk structures"],
+    links:{ note:"UIUC honor code — source is private" }
+  },
+  {
+    name:"Handwritten Digit Neural Network (From Scratch)", year:"2024", cat:"AI / ML",
+    line:"An MNIST classifier in Java with no ML library and no autograd.",
+    tags:["Java","MNIST"],
+    intro:"A small feed-forward neural network written entirely in Java, with no external ML libraries — built to make the math of forward propagation, backpropagation, and stochastic gradient descent concrete.",
+    quote:"Forward propagation, backpropagation, and activation functions, all implemented directly. The whole point was to follow the gradient flow by hand.",
+    body:[
+      "Trained on MNIST with stochastic gradient descent to recognize handwritten digits zero through nine. Layer weights and activations are explicit matrices multiplied by hand, which turned every shape mismatch into a learning moment rather than a stack trace."
+    ],
+    stack:["Java","Linear algebra","MNIST"],
+    links:{}
+  },
+  {
+    name:"XRayPDF", year:"2026", cat:"Tooling",
+    line:"A tool that surfaces hidden text inside PDFs.",
+    tags:["TypeScript","PDF.js"],
+    intro:"A tool that surfaces sneaky hidden text in PDFs — invisible layers, white-on-white text, and metadata-buried strings that slip past a normal reader. Useful for reviewing documents written by someone else.",
+    quote:"If a PDF is hiding something between the rendered glyphs, the tool reads it back out.",
+    body:[
+      "Built on PDF.js, it walks every text-object stream in the document and surfaces anything the renderer would normally suppress — zero-opacity layers, color-matched-to-background runs, hidden form-field defaults, and metadata strings."
+    ],
+    stack:["TypeScript","PDF.js"],
+    links:{ github:"https://github.com/geneticglitch1/XRayPDF" }
+  },
+  {
+    name:"Seafile + mTLS", year:"2026", cat:"Infrastructure",
+    line:"A fork of the Seafile desktop client with mutual-TLS authentication added.",
+    tags:["C++","Qt","OpenSSL"],
+    intro:"A fork of the Seafile desktop client with mutual-TLS support: the client authenticates itself to the server with a certificate, on top of the existing password auth.",
+    quote:"Useful when the storage server lives behind a Cloudflare tunnel that already terminates mTLS at the edge.",
+    body:[
+      "The Qt-based client is patched to load a client certificate and present it on every TLS handshake. The change is small in lines but spans the network layer, the settings UI, and the keychain integration on each platform."
+    ],
+    stack:["C++","Qt","OpenSSL","Seafile"],
+    links:{ github:"https://github.com/geneticglitch1/seafile-client" }
+  }
+];
+const FEATURED = 4;
+const SKILLS = [
+  { label:"Languages", tags:["C","C++","Rust","Python","Java","TypeScript","CUDA","SQL"] },
+  { label:"AI / ML", tags:["PyTorch","TensorFlow","LangChain","RAG","vLLM","Ollama","Whisper","OpenCV","TrOCR"] },
+  { label:"Python Data", tags:["NumPy","Pandas","scikit-learn","XGBoost","Random Forest","PySAL","GeoPandas","Streamlit","Plotly"] },
+  { label:"Web & Backend", tags:["Next.js","React","FastAPI","Spring Boot","Django","PostgreSQL","Redis","pgvector","Supabase"] },
+  { label:"Infrastructure", tags:["K3s","Docker","Proxmox","OPNsense","WireGuard","Traefik","Longhorn","Cloudflare","Jenkins","Keycloak"] },
+  { label:"Tools", tags:["Git","Linux","Nsight Systems","Nsight Compute","VS Code","Cursor","Claude Code","Postman"] }
+];
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = window.matchMedia('(hover: none)').matches;
+
+/* ════════════════════════════════════════════════════════════════════════
+   POPULATE
+   ════════════════════════════════════════════════════════════════════════ */
+const CARD_LAYOUT = [
+  { left:'1%',  top:'8%',  rot:-6 },
+  { left:'26%', top:'0%',  rot:3.5 },
+  { left:'51%', top:'12%', rot:-2.5 },
+  { left:'73%', top:'2%',  rot:6 }
+];
+(function(){
+  const wrap = document.getElementById('cards');
+  PROJECTS.slice(0, FEATURED).forEach((p,i)=>{
+    const L = CARD_LAYOUT[i];
+    const c = document.createElement('div');
+    c.className = 'card'; c.dataset.rot = L.rot; c.dataset.idx = i;
+    c.style.left = L.left; c.style.top = L.top; c.style.zIndex = String(10+i);
+    c.style.transform = 'rotate('+L.rot+'deg)';
+    c.innerHTML =
+      '<span class="punch"></span>'+
+      '<div class="chead"><span class="cno">RECORD // '+String(i+1).padStart(2,'0')+'</span><span class="cyear">'+p.year+'</span></div>'+
+      '<div class="cbody">'+
+        '<h3 class="ctitle">'+p.name+'</h3>'+
+        '<p class="cdesc">'+p.desc+'</p>'+
+        '<div class="cmetric"><span class="v" data-count="'+p.count+'" data-dec="'+p.dec+'" data-suf="'+p.suf+'" data-pre="'+(p.pre||'')+'">'+(p.pre||'')+'0'+p.suf+'</span><span class="l">'+(p.mlabel||'')+'</span></div>'+
+        '<div class="ctags">'+p.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
+        '<div class="cfoot"><button class="openbtn" data-open="'+i+'">Open dossier →</button></div>'+
+      '</div>';
+    wrap.appendChild(c);
+  });
+})();
+
+(function(){
+  const m = document.getElementById('marquee');
+  const unit = '<span>Selected Work<span class="st">✦</span>Catalogue 2024—2026<span class="st">✦</span>Archive Edition<span class="st">✦</span></span>';
+  m.innerHTML = unit.repeat(8);
+})();
+
+(function(){
+  const L = document.getElementById('ledger');
+  PROJECTS.slice(FEATURED).forEach((p,i)=>{
+    const idx = i + FEATURED;
+    const a = document.createElement('a');
+    a.className = 'lrow'; a.href = 'javascript:void 0'; a.tabIndex = 0; a.dataset.open = String(idx);
+    a.innerHTML =
+      '<div class="lhead">'+
+        '<span class="lacc">PORT-'+p.year.slice(0,4)+'-'+String(idx+1).padStart(2,'0')+'</span>'+
+        '<span class="lyear">'+p.year+'</span>'+
+        '<span class="lname">'+p.name+'</span>'+
+        '<span class="lcat">'+p.cat+'</span>'+
+        '<span class="larr">→</span>'+
+      '</div>'+
+      '<div class="lmore"><div><div class="lmore-in"><span></span>'+
+        '<div><p>'+p.line+'</p><div class="lt">'+p.tags.map(t=>'<span>'+t+'</span>').join('')+'</div></div>'+
+      '</div></div></div>';
+    L.appendChild(a);
+  });
+})();
+
+(function(){
+  const d = document.getElementById('drawers');
+  SKILLS.forEach((g,i)=>{
+    const el = document.createElement('div');
+    el.className = 'drawer'; el.setAttribute('data-rise','');
+    el.innerHTML = '<span class="pull"></span><span class="dno">DR-'+String(i+1).padStart(2,'0')+'</span>'+
+      '<div class="dlabel">'+g.label+'</div>'+
+      '<div class="dtags">'+g.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>';
+    d.appendChild(el);
+  });
+})();
+
+/* ════════════════════════════════════════════════════════════════════════
+   MOTION
+   ════════════════════════════════════════════════════════════════════════ */
+const docEl = document.documentElement;
+let lenis = null;
+
+function splitWords(){
+  document.querySelectorAll('[data-words]').forEach(el=>{
+    if (el.dataset.split) return;
+    const words = el.textContent.trim().split(/\s+/);
+    el.textContent='';
+    words.forEach((w,i)=>{ const s=document.createElement('span'); s.className='w'; s.textContent=w; el.appendChild(s); if(i<words.length-1) el.appendChild(document.createTextNode(' ')); });
+    el.dataset.split='1';
+  });
+}
+splitWords();
+
+function countUp(el){
+  const target = parseFloat(el.dataset.count); const dec = parseInt(el.dataset.dec||'0',10);
+  const suf = el.dataset.suf||''; const pre = el.dataset.pre||'';
+  if (prefersReduced){ el.textContent = pre + target.toFixed(dec) + suf; return; }
+  const o = { v:0 };
+  gsap.to(o, { v:target, duration:1.1, ease:'power2.out', onUpdate(){ el.textContent = pre + o.v.toFixed(dec) + suf; }, onComplete(){ el.textContent = pre + target.toFixed(dec) + suf; } });
+}
+
+function initLenis(){
+  if (prefersReduced || !window.Lenis) return;
+  lenis = new Lenis({ duration: 1.05, easing: t => Math.min(1, 1.001 - Math.pow(2, -10*t)), smoothWheel: true });
+  lenis.on('scroll', ()=> window.ScrollTrigger && ScrollTrigger.update());
+  gsap.ticker.add(t=> lenis && lenis.raf(t*1000));
+  gsap.ticker.lagSmoothing(0);
+}
+
+/* magnetic */
+function initMagnetic(){
+  if (prefersReduced || isTouch) return;
+  document.querySelectorAll('.openbtn, .c-link, .scrollcue').forEach(host=>{
+    host.addEventListener('pointermove', e=>{
+      const r = host.getBoundingClientRect();
+      gsap.to(host, { x:(e.clientX-(r.left+r.width/2))*0.25, y:(e.clientY-(r.top+r.height/2))*0.3, duration:0.4, ease:'power3.out' });
+    });
+    host.addEventListener('pointerleave', ()=> gsap.to(host, { x:0, y:0, duration:0.5, ease:'elastic.out(1,0.5)' }));
+  });
+}
+
+function buildScene(){
+  if (!window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger);
+  if (prefersReduced){
+    document.querySelectorAll('[data-count]').forEach(countUp);
+    return;
+  }
+  docEl.classList.add('motion');
+
+  /* hero */
+  const tl = gsap.timeline({ delay: 0.12 });
+  tl.from('.folder', { y: 40, opacity: 0, duration: 0.9, ease:'power3.out' })
+    .fromTo('.filetab', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease:'power3.out' }, '-=0.5')
+    .from('.hero-topmeta .lbl', { y: 14, opacity: 0, duration: 0.6, stagger: 0.06, ease:'power3.out' }, '-=0.4')
+    .from('.hero-name .ln > span', { yPercent: 110, duration: 1.0, ease:'power4.out', stagger: 0.1 }, '-=0.45')
+    .fromTo('[data-stamp]', { scale: 0, rotate: 22, opacity: 0 }, { scale: 1, rotate: -8, opacity: 1, duration: 0.6, ease:'back.out(1.7)' }, '-=0.3')
+    .to('[data-stamp]', { rotate: -7, duration: 0.12, ease:'power1.inOut', yoyo: true, repeat: 1 })
+    .fromTo('.hero-foot [data-rise], .scrollcue', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.07, ease:'power3.out' }, '-=0.5');
+  /* clear rise base on hero items handled by from() above */
+  /* hero-foot, scrollcue, filetab end visible via fromTo above (no clearProps — CSS base is opacity:0) */
+
+  /* section heading wipes */
+  document.querySelectorAll('.wipe').forEach(h=>{
+    gsap.to(h, { clipPath:'inset(0 0 0% 0)', duration: 0.9, ease:'power3.out', scrollTrigger:{ trigger:h, start:'top 85%' } });
+  });
+
+  /* generic rises (skip hero — handled) */
+  document.querySelectorAll('[data-rise]').forEach(el=>{
+    if (el.closest('.hero')) return;
+    gsap.to(el, { opacity:1, y:0, duration:0.85, ease:'power3.out', scrollTrigger:{ trigger:el, start:'top 90%' } });
+  });
+  document.querySelectorAll('[data-fade]').forEach(el=>{
+    if (el.closest('.hero')) return;
+    gsap.to(el, { opacity:1, duration:0.7, ease:'power2.out', scrollTrigger:{ trigger:el, start:'top 92%' } });
+  });
+
+  /* contact head lines */
+  gsap.from('.contact-head .ln > span', { yPercent: 110, duration: 0.9, ease:'power4.out', stagger: 0.08, scrollTrigger:{ trigger:'.contact-head', start:'top 85%' } });
+
+  /* work cards fan in from pile */
+  ScrollTrigger.create({ trigger:'.board', start:'top 78%', once:true, onEnter(){
+    document.querySelectorAll('.card').forEach((c,i)=>{
+      const rot = parseFloat(c.dataset.rot)||0;
+      gsap.fromTo(c, { y: 120, opacity: 0, rotate: 0 }, { y: 0, opacity: 1, rotate: rot, duration: 0.9, ease:'power3.out', delay: i*0.1 });
+    });
+  }});
+
+  /* count-ups */
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    ScrollTrigger.create({ trigger:el, start:'top 92%', once:true, onEnter:()=> countUp(el) });
+  });
+
+  /* award seals pop */
+  document.querySelectorAll('[data-seal]').forEach(s=>{
+    gsap.from(s, { scale:0, rotate:-30, opacity:0, duration:0.6, ease:'back.out(1.7)', scrollTrigger:{ trigger:s, start:'top 90%' } });
+  });
+
+  /* about words lit */
+  document.querySelectorAll('.about-para[data-words]').forEach(p=>{
+    const ws = p.querySelectorAll('.w');
+    ScrollTrigger.create({ trigger:p, start:'top 78%', once:true, onEnter(){ ws.forEach((w,i)=> setTimeout(()=> w.classList.add('lit'), i*24)); }});
+  });
+
+  /* marquee loop */
+  gsap.to('.mtrack', { xPercent:-50, duration: 34, ease:'none', repeat:-1 });
+
+  /* subtle parallax on folder tab + stamps (transform only) */
+  gsap.to('.hero-stamp', { yPercent: 30, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub: 1 } });
+
+  ScrollTrigger.refresh();
+}
+
+/* progress + active tab */
+const prog = document.getElementById('prog');
+const tabLinks = [...document.querySelectorAll('.tabnav a.tab')];
+const sections = tabLinks.map(a=> document.querySelector(a.getAttribute('href')));
+function onScroll(){
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  prog.style.transform = 'scaleX(' + (h>0 ? Math.min(1, window.scrollY/h) : 0) + ')';
+  const y = window.scrollY + window.innerHeight*0.3;
+  let cur = -1;
+  sections.forEach((s,i)=>{ if (s && s.offsetTop <= y) cur = i; });
+  tabLinks.forEach((a,i)=> a.setAttribute('aria-current', i===cur ? 'true':'false'));
+}
+window.addEventListener('scroll', onScroll, { passive:true });
+
+/* smooth anchor via lenis */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    const id = a.getAttribute('href'); if (id.length<2) return;
+    const t = document.querySelector(id); if (!t) return;
+    e.preventDefault();
+    if (lenis) lenis.scrollTo(t, { offset: -10, duration: 1.1 });
+    else t.scrollIntoView();
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════════════
+   DRAGGABLE CARDS
+   ════════════════════════════════════════════════════════════════════════ */
+(function(){
+  const cards = [...document.querySelectorAll('.card')];
+  let topZ = 20, moved = false;
+  cards.forEach(card=>{
+    let sx, sy, ox=0, oy=0, bx=0, by=0, dragging=false;
+    const rot = parseFloat(card.dataset.rot)||0;
+    card.addEventListener('pointerdown', e=>{
+      if (e.target.closest('.openbtn')) return;
+      dragging=true; moved=false; topZ++; card.style.zIndex=topZ; card.style.transition='none';
+      const pt = e; sx=pt.clientX; sy=pt.clientY; bx=ox; by=oy;
+      try{ card.setPointerCapture(e.pointerId); }catch(_){}
+    });
+    card.addEventListener('pointermove', e=>{
+      if(!dragging) return;
+      ox = bx + (e.clientX-sx); oy = by + (e.clientY-sy);
+      if (Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy) > 4) moved=true;
+      card.style.transform = 'translate('+ox+'px,'+oy+'px) rotate('+(rot*0.4)+'deg) scale(1.03)';
+    });
+    function end(){ if(!dragging) return; dragging=false; card.style.transition='transform 0.4s var(--ease)'; card.style.transform='translate('+ox+'px,'+oy+'px) rotate('+rot+'deg)'; }
+    card.addEventListener('pointerup', end);
+    card.addEventListener('pointercancel', end);
+    card.addEventListener('pointerenter', ()=>{ if(!dragging){ card.style.transition='transform 0.4s var(--ease)'; card.style.zIndex=++topZ; card.style.transform='translate('+ox+'px,'+oy+'px) rotate(0deg) scale(1.04)'; } });
+    card.addEventListener('pointerleave', ()=>{ if(!dragging){ card.style.transform='translate('+ox+'px,'+oy+'px) rotate('+rot+'deg)'; } });
+  });
+})();
+
+/* ════════════════════════════════════════════════════════════════════════
+   DOSSIER OVERLAY
+   ════════════════════════════════════════════════════════════════════════ */
+const dossier = document.getElementById('dossier');
+const dossierSheet = document.getElementById('dossierSheet');
+let cur = 0, lastFocus = null;
+
+function fillDossier(i){
+  const n = PROJECTS.length;
+  cur = ((i%n)+n)%n; const p = PROJECTS[cur];
+  const pad = x => String(x).padStart(2,'0');
+  const note = t => '<span style="color:var(--dim);font-family:var(--mono);font-size:0.66rem;letter-spacing:0.04em">'+t+'</span>';
+  document.getElementById('daAcc').textContent = 'Accession · '+pad(cur+1)+' / '+pad(n);
+  document.getElementById('daTitle').textContent = p.name;
+  const mrow = document.getElementById('daMetricRow');
+  if (p.metric){ mrow.style.display=''; document.getElementById('daMetric').textContent = p.metric; document.getElementById('daMetricLabel').textContent = p.mlabel||''; }
+  else { mrow.style.display='none'; }
+  document.getElementById('daIntro').textContent = p.intro;
+  document.getElementById('daCite').textContent = '— '+p.cat+' · '+(p.year||'');
+  document.getElementById('daYear').textContent = p.year;
+  document.getElementById('daBody').innerHTML = (p.body||[]).map(t=>'<p>'+t+'</p>').join('');
+  document.getElementById('daStack').innerHTML = (p.stack||[]).map(t=>'<span>'+t+'</span>').join('');
+  const L = p.links||{}, ln = [];
+  if (L.github) ln.push('<a href="'+L.github+'" target="_blank" rel="noopener">GitHub →</a>');
+  if (L.live) ln.push('<a href="'+L.live+'" target="_blank" rel="noopener">Live →</a>');
+  if (L.note) ln.push(note(L.note));
+  if (!ln.length) ln.push(note('—'));
+  document.getElementById('daLinks').innerHTML = ln.join('');
+  document.querySelector('#daFootPrev .t').textContent = PROJECTS[(cur-1+n)%n].name;
+  document.querySelector('#daFootNext .t').textContent = PROJECTS[(cur+1)%n].name;
+  const q = document.getElementById('daQuote');
+  q.innerHTML = '';
+  const words = (p.quote||'').split(/\s+/);
+  words.forEach((w,idx)=>{ const s=document.createElement('span'); s.className='w'; s.textContent=w; q.appendChild(s); if(idx<words.length-1) q.appendChild(document.createTextNode(' ')); });
+  q.querySelectorAll('.w').forEach((w,idx)=> setTimeout(()=> w.classList.add('lit'), 140 + idx*22));
+}
+function openDossier(i, trigger){
+  lastFocus = trigger || document.activeElement;
+  fillDossier(i);
+  dossier.classList.add('open');
+  if (lenis) lenis.stop();
+  document.body.style.overflow='hidden';
+  dossierSheet.scrollTop = 0;
+  if (!prefersReduced){
+    gsap.fromTo(dossierSheet, { y:'100%' }, { y:'0%', duration:0.6, ease:'power3.out' });
+    gsap.from(dossier.querySelectorAll('.da-top, .da-title, .da-metricrow, .da-intro, .da-quote, .da-cols'), { y:24, opacity:0, duration:0.6, ease:'power3.out', stagger:0.06, delay:0.2 });
+  }
+  document.getElementById('dossierClose').focus();
+}
+function closeDossier(){
+  const done = ()=>{ dossier.classList.remove('open'); dossierSheet.style.transform=''; document.body.style.overflow=''; if(lenis) lenis.start(); if(lastFocus) lastFocus.focus(); };
+  if (prefersReduced){ done(); return; }
+  gsap.to(dossierSheet, { y:'100%', duration:0.45, ease:'power3.in', onComplete: done });
+}
+function swap(dir){
+  const n = PROJECTS.length; const next = ((cur+dir)%n+n)%n;
+  const body = dossier.querySelector('.dossier-body');
+  if (prefersReduced){ fillDossier(next); dossierSheet.scrollTop=0; return; }
+  gsap.to(body, { opacity:0, y:16, duration:0.25, ease:'power2.in', onComplete(){ fillDossier(next); dossierSheet.scrollTop=0; gsap.fromTo(body, { opacity:0, y:20 }, { opacity:1, y:0, duration:0.45, ease:'power3.out' }); } });
+}
+
+document.addEventListener('click', e=>{
+  const o = e.target.closest('[data-open]');
+  if (o){ e.preventDefault(); openDossier(parseInt(o.dataset.open,10)||0, o); }
+});
+document.querySelectorAll('.lrow').forEach(r=>{
+  r.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); openDossier(parseInt(r.dataset.open,10)||0, r); } });
+});
+document.getElementById('dossierClose').addEventListener('click', closeDossier);
+document.getElementById('dossierPrev').addEventListener('click', ()=> swap(-1));
+document.getElementById('dossierNext').addEventListener('click', ()=> swap(1));
+document.getElementById('daFootPrev').addEventListener('click', ()=> swap(-1));
+document.getElementById('daFootNext').addEventListener('click', ()=> swap(1));
+dossier.addEventListener('click', e=>{ if (e.target === dossier) closeDossier(); });
+document.addEventListener('keydown', e=>{
+  if (!dossier.classList.contains('open')) return;
+  if (e.key==='Escape') closeDossier();
+  else if (e.key==='ArrowRight') swap(1);
+  else if (e.key==='ArrowLeft') swap(-1);
+});
+
+/* ════════════════════════════════════════════════════════════════════════
+   BOOT
+   ════════════════════════════════════════════════════════════════════════ */
+function boot(){
+  initLenis();
+  buildScene();
+  initMagnetic();
+  onScroll();
+}
+if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(()=> window.ScrollTrigger && ScrollTrigger.refresh());
+window.addEventListener('load', ()=> window.ScrollTrigger && ScrollTrigger.refresh());
+window.addEventListener('resize', ()=> window.ScrollTrigger && ScrollTrigger.refresh());
+</script>
+</body>
+</html>

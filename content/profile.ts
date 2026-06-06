@@ -9,20 +9,20 @@ const awards: readonly Award[] = [
   {
     title: "CS 341 Malloc Performance Contest — 1st of 400",
     detail:
-      "My custom memory allocator outscored both stock glibc and the optimized glibc baseline on the official benchmark suite.",
+      "A custom memory allocator that outscored both stock and optimized glibc on the official benchmark suite.",
     year: "2025",
     link: "/projects/malloc",
   },
   {
     title: "UIUC Capture-the-Flag (CTF) Competition — 4th of 25+ teams",
     detail:
-      "I played binary exploitation, reverse engineering, cryptography, and web — and we placed 4th.",
+      "Binary exploitation, reverse engineering, cryptography, and web; placed 4th.",
     year: "2025",
   },
   {
     title: "Science Olympiad Robot Tour — 5th of 50 regional teams",
     detail:
-      "I built the best-performing team's robot at our school. Autonomous maze navigation on a Raspberry Pi Pico.",
+      "Autonomous maze navigation on a Raspberry Pi Pico — the top-performing robot from the school.",
     year: "2024",
     link: "/projects/robot-tour",
   },
@@ -30,11 +30,11 @@ const awards: readonly Award[] = [
 
 export const profile = {
   name: "Aryan Singh",
-  shortBio: "Junior at UIUC. C, CUDA, and the cluster in my basement.",
+  shortBio: "CS + Math at UIUC. Allocators, CUDA kernels, a home Kubernetes cluster.",
   tagline:
-    "Junior at UIUC studying CS + Math. Mostly C, CUDA, and the K3s cluster in my basement.",
+    "Computer Science and Mathematics at the University of Illinois. Allocators, CUDA kernels, and a home Kubernetes cluster.",
   summary:
-    "I'm a junior at UIUC studying CS + Math. I work on two kinds of problems: code that has to be fast, and infrastructure that has to not go down. This site is hosted on the second one.",
+    "Computer Science and Mathematics student at the University of Illinois, graduating May 2027. The work splits in two: software where performance is the point — memory allocators, CUDA kernels, OS schedulers — and the infrastructure to run it reliably. Everything here runs on a self-managed Kubernetes cluster.",
   location: "Champaign, IL · Chicago, IL",
   email: "asing271@illinois.edu",
   socials: {
@@ -72,12 +72,12 @@ export const profile = {
       period: "May 2025 – August 2025",
       location: "Chicago, IL",
       headline:
-        "I moved the OS job scheduler onto an FPGA. Throughput doubled.",
+        "Moved the OS job scheduler onto an FPGA. Throughput doubled.",
       bullets: [
-        "Took the job scheduler off the CPU and put it on a Xilinx Alveo U55C FPGA. The CPU had been burning cycles doing the thing it was supposed to be managing — once the FPGA owned scheduling, the host could actually do work.",
-        "Killed the double-copy between host and FPGA by sharing physical memory between them. Throughput doubled because we stopped paying for transfers we didn't need.",
-        "Wrote a three-thread C++ pipeline — Writer, Reader, Logger — that kept two FPGA kernels fed at all times. Lock-free ring buffers on the hot path, mutexes for the rest. The kernels never sat idle.",
-        "Moved the task queue into hardware so high-priority jobs don't wait on the OS scheduler. Latency dropped to microseconds.",
+        "Moved scheduling off the CPU and onto a Xilinx Alveo U55C FPGA. With the FPGA owning the scheduler, the host CPU stopped burning cycles managing the work it could be doing.",
+        "Removed the host–FPGA double-copy by sharing physical memory between them; throughput doubled once those redundant transfers were gone.",
+        "Built a three-thread C++ pipeline — Writer, Reader, Logger — to keep two FPGA kernels fed continuously: lock-free ring buffers on the hot path, mutexes elsewhere. The kernels never idled.",
+        "Moved the task queue into hardware so high-priority jobs bypass the OS scheduler, dropping latency to microseconds.",
       ],
     },
   ],

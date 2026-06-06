@@ -1,0 +1,16 @@
+.git
+.github
+.claude
+node_modules
+.next
+content
+*.ts
+*.md
+Dockerfile
+.dockerignore
+Jenkinsfile
+k8s
+.vscode
+.idea
+.DS_Store
+*.log
