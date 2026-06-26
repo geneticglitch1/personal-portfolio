@@ -422,7 +422,7 @@ html.motion .wipe{ clip-path: inset(0 0 110% 0); }
         </h1>
 
         <div class="hero-foot">
-          <p class="lead" data-rise>Software where performance is the point — and the infrastructure to run it reliably.</p>
+          <p class="lead" data-rise>I got into C and CUDA chasing speed under the abstraction, and into self-hosting through networking. Lately, into self-hosted AI models and the agentic workflows I build on top of them.</p>
           <div class="specs">
             <div class="r" data-rise><span class="k">Discipline</span><span class="v">Systems · CUDA · Infrastructure</span></div>
             <div class="r" data-rise><span class="k">Location</span><span class="v">Champaign · Chicago, IL</span></div>
@@ -490,12 +490,12 @@ html.motion .wipe{ clip-path: inset(0 0 110% 0); }
             <div class="record-field"><span class="k">Ref.</span><span class="v">EXP-01</span></div>
           </div>
           <div class="rcol-r">
-            <p class="record-head-line">Moved the OS job scheduler onto an FPGA. Throughput doubled.</p>
+            <p class="record-head-line">Pulled the OS job scheduler off the CPU and onto an FPGA. Throughput doubled.</p>
             <ul class="record-bullets">
-              <li><span class="bn">01</span><span>Moved scheduling off the CPU and onto a Xilinx Alveo U55C FPGA. With the FPGA owning the scheduler, the host CPU stopped burning cycles managing the work it could be doing.</span></li>
-              <li><span class="bn">02</span><span>Removed the host–FPGA double-copy by sharing physical memory between them; throughput doubled once those redundant transfers were gone.</span></li>
-              <li><span class="bn">03</span><span>Built a three-thread C++ pipeline — Writer, Reader, Logger — keeping two FPGA kernels fed continuously: lock-free ring buffers on the hot path, mutexes elsewhere.</span></li>
-              <li><span class="bn">04</span><span>Moved the task queue into hardware so high-priority jobs bypass the OS scheduler, dropping latency to microseconds.</span></li>
+              <li><span class="bn">01</span><span>Put the scheduler on a Xilinx Alveo U55C. Once the FPGA owned scheduling, the host CPU stopped burning cycles babysitting work it should have just been running.</span></li>
+              <li><span class="bn">02</span><span>The host and FPGA were copying the same data across the bus twice. Shared their physical memory instead, killed the redundant transfers, and throughput doubled.</span></li>
+              <li><span class="bn">03</span><span>Wrote a three-thread C++ pipeline — Writer, Reader, Logger — to keep two FPGA kernels fed without stalling. Lock-free ring buffers on the hot path; mutexes only where contention didn't matter.</span></li>
+              <li><span class="bn">04</span><span>Moved the task queue into hardware so urgent jobs skip the OS scheduler entirely. Latency dropped to microseconds.</span></li>
             </ul>
           </div>
         </div>
@@ -531,7 +531,7 @@ html.motion .wipe{ clip-path: inset(0 0 110% 0); }
         <div class="award" data-rise>
           <span class="seal-ico" data-seal>1st</span>
           <span class="atitle">CS 341 Malloc Performance Contest</span>
-          <span class="adetail">Top of ~400 submissions — outscored both stock and optimized glibc.</span>
+          <span class="adetail">Beat both stock and optimized glibc; first of ~400 submissions.</span>
           <span class="ayear">2025</span>
         </div>
         <div class="award" data-rise>
@@ -560,7 +560,7 @@ html.motion .wipe{ clip-path: inset(0 0 110% 0); }
         </div>
       </div>
       <div class="about-grid">
-        <p class="about-para" data-words>Computer Science and Mathematics student at the University of Illinois, graduating May 2027. The work splits in two: software where performance is the point — memory allocators, CUDA kernels, OS schedulers — and the infrastructure to run it reliably. Everything here runs on a self-managed Kubernetes cluster.</p>
+        <p class="about-para" data-words>CS and Math at UIUC, graduating May 2027. I like taking a problem apart and making it faster underneath the abstraction — that's what pulled me into systems programming in C, then CUDA. Around the same time I got hooked on self-hosting and networking, which grew into a six-node cluster I run at home. Lately I've been running self-hosted AI models and building agentic workflows on top of them. Everything on this site runs on that cluster.</p>
         <aside class="about-card" data-rise>
           <span class="pin"></span>
           <div class="ach">Record card — biographical</div>
@@ -665,52 +665,69 @@ html.motion .wipe{ clip-path: inset(0 0 110% 0); }
    ════════════════════════════════════════════════════════════════════════ */
 const PROJECTS = [
   {
+    name:"Sentinel — Homelab Control Agent", year:"2026", cat:"Infrastructure",
+    desc:"An LLM agent that runs my homelab from one sentence — and won't touch anything destructive without a dry run.",
+    line:"An LLM agent that operates my homelab from plain English, with a dry-run gate so it can't break what it's fixing.",
+    metric:"100%", count:100, dec:0, pre:"", suf:"%", mlabel:"State changes behind a confirm gate",
+    tags:["Python","Agent SDK","MCP"],
+    intro:"I got tired of SSHing through three boxes to do one small thing — spin up a container on the Docker host, open a port in the OPNsense GUI, then check whether the firewall is actually dropping the scans hitting it or just logging them. Sentinel hands all of that to a Claude agent. I describe what I want in a sentence; it works out the tool calls, shows me the plan, and only runs it if I say so.",
+    quote:"Anything that changes state is a dry run unless I pass confirm=true — because I once stopped sshd on the firewall mid-edit and locked myself out. Once was enough.",
+    body:[
+      "It drives three systems through one shared set of tools: Proxmox for VMs and containers, OPNsense for the firewall (Suricata IPS, CrowdSec), and a Debian Docker host for everything else. Same tools whether I reach it as an MCP server in Claude Desktop, a Claude Code plugin, or the standalone Agent SDK app behind the deploy command.",
+      "The safety gate is the whole design, not a flag. Stop a VM, delete a firewall rule, remove a container, flip IDS mode — all of it refuses to run without an explicit confirm. The OPNsense provider only changes things through supported paths, configctl and the REST reconfigure endpoints, never a raw PHP poke, and it backs up config.xml before it touches anything.",
+      "There's exactly one definition of each tool, in tools.py. The MCP server, the agent app, and the CLI all import the same functions, so nothing works in Claude Desktop but breaks from the CLI. Providers do the raw I/O; the tool layer owns the dry-run gate and the audit log. Every call — planned or applied — lands in that log, and the dashboard reads straight from it.",
+      "The one-liner I actually use: sentinel deploy \"run postgres:16, 2GB RAM, expose 5432\". It prints the real docker run it would execute, then waits for a yes."
+    ],
+    stack:["Python","Claude Agent SDK","MCP","Proxmox","OPNsense","Suricata","CrowdSec","Docker","Nginx Proxy Manager","Next.js","ntfy"],
+    links:{ github:"https://github.com/geneticglitch1/Sentinel", live:"https://sentinel.aryan-singh.dev/" }
+  },
+  {
+    name:"GPT-2 Inference Engine — from Scratch in CUDA", year:"2026", cat:"AI / ML",
+    desc:"GPT-2's forward pass in raw CUDA. 250 ms to 10 ms.",
+    line:"Every GPT-2 layer hand-written in CUDA, no PyTorch. Tuned from 250 ms a pass down to 10.",
+    metric:"24.2×", count:24.2, dec:1, pre:"", suf:"×", mlabel:"Forward-pass speedup",
+    tags:["CUDA","C++17","CUTLASS"],
+    intro:"Every layer of OpenAI's GPT-2 (124 M parameters) written in raw C++/CUDA — no PyTorch, no framework underneath. I wanted a 12-layer transformer fast enough to be interesting on a single A40, so I wrote the kernels myself.",
+    quote:"The forward pass went from 249.8 ms to 10.3 ms — 24.2× — and per-token generation peaked at 117× once the KV cache was in.",
+    body:[
+      "The baseline was a naive Python port: ~250 ms per forward pass on an A40. The CUDA version hits the same numeric output with custom kernels for every block — encoder, LayerNorm, multi-head self-attention with causal masking, feed-forward, GeLU.",
+      "Most of the speed came from working the memory hierarchy. Shared-memory and register tiling keep matmul operands close to the SMs; tensor-core TF32 does the bulk of the math; cuBLAS takes over wherever a hand-written kernel would lose to the vendor library. Warp-level reductions keep softmax and LayerNorm tight.",
+      "Attention runs a FlashAttention-style IO-aware tile schedule, so the working set stays in shared memory instead of streaming through HBM every step. For generation, a KV cache turns the O(n²) attention cost into O(n) per new token — that's where the 117× per-token peak comes from at large batch sizes.",
+      "CUTLASS device GEMM templates with fused epilogues fold chains of small ops into one launch, cutting launch latency in the inner loop. Nothing went in on a hunch — coalescing, bank-conflict-free swizzles, warp-stall removal, all of it was measured under Nsight Systems and Nsight Compute before it earned a place."
+    ],
+    stack:["CUDA","C++17","CUTLASS","Tensor Cores (Ampere)","FlashAttention","cuBLAS","Nsight Systems","Nsight Compute","NCSA Delta · A40"],
+    links:{ live:"https://gpt2.aryan-singh.dev/", note:"ECE 408 — source private per UIUC honor code" }
+  },
+  {
     name:"High-Performance Custom Memory Allocator", year:"2025", cat:"Systems",
-    desc:"A malloc written from scratch in C — faster than glibc.",
-    line:"A from-scratch malloc/calloc/realloc/free in C, tuned to outperform the glibc allocator on the CS 341 benchmark.",
+    desc:"Hand-rolled malloc in C. Beat glibc. First of ~400.",
+    line:"A malloc/free written from scratch in C that beat glibc's allocator on the CS 341 benchmark — first of ~400.",
     metric:"1 / 400", count:400, dec:0, pre:"1 / ", suf:"", mlabel:"CS 341 Malloc Contest",
     tags:["C","POSIX","sbrk"],
-    intro:"A complete dynamic memory allocator written in C on top of sbrk, implementing the full malloc/calloc/realloc/free interface. The goal was to match, then exceed, the highly optimized glibc allocator that ships with every Linux machine — measured on the CS 341 benchmark suite.",
-    quote:"Scored 122.6 on the shared benchmark against the optimized glibc baseline's 114.91 — the top result among roughly 400 submissions.",
+    intro:"A full dynamic allocator in C, sitting on sbrk and implementing the whole malloc/calloc/realloc/free interface. The target was the glibc allocator that ships on every Linux box — match it first, then beat it, scored on the CS 341 benchmark suite.",
+    quote:"Scored 122.6 against the optimized glibc baseline's 114.91 — top of roughly 400 submissions.",
     body:[
-      "The contest ran every student's allocator against glibc on a workload mix designed to expose fragmentation, alignment, and locality bugs. Submissions were ranked by a single score combining runtime and resident memory.",
-      "Block metadata lives in a header immediately before each payload, so the free list walks without an external index. The list stays address-sorted, which makes coalescing O(1) at free time: a returning block checks its two physical neighbors in constant time and merges in place.",
-      "Splitting is fragmentation-aware — rather than serving any block large enough for the request, the allocator favors blocks that leave a useful-sized remainder, falling back to exact-fit when none exists. realloc grows in place whenever the right-hand neighbor is free, avoiding the copy a naive implementation performs.",
-      "The final design held up under both small-allocation churn and large mixed workloads — a practical exercise in cache lines, branch prediction, and the cost of a single conditional on a hot path."
+      "The contest threw a workload mix at every student's allocator — one built to expose fragmentation, alignment, and locality bugs — and ranked submissions by a single score combining runtime and resident memory.",
+      "Each block carries its metadata in a header right before the payload, so the free list walks without a separate index. Keeping that list address-sorted makes coalescing O(1) on free: a returning block looks at its two physical neighbors and merges in place.",
+      "Splitting is fragmentation-aware. Instead of grabbing any block big enough, it prefers ones that leave a useful-sized remainder, and falls back to exact-fit when nothing fits that bill. realloc grows in place whenever the block to the right is free, skipping the copy a naive version would do.",
+      "It held up under both small-allocation churn and big mixed workloads. Mostly it was a lesson in cache lines, branch prediction, and what one extra conditional costs on a hot path."
     ],
     stack:["C","POSIX","sbrk","glibc benchmark suite"],
     links:{ note:"UIUC honor code — source is private" }
   },
   {
-    name:"GPT-2 Inference Engine — from Scratch in CUDA", year:"2026", cat:"AI / ML",
-    desc:"Every GPT-2 layer hand-written in CUDA, then tuned hard.",
-    line:"A complete GPT-2 forward pass written in raw CUDA, tuned from 249 ms to 10 ms per pass.",
-    metric:"24.2×", count:24.2, dec:1, pre:"", suf:"×", mlabel:"Forward-pass speedup",
-    tags:["CUDA","C++17","CUTLASS"],
-    intro:"Every layer of OpenAI's GPT-2 (124 M parameters) implemented in raw C++/CUDA — no PyTorch, no high-level abstractions. The aim: make a 12-layer transformer fast enough to be interesting on a single A40.",
-    quote:"The end-to-end forward pass dropped from 249.8 ms to 10.3 ms — a 24.2× speedup. Per-token generation reached a 117× peak via KV caching.",
-    body:[
-      "The reference implementation was a naive Python port at ~250 ms per forward pass on an A40. The CUDA version targets the same numeric output through custom kernels for every transformer block: encoder, LayerNorm, multi-head self-attention with causal masking, feed-forward, and GeLU activations.",
-      "Performance work focused on three layers of the memory hierarchy. Shared-memory and register tiling move matmul operands close to the SMs; tensor-core TF32 math handles the bulk of the arithmetic; cuBLAS picks up the cases where a hand-written kernel would lose to the vendor library. Warp-level reductions keep softmax and LayerNorm tight.",
-      "Attention uses a FlashAttention-style IO-aware tile schedule, keeping the working set in shared memory instead of streaming through HBM on every step. Autoregressive generation wraps a KV cache that turns the O(n²) attention cost into O(n) per new token — the source of the 117× peak per-token speedup at large batch sizes.",
-      "CUTLASS device GEMM templates with fused epilogues collapse chains of small ops into single launches, cutting kernel-launch latency in the inner loop. Every optimization — coalescing, bank-conflict-free swizzles, warp-stall removal — was measured under Nsight Systems and Nsight Compute before being kept, rather than guessed at."
-    ],
-    stack:["CUDA","C++17","CUTLASS","Tensor Cores (Ampere)","FlashAttention","cuBLAS","Nsight Systems","Nsight Compute","NCSA Delta · A40"],
-    links:{ note:"ECE 408 — source private per UIUC honor code" }
-  },
-  {
     name:"High-Availability K3s Home Lab Cluster", year:"2024 — present", cat:"Infrastructure",
-    desc:"A six-node Kubernetes cluster at home — it serves this site.",
-    line:"Six K3s nodes at home — every project on this site runs on them.",
+    desc:"Six-node K3s in my apartment. It serves this page.",
+    line:"Six K3s nodes in my apartment. Everything on this site runs on them, and they've stayed up.",
     metric:"99.9%", count:99.9, dec:1, pre:"", suf:"%", mlabel:"Uptime · 12 months",
     tags:["K3s","Proxmox","Cloudflare"],
-    intro:"A private cloud built from scratch at home. Every AI, ML, and systems project on this site runs on it, behind networking the projects themselves never have to think about.",
-    quote:"Six-node Kubernetes on Proxmox, 99.9% uptime, fully behind mTLS Cloudflare tunnels with zero exposed public IPs.",
+    intro:"A private cloud I built from scratch at home. Every AI, ML, and systems project here runs on it, behind networking the projects themselves never have to think about.",
+    quote:"Six-node Kubernetes on Proxmox, 99.9% uptime over a year, behind mTLS Cloudflare tunnels with zero public IPs exposed.",
     body:[
-      "Six VMs on Proxmox, K3s on top, and everything here runs on it — LLM inference, Postgres, vector stores, CI runners, photo and document storage, this portfolio. Deploys go through Fleet, so what's running matches what's in Git.",
-      "The network is intentionally paranoid: OPNsense at the edge, Suricata for IDS, CrowdSec for adaptive blocking. Nothing has a public IP — the only way in is a Cloudflare mTLS tunnel, so a port scan of the home address finds nothing.",
-      "Longhorn replicates persistent volumes synchronously across three nodes. A node failing overnight surfaces the next morning, because nothing actually broke. WireGuard handles remote access.",
-      "Deploys go through Jenkins: build a Docker image, push to GHCR, and do a zero-downtime rolling restart on the cluster — rarely touched by hand."
+      "Six VMs on Proxmox, K3s on top. It runs LLM inference, Postgres, vector stores, CI runners, photo and document storage, and this page. Fleet keeps the cluster reconciled against Git, so what's deployed is whatever's committed.",
+      "The network is paranoid on purpose: OPNsense at the edge, Suricata for IDS, CrowdSec for adaptive blocking. Nothing has a public IP — the only way in is a Cloudflare mTLS tunnel, so a port scan of the home address finds nothing.",
+      "Longhorn replicates persistent volumes synchronously across three nodes, so a node dying overnight is something I read about the next morning instead of getting paged for. WireGuard handles remote access.",
+      "The CI side is Jenkins: build a Docker image, push to GHCR, roll it out with zero downtime. I almost never touch a deploy by hand."
     ],
     stack:["K3s","Proxmox","OPNsense","Cloudflare Tunnels","Suricata","CrowdSec","WireGuard","Longhorn","Traefik","Fleet","Jenkins"],
     links:{}
@@ -718,162 +735,178 @@ const PROJECTS = [
   {
     name:"Autonomous Maze Solver — Robot Tour", year:"2024", cat:"Hardware",
     desc:"A dual-core Pi Pico robot that solves mazes on its own.",
-    line:"A dual-core Raspberry Pi Pico robot that placed 5th of 50 at the UIUC State Science Olympiad.",
+    line:"A dual-core Pi Pico maze robot. Gave every sensor its own core and it stopped crashing — 5th of 50 at State.",
     metric:"5 / 50", count:50, dec:0, pre:"5 / ", suf:"", mlabel:"State Science Olympiad",
     tags:["C / C++","Pi Pico","Sensors"],
-    intro:"A robot that autonomously navigates a complex maze using pre-programmed distances and turns — hard because the cheap motors and sensors available bring none of the precision the task requires.",
-    quote:"\"Integration hell\" went away once every sensor got its own CPU core — Core 0 ran the primary loop while Core 1 fielded secondary interrupts.",
+    intro:"A robot that drives a maze on its own from pre-programmed distances and turns. The hard part wasn't the navigation — it was that the cheap motors and sensors I had to use bring none of the precision the task needs.",
+    quote:"The crashing stopped the moment every sensor got its own core — Core 0 on the main loop, Core 1 fielding the secondary interrupts.",
     body:[
-      "The Pi Pico's dual cores were the unlock. An initial attempt multiplexed every sensor onto a single core and kept crashing under interrupt load. Splitting the work — Core 0 owning the primary loop, Core 1 owning secondary sensor interrupts — made the contention disappear.",
-      "Cheap yellow DC motors have enough backlash and inertia to overshoot any naive angle-based rotation. A dynamic rotation algorithm fixed it: a turn terminates only once the gyro reads the target angle and angular velocity falls to zero, hitting precise headings on a surface with unpredictable friction.",
-      "Command sequences are pre-compiled through a C preprocessor pass that converts authored command arrays into a format the main loop consumes directly, keeping the hot path branch-free."
+      "The Pico's two cores were the unlock. My first version multiplexed every sensor onto one core and kept crashing under interrupt load. Splitting it — Core 0 on the primary loop, Core 1 on the secondary sensor interrupts — made the contention disappear.",
+      "Cheap yellow DC motors have enough backlash and inertia to overshoot any naive angle-based turn. The fix was a dynamic rotation routine: a turn only ends once the gyro reads the target angle and angular velocity has fallen to zero — accurate headings even on a surface with unpredictable friction.",
+      "Command sequences get pre-compiled through a C preprocessor pass that turns the authored arrays into something the main loop consumes directly, so the hot path stays branch-free."
     ],
     stack:["C / C++","Raspberry Pi Pico","LM393 light encoders","HC-SR04 ultrasonic","TB6612 motor driver","MP1584 regulator","HC-05 Bluetooth"],
     links:{ github:"https://github.com/geneticglitch/Autonomous-self-driving-robot" }
   },
   {
-    name:"EnvSync", year:"2026", cat:"Full Stack",
-    line:"A zero-knowledge secret manager for teams that have stopped trusting Slack with their API keys.",
-    tags:["Rust","Spring Boot","AES-GCM"],
-    intro:"A full-stack platform that versions, diffs, and syncs .env files across machines and teammates — designed so the server is mathematically incapable of reading any secret it stores.",
-    quote:"Encrypted on-device with keys derived via Argon2id, sealed with AES-GCM, and sent to a server that only ever sees ciphertext.",
+    name:"Hardware Job Scheduler — FPGA Offload", year:"2025", cat:"Hardware",
+    desc:"A Linux job scheduler moved onto an FPGA. Throughput doubled.",
+    line:"Moved a Linux job scheduler off the CPU and onto a Xilinx Alveo U55C. Throughput doubled.",
+    metric:"2×", count:2, dec:0, pre:"", suf:"×", mlabel:"Throughput vs. CPU baseline",
+    tags:["C++","Alveo U55C","FPGA"],
+    intro:"Built during my internship at UIC: take the job scheduler the OS normally runs on the CPU and put it on a Xilinx Alveo U55C FPGA instead. The CPU spends a surprising amount of time just deciding what to run next — the bet was that dedicated silicon could do that and hand the cycles back.",
+    quote:"The host and FPGA were copying the same data across the bus twice. Sharing physical memory between them doubled throughput on its own.",
     body:[
-      "Everything is encrypted on the client before it leaves. A passphrase derives a key through Argon2id (tuned to ~250 ms, slow enough to make brute force painful), then AES-GCM seals the secrets. The server only ever sees ciphertext. There is no admin override and no password reset — losing the passphrase means losing the vault, by design.",
-      "The Rust CLI works the way git does: envsync push, pull, diff, rollback. Login is OAuth2 device-code with auto-refresh, so the CLI never sees the password. Each project keeps its own snapshot history, making a bad rotation a one-command undo.",
-      "Conflict resolution is deterministic, so two teammates editing the same vault never diverge. Per-project scopes mean a leaked token compromises one vault, not everything. Every push builds, tests, and deploys to a K3s cluster through a Jenkins pipeline."
+      "With the scheduler living on the FPGA, the host CPU stopped burning cycles managing work it could have been executing. The first version still bottlenecked on data movement: every hand-off copied the same buffers across the PCIe bus twice.",
+      "Sharing physical memory between host and FPGA removed the double-copy, and throughput doubled once those transfers were gone. A three-thread C++ pipeline — Writer, Reader, Logger — kept two FPGA kernels fed without stalling: lock-free ring buffers on the hot path, mutexes only where contention didn't matter.",
+      "Putting the task queue itself in hardware let high-priority jobs bypass the OS scheduler entirely, dropping their latency into the microsecond range."
+    ],
+    stack:["C++","Xilinx Alveo U55C","FPGA","Shared physical memory","Lock-free ring buffers"],
+    links:{ note:"UIC internship — source is private" }
+  },
+  {
+    name:"EnvSync", year:"2026", cat:"Full Stack",
+    line:"A secret manager that encrypts on your machine and ships the server only ciphertext, for teams done pasting API keys into Slack.",
+    tags:["Rust","Spring Boot","AES-GCM"],
+    intro:"Versions, diffs, and syncs .env files across machines and teammates, built so the server is mathematically incapable of reading anything it stores. Encryption happens on the client; the backend only ever holds ciphertext.",
+    quote:"Keys derived on-device with Argon2id, secrets sealed with AES-GCM, and only the ciphertext leaves your machine.",
+    body:[
+      "Everything is encrypted client-side before it leaves. A passphrase runs through Argon2id (tuned to ~250 ms — slow enough to make brute force miserable), then AES-GCM seals the secrets. The server sees ciphertext and nothing else. No admin override, no password reset: lose the passphrase and the vault is gone, on purpose.",
+      "The Rust CLI behaves like git: envsync push, pull, diff, rollback. Login is OAuth2 device-code with auto-refresh, so the CLI never touches the password. Each project keeps its own snapshot history, which makes a bad rotation a one-command undo.",
+      "Conflict resolution is deterministic, so two people editing the same vault never diverge. Scopes are per-project, so a leaked token costs you one vault, not all of them. Every push builds, tests, and deploys to K3s through a Jenkins pipeline."
     ],
     stack:["Rust","Cobra","Next.js","Spring Boot","PostgreSQL","Argon2id","AES-GCM","Keycloak","MinIO","Jenkins"],
     links:{ github:"https://github.com/geneticglitch1/EnvSync" }
   },
   {
     name:"Schema — AI Document Search", year:"2026", cat:"AI / ML",
-    line:"A retrieval-augmented document search engine that grounds LLM answers in a private PDF library.",
+    line:"RAG over your own PDFs so the model cites real passages instead of inventing them — handwriting included.",
     tags:["FastAPI","pgvector","CUDA"],
-    intro:"An end-to-end RAG pipeline that lets a language model recall and cite passages from a user's private library instead of hallucinating around them. It ingests typed and handwritten PDFs, embeds them with Instructor-XL, and retrieves with re-ranking on top of pgvector.",
-    quote:"Surfaced 80–90% relevant passages on real 800-page documents — enough context for downstream LLMs to ground their answers in the source.",
+    intro:"A RAG pipeline that lets a model quote from your private library instead of hallucinating around it. It ingests typed and handwritten PDFs, embeds them with Instructor-XL, and retrieves with a re-ranking pass on top of pgvector.",
+    quote:"On real 800-page documents it surfaced 80–90% relevant passages — enough for the model downstream to ground its answers in the source.",
     body:[
-      "The ingestion pipeline runs asynchronously, routing each PDF to one of two extractors: PyMuPDF for typed text, TrOCR for scanned or handwritten pages. Both paths converge on a sentence-aware chunker with overlapping windows, preserving semantic boundaries across chunk edges.",
-      "Embeddings batch 64 chunks at a time against hkunlp/instructor-xl on CUDA, keeping GPU utilization high during bulk ingestion. Vectors land in Actian Vector — chosen for hybrid filtering — with the original chunk metadata stored alongside.",
-      "Retrieval combines vector similarity with a re-ranking layer, so the passages returned to the LLM are actually relevant rather than merely nearest in latent space. Validation ran on real 800-page reference documents across multiple domains, where it consistently surfaced the right passages.",
-      "The backend is a FastAPI service with Supabase JWT auth and user-scoped filtering on every query. Deletes cascade across PostgreSQL, the filesystem, and the vector store, so revoking a document removes it everywhere."
+      "Ingestion is async and routes each PDF to one of two extractors: PyMuPDF for typed text, TrOCR for scanned or handwritten pages. Both paths feed a sentence-aware chunker with overlapping windows, so meaning doesn't get cut in half at a chunk boundary.",
+      "Embeddings run 64 chunks at a time against hkunlp/instructor-xl on CUDA, which keeps the GPU busy during bulk ingestion. Vectors land in Actian Vector — picked for its hybrid filtering — with the original chunk metadata stored next to them.",
+      "Retrieval pairs vector similarity with a re-ranking layer, so what reaches the model is actually relevant, not just nearest in latent space. I validated it on real 800-page reference documents across a few domains, where it kept pulling the right passages.",
+      "The backend is FastAPI with Supabase JWT auth and user-scoped filtering on every query. Deletes cascade across PostgreSQL, the filesystem, and the vector store, so revoking a document actually removes it everywhere."
     ],
     stack:["FastAPI","React","Supabase","Actian Vector","pgvector","PyMuPDF","TrOCR","Instructor-XL","CUDA"],
     links:{}
   },
   {
     name:"AI-Powered Digital Journaling Platform", year:"2025", cat:"Full Stack",
-    line:"A journaling app that reads your face, checks your calendar, and writes a reflection that fits the day you actually had.",
+    line:"A journaling app that watches your webcam and reads your calendar, then writes a prompt that fits the day you actually had.",
     tags:["Next.js","FastAPI","Claude"],
-    intro:"The idea: reflection prompts that feel like they know what kind of day you had. The app watches your face on the webcam, reads your calendar, and uses both to write you something more specific than \"how are you feeling?\" The AI layer was built as one part of a 15-person team project.",
-    quote:"The vision service runs under 100 ms per frame, so the camera feed feels live, not laggy.",
+    intro:"Reflection prompts that feel like they know what kind of day you had. The app reads your face off the webcam and your schedule off the calendar, then writes something more specific than 'how are you feeling?' I built the AI layer as one piece of a 15-person team project.",
+    quote:"The vision service stays under 100 ms a frame, so the camera feed reads as live instead of laggy.",
     body:[
-      "The AI layer, owned end to end: getting the right context into the model, turning it into a prompt the model could actually use, and returning the response to the UI without it feeling slow.",
-      "Reflection prompts come out of a RAG pipeline on top of Claude 3.5 Sonnet. It combines mood ratings, what the webcam read during the day, and what was on the calendar, then asks Claude for a prompt grounded in that — not a generic \"reflect on your day.\"",
-      "Vision lives in its own FastAPI service running MediaPipe and OpenCV — sub-100 ms per frame, so the UI can show what the model thinks it sees without the loop stalling.",
-      "CI/CD runs through Jenkins: it builds the Next.js frontend, the vision service, and the backend on every push, then rolls them out to a K3s cluster as Docker images."
+      "I owned the AI layer end to end: pulling the right context together, shaping it into a prompt the model could actually use, and getting the response back to the UI before it felt slow.",
+      "The prompts come out of a RAG pipeline on Claude 3.5 Sonnet. It pulls together mood ratings, what the webcam saw during the day, and what was on the calendar, then asks Claude for something grounded in all of that — not a generic 'reflect on your day.'",
+      "Vision runs in its own FastAPI service on MediaPipe and OpenCV, under 100 ms a frame, so the UI can show what the model thinks it sees without stalling the loop.",
+      "CI/CD is Jenkins: every push builds the Next.js frontend, the vision service, and the backend, then rolls them out to K3s as Docker images."
     ],
     stack:["TypeScript","Next.js","Python","FastAPI","MediaPipe","OpenCV","Claude 3.5 Sonnet","PostgreSQL","Docker","Jenkins","K3s"],
     links:{}
   },
   {
     name:"Pathway to Improved Cities — Urban Analytics", year:"2025", cat:"AI / ML",
-    line:"ML on millions of Chicago city records to find which neighborhoods are most underserved.",
+    line:"Trained models on a few million Chicago city records to flag which neighborhoods get shorted on services.",
     tags:["Python","XGBoost","PySAL"],
-    intro:"The Chicago Data Portal has years of 311 calls, crime reports, and service records sitting in public. The question: can you point at a neighborhood and predict whether it gets its fair share of city services? The answer is yes — and sometimes uncomfortable.",
+    intro:"The Chicago Data Portal has years of 311 calls, crime reports, and service records sitting out in the open. Could you point at a neighborhood and predict whether it gets its fair share of city services? Turns out yes — and the answer is sometimes uncomfortable.",
     quote:"XGBoost and Random Forest on millions of municipal records, cross-checked against PySAL spatial clusters of crime and traffic incidents.",
     body:[
-      "XGBoost and Random Forest trained on a few million rows of city records — reported incidents, response times, demographic geography — reaching high precision and recall on whether a neighborhood is underserved.",
-      "The data pipeline pulls live updates from the Chicago Data Portal through a NumPy + Pandas ETL. Cached intermediate stages keep refreshes cheap, so the dashboard stays current and the models retrain on recent data.",
-      "On top of the model, a PySAL spatial pass finds geographic clusters of crime and traffic incidents, making it possible to check visually where predictions line up with ground truth. The whole thing renders as a Streamlit dashboard with Plotly and Mapbox layers.",
-      "The point wasn't a paper. It was making the data clear enough that someone who allocates city services could look at the map and see where the gaps are."
+      "XGBoost and Random Forest, trained on a few million rows of city records — reported incidents, response times, demographic geography — landing high precision and recall on whether a neighborhood is underserved.",
+      "A NumPy + Pandas ETL pulls live updates from the portal, with cached intermediate stages so a refresh stays cheap. The dashboard stays current and the models retrain on recent data.",
+      "On top of that, a PySAL spatial pass finds geographic clusters of crime and traffic incidents, so you can eyeball where the predictions line up with the ground truth. It all renders as a Streamlit dashboard with Plotly and Mapbox layers.",
+      "The point was never a paper. It was getting the data clear enough that someone who actually allocates city services could open the map and see where the gaps are."
     ],
     stack:["Python","Pandas","NumPy","XGBoost","Random Forest","PySAL","GeoPandas","Streamlit","Plotly","Mapbox"],
     links:{}
   },
   {
     name:"Nonstop Networking", year:"2025", cat:"Systems",
-    line:"A non-blocking, epoll-driven client–server in C that handles any number of connections without threads.",
+    line:"An epoll server in C that holds any number of connections on one thread: a state machine per socket, no threads.",
     tags:["C","epoll","TCP"],
-    intro:"An asynchronous, event-driven server in C that uses epoll and non-blocking I/O to handle any number of concurrent clients with a single thread and a per-connection state machine.",
-    quote:"One thread, one reactor, one state machine per connection — partial reads and writes resume exactly where the last EAGAIN left them.",
+    intro:"An event-driven server in C built on epoll and non-blocking I/O. One thread, a state machine per connection, and as many concurrent clients as the box can hold.",
+    quote:"One thread, one reactor, one state machine per connection — partial reads and writes pick up exactly where the last EAGAIN left off.",
     body:[
-      "The reactor is a single-threaded epoll loop. Every connection has a state machine that remembers exactly where the last read or write stopped, so a half-received request or a partial response continues correctly on the next epoll wake-up. No thread-per-connection, no busy waiting.",
-      "The wire format is a custom binary protocol for GET, PUT, DELETE, and LIST over TCP, with explicit error codes and length prefixes. Framing edge cases — short reads, write blocking mid-response, abrupt client close — are handled at the state-machine level rather than papered over with retries."
+      "The reactor is a single-threaded epoll loop. Every connection carries a state machine that remembers exactly where the last read or write stopped, so a half-received request or a partial response just resumes on the next wake-up. No thread-per-connection, no busy-waiting.",
+      "The wire format is a custom binary protocol — GET, PUT, DELETE, LIST over TCP, with explicit error codes and length prefixes. The framing edge cases (short reads, a write blocking mid-response, a client vanishing) get handled in the state machine instead of papered over with retries."
     ],
     stack:["C","epoll","POSIX sockets","non-blocking I/O"],
     links:{ note:"UIUC honor code — source is private" }
   },
   {
     name:"Parallel Make", year:"2025", cat:"Systems",
-    line:"A multi-threaded make(1) that respects DAG dependencies and parallelizes everything else.",
+    line:"A multi-threaded make(1): parse the Makefile into a DAG, then run everything that isn't waiting on something else.",
     tags:["C","pthreads","DAG"],
-    intro:"A multi-threaded build system in C that parses a Makefile into a dependency DAG and dispatches worker threads to execute rules in dependency order — the same contract make -j honors, implemented from scratch.",
-    quote:"A thread pool guarded by condition variables on the ready queue wakes workers only when a new rule becomes runnable — so idle CPUs never busy-wait.",
+    intro:"A multi-threaded build system in C. It parses a Makefile into a dependency DAG and hands rules to worker threads in dependency order — the same contract make -j honors, written from scratch.",
+    quote:"A thread pool sits on a condition-variable-guarded ready queue, waking a worker only when a new rule becomes runnable — so idle cores never spin.",
     body:[
-      "The DAG builder rejects cycles before scheduling begins. The thread-pool executor uses condition variables on the ready queue, so workers sleep when there's nothing to do and wake exactly when a new rule's dependencies are satisfied.",
-      "Failure handling is the interesting part: when a rule fails, the failure has to propagate up the DAG without leaking threads or leaving half-built targets behind. Cancellation walks the DAG, marks unreachable targets, and joins workers cleanly."
+      "The DAG builder rejects cycles before any scheduling starts. The executor's thread pool uses condition variables on the ready queue, so workers sleep when there's nothing to do and wake the moment a rule's dependencies are satisfied.",
+      "Failure handling is the interesting part. When a rule fails, that failure has to propagate up the DAG without leaking threads or leaving half-built targets around. Cancellation walks the graph, marks the now-unreachable targets, and joins every worker cleanly."
     ],
     stack:["C","pthreads","mutex / cond vars","DAG scheduling"],
     links:{ note:"UIUC honor code — source is private" }
   },
   {
     name:"sshell — POSIX Shell", year:"2025", cat:"Systems",
-    line:"A UNIX-like shell with pipes, redirection, and logical operators.",
+    line:"A POSIX shell — pipes, redirection, && / ||, job control — with a tokenizer and parser written by hand.",
     tags:["C","POSIX","signals"],
-    intro:"A POSIX shell with complex argument parsing, background processes, logical operators, and file redirection — most of what sh does, minus the scripting language.",
-    quote:"A hand-written tokenizer and parser handle quoted arguments, pipes, && / || / ;, and < / > / >> redirection — no grammar libraries.",
+    intro:"A POSIX shell that handles real argument parsing, background processes, logical operators, and file redirection — most of what sh gives you, minus the scripting language.",
+    quote:"A hand-written tokenizer and parser cover quoted arguments, pipes, && / || / ;, and < / > / >> redirection — no grammar library in sight.",
     body:[
-      "Tokenization and parsing are hand-written, keeping the binary small and dependencies at zero. Quoted arguments, multi-stage pipelines, conditional sequences, and file redirection all flow through one expression tree.",
-      "Process management is straightforward fork / execvp / waitpid, with explicit signal handling for Ctrl-C and Ctrl-Z so the shell isn't killed by signals meant for its children. Background processes report completion asynchronously without clobbering the prompt currently being typed."
+      "Tokenizing and parsing are both hand-written, which keeps the binary small and the dependency count at zero. Quoted arguments, multi-stage pipelines, conditional sequences, and file redirection all run through one expression tree.",
+      "Process management is plain fork / execvp / waitpid, with explicit signal handling for Ctrl-C and Ctrl-Z so the shell doesn't die from signals meant for its children. Background jobs report finishing asynchronously, without stomping on the prompt you're in the middle of typing."
     ],
     stack:["C","POSIX","fork / exec / wait","signals"],
     links:{ note:"UIUC honor code — source is private" }
   },
   {
     name:"Finding Filesystems", year:"2025", cat:"Systems",
-    line:"An ext2 on-disk inode parser that walks raw filesystem bytes.",
+    line:"Walks a raw ext2 image straight off the disk bytes — superblock, inodes, indirect pointers — without asking the kernel.",
     tags:["C","ext2"],
-    intro:"A tool that walks a raw ext2 filesystem image: parses the superblock, traverses inode and block-group descriptor tables, and reconstructs the directory tree without relying on the kernel's filesystem support.",
-    quote:"It resolves inode → block mappings through direct, singly-indirect, and doubly-indirect pointers — straight off the disk bytes.",
+    intro:"A tool that walks a raw ext2 image by hand: parse the superblock, traverse the inode and block-group descriptor tables, and rebuild the directory tree — none of it leaning on the kernel's filesystem support.",
+    quote:"It resolves inode → block mappings through direct, singly-indirect, and doubly-indirect pointers, reading straight off the disk bytes.",
     body:[
-      "Reading a real filesystem from scratch is an exercise in believing what's on disk rather than what a diagram says. The parser reads the superblock, walks block-group descriptors, and resolves inodes through the full pointer hierarchy.",
-      "The directory hierarchy is rebuilt from on-disk dir_entry records, so a corrupted entry produces a useful error instead of a silent miss."
+      "Reading a real filesystem from scratch is mostly an exercise in trusting what's on disk over what the diagram in the spec says. The parser reads the superblock, walks the block-group descriptors, and resolves inodes through the full pointer hierarchy.",
+      "It rebuilds the directory tree from the on-disk dir_entry records, so a corrupted entry throws a useful error instead of silently going missing."
     ],
     stack:["C","ext2","on-disk structures"],
     links:{ note:"UIUC honor code — source is private" }
   },
   {
     name:"Handwritten Digit Neural Network (From Scratch)", year:"2024", cat:"AI / ML",
-    line:"An MNIST classifier in Java with no ML library and no autograd.",
+    line:"An MNIST net in Java with no ML library and no autograd. Backprop by hand, so the gradients had nowhere to hide.",
     tags:["Java","MNIST"],
-    intro:"A small feed-forward neural network written entirely in Java, with no external ML libraries — built to make the math of forward propagation, backpropagation, and stochastic gradient descent concrete.",
-    quote:"Forward propagation, backpropagation, and activation functions, all implemented directly. The whole point was to follow the gradient flow by hand.",
+    intro:"A small feed-forward net written entirely in Java, no external ML libraries. The whole point was to make forward propagation, backprop, and stochastic gradient descent concrete instead of abstract.",
+    quote:"Forward pass, backward pass, activations — all written out directly, so I could follow the gradient flow by hand.",
     body:[
-      "Trained on MNIST with stochastic gradient descent to recognize handwritten digits zero through nine. Layer weights and activations are explicit matrices multiplied by hand, which turned every shape mismatch into a learning moment rather than a stack trace."
+      "Trained on MNIST with SGD to recognize handwritten digits zero through nine. The weights and activations are explicit matrices I multiply myself, which turned every shape mismatch into something I had to actually understand rather than a stack trace to google."
     ],
     stack:["Java","Linear algebra","MNIST"],
     links:{}
   },
   {
     name:"XRayPDF", year:"2026", cat:"Tooling",
-    line:"A tool that surfaces hidden text inside PDFs.",
+    line:"Pulls the hidden text out of a PDF: invisible layers, white-on-white runs, strings buried in metadata.",
     tags:["TypeScript","PDF.js"],
-    intro:"A tool that surfaces sneaky hidden text in PDFs — invisible layers, white-on-white text, and metadata-buried strings that slip past a normal reader. Useful for reviewing documents written by someone else.",
-    quote:"If a PDF is hiding something between the rendered glyphs, the tool reads it back out.",
+    intro:"A tool that digs the sneaky text out of a PDF — invisible layers, white-on-white runs, strings buried in metadata, all the stuff a normal reader skips right over. Handy when you're vetting a document someone else wrote.",
+    quote:"If a PDF is hiding something between the glyphs it renders, this reads it back out.",
     body:[
-      "Built on PDF.js, it walks every text-object stream in the document and surfaces anything the renderer would normally suppress — zero-opacity layers, color-matched-to-background runs, hidden form-field defaults, and metadata strings."
+      "It's built on PDF.js: walk every text-object stream in the document and pull out anything the renderer would normally suppress — zero-opacity layers, runs color-matched to the background, hidden form-field defaults, metadata strings."
     ],
     stack:["TypeScript","PDF.js"],
     links:{ github:"https://github.com/geneticglitch1/XRayPDF" }
   },
   {
     name:"Seafile + mTLS", year:"2026", cat:"Infrastructure",
-    line:"A fork of the Seafile desktop client with mutual-TLS authentication added.",
+    line:"A Seafile desktop-client fork that presents a client cert on every handshake, so it works behind an mTLS tunnel.",
     tags:["C++","Qt","OpenSSL"],
-    intro:"A fork of the Seafile desktop client with mutual-TLS support: the client authenticates itself to the server with a certificate, on top of the existing password auth.",
-    quote:"Useful when the storage server lives behind a Cloudflare tunnel that already terminates mTLS at the edge.",
+    intro:"A fork of the Seafile desktop client with mutual-TLS bolted on: the client proves itself to the server with a certificate, on top of the password auth that was already there.",
+    quote:"Handy when the storage server sits behind a Cloudflare tunnel that already terminates mTLS at the edge.",
     body:[
-      "The Qt-based client is patched to load a client certificate and present it on every TLS handshake. The change is small in lines but spans the network layer, the settings UI, and the keychain integration on each platform."
+      "The Qt client is patched to load a client certificate and present it on every TLS handshake. Small in line count, but it touches the network layer, the settings UI, and the per-platform keychain integration all at once."
     ],
     stack:["C++","Qt","OpenSSL","Seafile"],
     links:{ github:"https://github.com/geneticglitch1/seafile-client" }
@@ -882,7 +915,7 @@ const PROJECTS = [
 const FEATURED = 4;
 const SKILLS = [
   { label:"Languages", tags:["C","C++","Rust","Python","Java","TypeScript","CUDA","SQL"] },
-  { label:"AI / ML", tags:["PyTorch","TensorFlow","LangChain","RAG","vLLM","Ollama","Whisper","OpenCV","TrOCR"] },
+  { label:"AI / ML", tags:["PyTorch","TensorFlow","Hugging Face","Transformers","LangChain","LangGraph","Claude Agent SDK","MCP","RAG","vLLM","Ollama","Whisper","OpenCV","TrOCR"] },
   { label:"Python Data", tags:["NumPy","Pandas","scikit-learn","XGBoost","Random Forest","PySAL","GeoPandas","Streamlit","Plotly"] },
   { label:"Web & Backend", tags:["Next.js","React","FastAPI","Spring Boot","Django","PostgreSQL","Redis","pgvector","Supabase"] },
   { label:"Infrastructure", tags:["K3s","Docker","Proxmox","OPNsense","WireGuard","Traefik","Longhorn","Cloudflare","Jenkins","Keycloak"] },
