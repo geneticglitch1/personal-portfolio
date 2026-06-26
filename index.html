@@ -963,17 +963,19 @@ const CARD_LAYOUT = [
 
 (function(){
   const L = document.getElementById('ledger');
-  PROJECTS.slice(FEATURED).forEach((p,i)=>{
-    const idx = i + FEATURED;
+  PROJECTS.forEach((p,idx)=>{
+    const live = p.links && p.links.live;
     const a = document.createElement('a');
-    a.className = 'lrow'; a.href = 'javascript:void 0'; a.tabIndex = 0; a.dataset.open = String(idx);
+    a.className = 'lrow'; a.tabIndex = 0;
+    if (live){ a.href = live; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.href = 'javascript:void 0'; a.dataset.open = String(idx); }
     a.innerHTML =
       '<div class="lhead">'+
         '<span class="lacc">PORT-'+p.year.slice(0,4)+'-'+String(idx+1).padStart(2,'0')+'</span>'+
         '<span class="lyear">'+p.year+'</span>'+
         '<span class="lname">'+p.name+'</span>'+
         '<span class="lcat">'+p.cat+'</span>'+
-        '<span class="larr">→</span>'+
+        '<span class="larr">'+(live?'↗':'→')+'</span>'+
       '</div>'+
       '<div class="lmore"><div><div class="lmore-in"><span></span>'+
         '<div><p>'+p.line+'</p><div class="lt">'+p.tags.map(t=>'<span>'+t+'</span>').join('')+'</div></div>'+
@@ -1231,7 +1233,7 @@ document.addEventListener('click', e=>{
   if (o){ e.preventDefault(); openDossier(parseInt(o.dataset.open,10)||0, o); }
 });
 document.querySelectorAll('.lrow').forEach(r=>{
-  r.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); openDossier(parseInt(r.dataset.open,10)||0, r); } });
+  r.addEventListener('keydown', e=>{ if(e.key==='Enter' && r.dataset.open!==undefined){ e.preventDefault(); openDossier(parseInt(r.dataset.open,10)||0, r); } });
 });
 document.getElementById('dossierClose').addEventListener('click', closeDossier);
 document.getElementById('dossierPrev').addEventListener('click', ()=> swap(-1));
