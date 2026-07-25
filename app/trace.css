@@ -1,0 +1,258 @@
+/* ════════════════════════════════════════════════════════════════════════
+   DEPTH TRACE
+   The work plotted as a profiler trace: time across, stack depth down.
+   Dark instrument register — near-black ground, hairline grid, heat ramp.
+   ════════════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:      #0A0C0E;
+  --panel:   #0F1317;
+  --panel-2: #151A20;
+  --grid:    rgba(230,233,236,0.055);
+  --grid-2:  rgba(230,233,236,0.13);
+  --fg:      #E6E9EC;
+  --dim:     rgba(230,233,236,0.56);
+  --faint:   rgba(230,233,236,0.28);
+  --amber:   #FFB020;
+
+  --gutter: 232px;
+  --row: 30px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*{ box-sizing: border-box; }
+html, body{ margin:0; padding:0; height:100%; }
+body{
+  background: var(--bg); color: var(--fg);
+  font-family: var(--mono); font-size: 13px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+a{ color: inherit; text-decoration: none; }
+button{ font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+::selection{ background: var(--amber); color: #000; }
+:focus-visible{ outline: 1px solid var(--amber); outline-offset: 2px; }
+
+.app{ height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }
+
+/* ── top bar ───────────────────────────────────────────────────────────── */
+.topbar{
+  display: flex; align-items: baseline; gap: 20px;
+  padding: 14px clamp(14px, 2vw, 26px);
+  border-bottom: 1px solid var(--grid-2); background: var(--panel);
+}
+.topbar .name{
+  font-family: var(--sans); font-weight: 700; font-size: 15px;
+  letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap;
+}
+.topbar .role{ font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); white-space: nowrap; }
+.topbar .spacer{ flex: 1; }
+.topbar nav{ display: flex; gap: 4px; }
+.topbar nav button{
+  font-size: 11px; letter-spacing: 0.11em; text-transform: uppercase; color: var(--dim);
+  padding: 5px 10px; border: 1px solid transparent; border-radius: 2px;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.topbar nav button:hover{ color: var(--fg); background: rgba(230,233,236,0.05); }
+.topbar nav button[aria-pressed="true"]{ color: var(--amber); border-color: rgba(255,176,32,0.4); }
+@media (max-width: 760px){
+  .topbar{ flex-wrap: wrap; gap: 10px; padding-bottom: 8px; }
+  .topbar .role{ display: none; }
+  .topbar .spacer{ display: none; }
+  /* Nav drops to its own row and scrolls rather than being clipped. */
+  .topbar nav{ width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .topbar nav::-webkit-scrollbar{ display: none; }
+  .topbar nav button{ padding: 5px 9px; }
+}
+
+/* ── trace ─────────────────────────────────────────────────────────────── */
+/* Flex rows rather than one grid: the ruler and employment tracks stay at
+   their natural height while the stack lanes share whatever is left, so the
+   trace always fills the viewport instead of bunching at the top. */
+.trace{
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; min-height: 0;
+}
+.trow{ display: grid; grid-template-columns: var(--gutter) 1fr; flex: none; min-height: 0; }
+.trow.lane{ flex: 1 1 0; }
+
+.cell-label{
+  border-right: 1px solid var(--grid-2); border-bottom: 1px solid var(--grid);
+  padding: 8px 14px 8px clamp(14px, 2vw, 26px); display: flex; flex-direction: column; justify-content: center;
+  background: var(--panel); z-index: 2;
+}
+.cell-plot{ border-bottom: 1px solid var(--grid); position: relative; overflow: hidden; }
+
+/* ruler */
+.trow.ruler-row .cell-label, .cell-plot.ruler{ border-bottom: 1px solid var(--grid-2); }
+.cell-plot.ruler{ height: 56px; }
+.tick{ position: absolute; top: 0; bottom: 0; width: 1px; background: var(--grid-2); }
+.tick.minor{ background: var(--grid); }
+.tick .t{
+  position: absolute; top: 7px; left: 7px; font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--dim); white-space: nowrap;
+}
+.tick.minor .t{ color: var(--faint); font-size: 9px; }
+.marker{ position: absolute; bottom: 6px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.marker i{ width: 5px; height: 5px; background: var(--amber); border-radius: 50%; box-shadow: 0 0 0 3px rgba(255,176,32,0.15); }
+.marker span{
+  font-size: 9px; letter-spacing: 0.06em; color: var(--amber); white-space: nowrap;
+  opacity: 0; transition: opacity 0.2s var(--ease);
+}
+.marker:hover span{ opacity: 1; }
+
+/* lane labels */
+.cell-label .l-name{ font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.01em; color: var(--fg); }
+.cell-label .l-sub{ font-size: 10px; letter-spacing: 0.05em; color: var(--faint); margin-top: 2px; }
+.cell-label .l-depth{ font-size: 10px; letter-spacing: 0.12em; color: var(--faint); }
+.cell-label .l-row{ display: flex; align-items: center; gap: 8px; }
+.cell-label .swatch{ width: 8px; height: 8px; border-radius: 1px; flex: none; }
+
+/* lane background grid */
+.lane-grid{ position: absolute; inset: 0; pointer-events: none; }
+.lane-grid i{ position: absolute; top: 0; bottom: 0; width: 1px; background: var(--grid); }
+
+/* Packed rows sit centred in the lane, so a lane that flexes taller than its
+   content keeps its spans optically in the middle rather than pinned up
+   against the boundary with the lane above. */
+.rows-box{ position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); }
+
+/* ── spans ─────────────────────────────────────────────────────────────── */
+.span{
+  position: absolute; height: 22px; border-radius: 2px; cursor: pointer;
+  display: flex; align-items: center; padding: 0 8px; overflow: hidden;
+  border: 1px solid transparent;
+  transition: filter 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.18s var(--ease);
+  will-change: transform;
+}
+.span span{
+  font-size: 10.5px; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; color: rgba(255,255,255,0.94); font-weight: 500;
+}
+.span:hover, .span.active{ filter: brightness(1.45); border-color: rgba(255,255,255,0.5); transform: translateY(-1px); }
+.span.active{ border-color: var(--amber); }
+.span.dim{ filter: saturate(0.25) brightness(0.55); }
+
+/* employment track */
+.cell-plot.track{ height: 48px; background: rgba(255,176,32,0.03); }
+.emp{
+  position: absolute; top: 11px; height: 22px; border-radius: 2px;
+  border: 1px solid rgba(255,176,32,0.55); background: rgba(255,176,32,0.13);
+  display: flex; align-items: center; padding: 0 9px; gap: 8px; overflow: hidden;
+}
+.emp b{ font-size: 10.5px; font-weight: 600; color: var(--amber); white-space: nowrap; }
+.emp span{ font-size: 10px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* playhead */
+.playhead{ position: absolute; top: 0; bottom: 0; width: 1px; background: var(--amber); opacity: 0.55; pointer-events: none; z-index: 3; }
+.playhead b{
+  position: absolute; top: 4px; left: 6px; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #000; background: var(--amber); padding: 2px 5px; border-radius: 2px; white-space: nowrap;
+}
+
+/* ── status bar ────────────────────────────────────────────────────────── */
+.statusbar{
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 9px clamp(14px, 2vw, 26px);
+  border-top: 1px solid var(--grid-2); background: var(--panel);
+  font-size: 11px; letter-spacing: 0.06em; color: var(--dim); min-height: 38px;
+}
+.statusbar .k{ color: var(--faint); text-transform: uppercase; letter-spacing: 0.14em; }
+.statusbar .v{ color: var(--fg); }
+.statusbar .sep{ color: var(--faint); }
+.statusbar .hint{ margin-left: auto; color: var(--faint); }
+@media (max-width: 700px){ .statusbar .hint{ display: none; } }
+
+/* ── detail panel ──────────────────────────────────────────────────────── */
+.panel{
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw);
+  background: var(--panel-2); border-left: 1px solid var(--grid-2);
+  box-shadow: -30px 0 60px -20px rgba(0,0,0,0.7);
+  overflow-y: auto; z-index: 40;
+}
+.panel-bar{
+  position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 12px 20px; background: var(--panel-2); border-bottom: 1px solid var(--grid-2);
+}
+.panel-bar .pn{ display: flex; gap: 14px; }
+.panel-bar button{ font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.panel-bar button:hover{ color: var(--fg); }
+.panel-body{ padding: 22px 20px 60px; }
+.panel-eyebrow{ display: flex; align-items: center; gap: 9px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.panel-eyebrow i{ width: 8px; height: 8px; border-radius: 1px; flex: none; }
+.panel h2{
+  font-family: var(--sans); font-weight: 700; font-size: clamp(21px, 3vw, 30px); line-height: 1.08;
+  letter-spacing: -0.02em; margin: 12px 0 14px;
+}
+.panel .meta{ display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 11px; color: var(--dim); padding-bottom: 16px; border-bottom: 1px solid var(--grid); }
+.panel .meta b{ color: var(--fg); font-weight: 500; }
+.panel .metric{
+  display: inline-flex; align-items: baseline; gap: 9px; margin: 18px 0 0;
+  border: 1px solid var(--amber); color: var(--amber); padding: 7px 11px; border-radius: 2px;
+}
+.panel .metric .v{ font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.panel .metric .l{ font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.panel .intro{ font-family: var(--serif); font-size: 16px; line-height: 1.5; color: var(--fg); margin: 18px 0 0; }
+.panel blockquote{
+  margin: 20px 0; padding-left: 14px; border-left: 2px solid var(--amber);
+  font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.4; color: var(--fg);
+}
+.panel .body{ display: flex; flex-direction: column; gap: 14px; color: var(--dim); font-size: 13px; line-height: 1.65; }
+.panel .body p{ margin: 0; }
+.panel .blk{ margin-top: 24px; }
+.panel .blk > .k{ display: block; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
+.panel .tags{ display: flex; flex-wrap: wrap; gap: 5px; }
+.panel .tags span{ font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid var(--grid-2); color: var(--dim); padding: 4px 8px; border-radius: 2px; }
+.panel .links{ display: flex; flex-direction: column; gap: 7px; align-items: flex-start; }
+.panel .links a{ font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); border-bottom: 1px solid rgba(255,176,32,0.4); padding-bottom: 2px; }
+.panel .links a:hover{ border-color: var(--amber); }
+.panel .note{ font-size: 11px; line-height: 1.6; color: var(--faint); }
+
+.scrim{ position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 39; }
+
+/* ── info overlay (about / skills / contact) ───────────────────────────── */
+.info{
+  position: fixed; inset: 0; z-index: 50; background: rgba(10,12,14,0.93);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  overflow-y: auto; padding: clamp(20px, 5vw, 70px);
+}
+.info-close{ position: fixed; top: 16px; right: clamp(16px, 3vw, 32px); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); z-index: 2; }
+.info-close:hover{ color: var(--amber); }
+.info-in{ max-width: 940px; margin: 0 auto; }
+.info h3{ font-family: var(--sans); font-weight: 700; font-size: clamp(24px, 4vw, 40px); letter-spacing: -0.02em; margin: 0 0 20px; text-transform: uppercase; }
+.info .lede{ font-family: var(--serif); font-size: clamp(16px, 2.2vw, 21px); line-height: 1.5; color: var(--fg); max-width: 62ch; margin: 0 0 34px; }
+.info .grid2{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
+.info .card{ border: 1px solid var(--grid-2); border-radius: 3px; padding: 16px; background: var(--panel); }
+.info .card .k{ display: block; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
+.info .card .tags{ display: flex; flex-wrap: wrap; gap: 5px; }
+.info .card .tags span{ font-size: 10px; letter-spacing: 0.04em; border: 1px solid var(--grid-2); color: var(--dim); padding: 4px 8px; border-radius: 100px; }
+.info .rows{ border-top: 1px solid var(--grid-2); }
+.info .rows a, .info .rows div.r{
+  display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: baseline;
+  padding: 14px 4px; border-bottom: 1px solid var(--grid);
+}
+.info .rows a:hover{ background: rgba(230,233,236,0.04); }
+.info .rows .k{ font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.info .rows .v{ font-family: var(--sans); font-size: 16px; font-weight: 500; }
+.info .rows a:hover .v{ color: var(--amber); }
+.info .bullets{ list-style: none; margin: 16px 0 0; padding: 0; }
+.info .bullets li{ display: grid; grid-template-columns: 2.4em 1fr; gap: 8px; padding: 11px 0; border-top: 1px solid var(--grid); color: var(--dim); font-size: 13px; line-height: 1.6; }
+.info .bullets li b{ color: var(--amber); font-weight: 500; font-size: 10px; padding-top: 0.35em; }
+
+/* ── mobile fallback: the trace collapses to a stacked list ────────────── */
+.mlist{ padding: 16px clamp(14px, 4vw, 24px) 60px; overflow-y: auto; overflow-x: hidden; }
+.mlayer{ margin-bottom: 26px; }
+.mlayer > .h{ display: flex; align-items: center; gap: 9px; padding-bottom: 8px; border-bottom: 1px solid var(--grid-2); margin-bottom: 4px; }
+.mlayer > .h i{ width: 9px; height: 9px; border-radius: 1px; flex: none; }
+.mlayer > .h b{ font-family: var(--sans); font-size: 13px; font-weight: 600; }
+.mlayer > .h span{ font-size: 10px; color: var(--faint); margin-left: auto; }
+.mrow{ display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; width: 100%; text-align: left; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
+/* Without this the text column refuses to shrink below its min-content and
+   pushes the date column off the screen. */
+.mrow > span{ min-width: 0; }
+.mrow .n{ display: block; font-family: var(--sans); font-size: 14px; font-weight: 500; }
+.mrow .d{ display: block; font-size: 11px; color: var(--faint); margin-top: 4px; line-height: 1.55; }
+.mrow .t{ font-size: 10px; color: var(--faint); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition-duration: 0.01ms !important; }
+}

@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, JetBrains_Mono, Newsreader } from "next/font/google";
-import LenisProvider from "@/components/motion/LenisProvider";
-import ScrollVelocityProvider from "@/components/motion/ScrollVelocityProvider";
-import "./globals.css";
+import "./trace.css";
 
 const sans = Space_Grotesk({
   subsets: ["latin"],
@@ -29,19 +27,12 @@ const serif = Newsreader({
 export const metadata: Metadata = {
   title: "Aryan Singh — Systems Engineer",
   description:
-    "Systems engineer working on CUDA kernels, allocators, FPGA offload, and the infrastructure that keeps them fed. CS and Math at UIUC.",
+    "The work plotted as a trace: time across, stack depth down, from product to silicon. CUDA kernels, allocators, FPGA offload, and the infrastructure underneath.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#DDD6C4",
+  themeColor: "#0A0C0E",
 };
-
-/**
- * Marks the document as animating before first paint, so the read-head base
- * state in CSS applies without a flash. Skipped entirely under reduced motion,
- * which leaves every block in its final visible state.
- */
-const MOTION_FLAG = `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion')}}catch(e){}`;
 
 const UMAMI_SITE_ID = "66a4ccd6-e6ea-43f4-a46f-bed24397bc18";
 
@@ -49,19 +40,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // The MOTION_FLAG script below adds a class to <html> before React
-    // hydrates, so the class list is expected to differ from the server's.
-    <html
-      lang="en"
-      className={`${sans.variable} ${mono.variable} ${serif.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable}`}>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
-
-        {/* Umami: pageviews plus session recording. `async` rather than
-            `defer` — React 19 hoists and executes async scripts natively, so
-            these load on parse instead of waiting on hydration. */}
+        {/* `async`, not `defer` — React 19 hoists and executes async scripts,
+            so these load on parse rather than waiting on hydration. */}
         <script
           async
           src="https://umami.aryan-singh.dev/script.js"
@@ -73,12 +55,7 @@ export default function RootLayout({
           data-website-id={UMAMI_SITE_ID}
         />
       </head>
-      <body>
-        <LenisProvider>
-          <ScrollVelocityProvider />
-          {children}
-        </LenisProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
