@@ -1,166 +1,213 @@
+/**
+ * Everything about the person, as opposed to the work. Single source of truth
+ * for the hero, experience, skills, recognition, about and contact sections.
+ */
+
+export interface SkillGroup {
+  label: string;
+  tags: string[];
+}
+
+export interface ExperienceRecord {
+  org: string;
+  role: string;
+  dates: string;
+  location: string;
+  type: string;
+  headline: string;
+  bullets: string[];
+}
+
 export interface Award {
+  rank: string;
   title: string;
   detail: string;
   year: string;
-  link?: string;
 }
 
-const awards: readonly Award[] = [
+export interface ContactLink {
+  key: string;
+  value: string;
+  href: string;
+  external?: boolean;
+}
+
+export const PROFILE = {
+  name: { first: "Aryan", last: "Singh" },
+  role: "Systems Engineer",
+
+  lead:
+    "I work under the abstraction — CUDA kernels, allocators, a job scheduler I moved onto an FPGA — and on the infrastructure that keeps all of it fed. Everything on this site is built and deployed from a cluster in my apartment.",
+
+  specs: [
+    { k: "Focus", v: "Systems engineering" },
+    { k: "Depth", v: "CUDA · FPGA · Infrastructure · Full stack" },
+    { k: "Location", v: "Champaign · Chicago, IL" },
+    { k: "Status", v: "Open to 2026 internships" },
+  ],
+
+  about:
+    "CS and Math at UIUC, graduating May 2027. I like taking a problem apart and making it faster underneath the abstraction — that's what pulled me into systems programming in C, then CUDA, then a summer spent moving an OS job scheduler onto an FPGA. Around the same time I got into self-hosting and networking, which grew into a six-node cluster I run at home and the CI that deploys onto it. Lately I've been running local models and building agentic workflows on top of them. Everything on this site runs on that cluster.",
+
+  education: [
+    { k: "School", v: "UIUC" },
+    { k: "Degree", v: "B.S. CS & Mathematics" },
+    { k: "Graduating", v: "May 2027" },
+    { k: "Focus", v: "Systems · HPC" },
+  ],
+
+  memberships: ["ACM at UIUC", "SIGCHI", "SIG AIDA"],
+
+  contactHead: ["Get in", "touch."],
+} as const;
+
+export const EXPERIENCE: ExperienceRecord[] = [
   {
-    title: "CS 341 Malloc Performance Contest — 1st of 400",
-    detail:
-      "A custom memory allocator that outscored both stock and optimized glibc on the official benchmark suite.",
-    year: "2025",
-    link: "/projects/malloc",
-  },
-  {
-    title: "UIUC Capture-the-Flag (CTF) Competition — 4th of 25+ teams",
-    detail:
-      "Binary exploitation, reverse engineering, cryptography, and web; placed 4th.",
-    year: "2025",
-  },
-  {
-    title: "Science Olympiad Robot Tour — 5th of 50 regional teams",
-    detail:
-      "Autonomous maze navigation on a Raspberry Pi Pico — the top-performing robot from the school.",
-    year: "2024",
-    link: "/projects/robot-tour",
+    org: "University of Illinois Chicago",
+    role: "Systems Engineer",
+    dates: "May 2025 — August 2025",
+    location: "Chicago, IL",
+    type: "Internship",
+    headline:
+      "Pulled the OS job scheduler off the CPU and onto an FPGA. Throughput doubled.",
+    bullets: [
+      "Put the scheduler on a Xilinx Alveo U55C. Once the FPGA owned scheduling, the host CPU stopped burning cycles babysitting work it should have just been running.",
+      "The host and FPGA were copying the same data across the bus twice. Shared their physical memory instead, killed the redundant transfers, and throughput doubled.",
+      "Wrote a three-thread C++ pipeline — Writer, Reader, Logger — to keep two FPGA kernels fed without stalling. Lock-free ring buffers on the hot path; mutexes only where contention didn't matter.",
+      "Moved the task queue into hardware so urgent jobs skip the OS scheduler entirely. Latency dropped to microseconds.",
+    ],
   },
 ];
 
-export const profile = {
-  name: "Aryan Singh",
-  shortBio: "CS + Math at UIUC. Allocators, CUDA kernels, a home Kubernetes cluster.",
-  tagline:
-    "Computer Science and Mathematics at the University of Illinois. Allocators, CUDA kernels, and a home Kubernetes cluster.",
-  summary:
-    "Computer Science and Mathematics student at the University of Illinois, graduating May 2027. The work splits in two: software where performance is the point — memory allocators, CUDA kernels, OS schedulers — and the infrastructure to run it reliably. Everything here runs on a self-managed Kubernetes cluster.",
-  location: "Champaign, IL · Chicago, IL",
-  email: "asing271@illinois.edu",
-  socials: {
-    github: "https://github.com/geneticglitch1",
-    githubAlt: "https://github.com/geneticglitch",
-    linkedin: "https://linkedin.com/in/aryan-singh06",
+export const SKILLS: SkillGroup[] = [
+  {
+    label: "Languages",
+    tags: ["C", "C++", "Rust", "Python", "Java", "TypeScript", "Swift", "CUDA", "SQL"],
   },
-  resume: "/resume.pdf",
-  education: {
-    school: "University of Illinois Urbana-Champaign",
-    degree: "B.S. Computer Science & Mathematics",
-    gpa: "3.89",
-    graduation: "May 2027",
-    coursework: [
-      "CS 446: Machine Learning",
-      "CS 425: Distributed Systems",
-      "CS 483: Applied Parallel Programming (CUDA)",
-      "CS 475: Formal Models of Computation",
-      "CS 374: Algorithms & Models of Computation",
-      "CS 341: System Programming",
-      "CS 411: Database Systems",
-      "CS 357: Numerical Methods I",
-      "CS 233: Computer Architecture",
-      "CS 225: Data Structures",
-      "CS 173: Discrete Structures",
-      "MATH 412: Graph Theory",
-      "MATH 441: Differential Equations",
-      "MATH 314: Introduction to Higher Mathematics",
-    ],
-  },
-  experience: [
-    {
-      company: "University of Illinois Chicago",
-      role: "Systems Engineer",
-      period: "May 2025 – August 2025",
-      location: "Chicago, IL",
-      headline:
-        "Moved the OS job scheduler onto an FPGA. Throughput doubled.",
-      bullets: [
-        "Moved scheduling off the CPU and onto a Xilinx Alveo U55C FPGA. With the FPGA owning the scheduler, the host CPU stopped burning cycles managing the work it could be doing.",
-        "Removed the host–FPGA double-copy by sharing physical memory between them; throughput doubled once those redundant transfers were gone.",
-        "Built a three-thread C++ pipeline — Writer, Reader, Logger — to keep two FPGA kernels fed continuously: lock-free ring buffers on the hot path, mutexes elsewhere. The kernels never idled.",
-        "Moved the task queue into hardware so high-priority jobs bypass the OS scheduler, dropping latency to microseconds.",
-      ],
-    },
-  ],
-  awards,
-  memberships: ["ACM at UIUC", "SIGCHI", "SIG AIDA"],
-  skills: {
-    Languages: [
-      "C",
-      "C++",
-      "Rust",
-      "Python",
-      "Java",
-      "TypeScript",
+  {
+    label: "Systems & HPC",
+    tags: [
       "CUDA",
-      "SQL",
+      "CUTLASS",
+      "Tensor Cores",
+      "FlashAttention",
+      "cuBLAS",
+      "Nsight Systems",
+      "Nsight Compute",
+      "pthreads",
+      "epoll",
+      "Lock-free structures",
+      "POSIX",
     ],
-    "AI / ML": [
-      "PyTorch",
-      "TensorFlow",
-      "LangChain",
-      "RAG Pipelines",
-      "Vector Embeddings",
-      "Semantic Search",
-      "Anthropic SDK",
-      "OpenAI SDK",
-      "Model Context Protocol",
-      "Ollama",
-      "vLLM",
-      "Whisper",
-      "MediaPipe",
-      "OpenCV",
-      "TrOCR",
+  },
+  {
+    label: "Hardware & FPGA",
+    tags: [
+      "Xilinx Alveo U55C",
+      "FPGA offload",
+      "Shared physical memory",
+      "PCIe",
+      "Raspberry Pi Pico",
+      "Embedded C",
+      "Sensor interfacing",
     ],
-    "Python Data": [
-      "NumPy",
-      "Pandas",
-      "scikit-learn",
-      "XGBoost",
-      "Random Forest",
-      "PySAL",
-      "GeoPandas",
-      "Plotly",
-      "Streamlit",
-      "Mapbox",
-    ],
-    "Web & Backend": [
-      "Next.js",
-      "React",
-      "FastAPI",
-      "Spring Boot",
-      "Fastify",
-      "Django",
-      "PostgreSQL",
-      "Redis",
-      "pgvector",
-      "Supabase",
-    ],
-    Infrastructure: [
-      "Kubernetes (K3s)",
+  },
+  {
+    label: "Infrastructure & DevOps",
+    tags: [
+      "K3s",
       "Docker",
       "Proxmox",
+      "Jenkins",
       "OPNsense",
       "WireGuard",
       "Traefik",
       "Longhorn",
-      "Fleet",
       "Cloudflare",
-      "Jenkins CI/CD",
-      "GitHub Actions",
+      "Fleet",
       "Keycloak",
-      "MinIO",
-    ],
-    Tools: [
-      "Git",
-      "Linux",
-      "Nsight Systems",
-      "Nsight Compute",
-      "VS Code",
-      "Cursor",
-      "Claude Code",
-      "Postman",
+      "Tailscale",
     ],
   },
-} as const;
+  {
+    label: "AI / ML",
+    tags: [
+      "PyTorch",
+      "Transformers",
+      "Hugging Face",
+      "Claude Agent SDK",
+      "MCP",
+      "LangGraph",
+      "RAG",
+      "MLX",
+      "vLLM",
+      "Ollama",
+      "OpenCV",
+      "TrOCR",
+    ],
+  },
+  {
+    label: "Web & Data",
+    tags: [
+      "Next.js",
+      "React",
+      "FastAPI",
+      "Spring Boot",
+      "PostgreSQL",
+      "Redis",
+      "pgvector",
+      "Supabase",
+      "NumPy",
+      "Pandas",
+      "XGBoost",
+    ],
+  },
+];
 
-export type Profile = typeof profile;
+export const AWARDS: Award[] = [
+  {
+    rank: "1st",
+    title: "CS 341 Malloc Performance Contest",
+    detail: "Beat both stock and optimized glibc; first of roughly 400 submissions.",
+    year: "2025",
+  },
+  {
+    rank: "4th",
+    title: "UIUC Capture-the-Flag (CTF)",
+    detail: "Binary exploitation, reversing, crypto, and web — 4th of 25+ teams.",
+    year: "2025",
+  },
+  {
+    rank: "5th",
+    title: "Science Olympiad — Robot Tour",
+    detail: "Autonomous Pi Pico maze robot; 5th of 50 regional teams.",
+    year: "2024",
+  },
+];
+
+export const CONTACT_LINKS: ContactLink[] = [
+  { key: "Email", value: "asing271@illinois.edu", href: "mailto:asing271@illinois.edu" },
+  {
+    key: "GitHub",
+    value: "@geneticglitch1",
+    href: "https://github.com/geneticglitch1",
+    external: true,
+  },
+  {
+    key: "LinkedIn",
+    value: "/in/aryan-singh06",
+    href: "https://linkedin.com/in/aryan-singh06",
+    external: true,
+  },
+  { key: "Résumé", value: "resume.pdf", href: "/resume.pdf", external: true },
+];
+
+export const SECTIONS = [
+  { n: "01", id: "work", label: "Work" },
+  { n: "02", id: "index", label: "Index" },
+  { n: "03", id: "experience", label: "Experience" },
+  { n: "04", id: "skills", label: "Skills" },
+  { n: "05", id: "recognition", label: "Recognition" },
+  { n: "06", id: "about", label: "About" },
+  { n: "07", id: "contact", label: "Contact" },
+] as const;
