@@ -37,11 +37,27 @@ export default function Dossier({ index, onClose, onIndex }: DossierProps) {
     lastFocus.current = document.activeElement as HTMLElement | null;
     const lenis = getLenis();
     lenis?.stop();
-    document.body.style.overflow = "hidden";
+
+    // iOS Safari ignores overflow:hidden on body, so the page scrolls behind
+    // the sheet. Pinning the body is the reliable lock; the offset has to be
+    // captured and put back or closing jumps you to the top.
+    const y = window.scrollY;
+    const body = document.body;
+    body.style.position = "fixed";
+    body.style.top = `-${y}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.overflow = "hidden";
+
     closeRef.current?.focus();
     return () => {
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.overflow = "";
+      window.scrollTo(0, y);
       lenis?.start();
-      document.body.style.overflow = "";
       lastFocus.current?.focus?.();
     };
   }, [isOpen]);

@@ -32,6 +32,11 @@
 }
 *{ box-sizing: border-box; }
 html, body{ margin: 0; padding: 0; }
+/* `clip` rather than `hidden`: overflow-x:hidden on body makes it a scroll
+   container, which breaks scroll propagation and momentum on iOS Safari.
+   `clip` suppresses the same overflow without creating one. */
+html, body{ overflow-x: hidden; }
+@supports (overflow: clip){ html, body{ overflow-x: clip; } }
 html.lenis, html.lenis body{ height: auto; }
 .lenis.lenis-smooth{ scroll-behavior: auto !important; }
 .lenis.lenis-stopped{ overflow: hidden; }
@@ -39,7 +44,7 @@ html.lenis, html.lenis body{ height: auto; }
 body{
   font-family: var(--sans); background: var(--paper); color: var(--ink);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-  overflow-x: hidden; line-height: 1.55;
+  line-height: 1.55;
   background-image: radial-gradient(rgba(34,30,24,0.055) 1px, transparent 1.4px);
   background-size: 22px 22px;
 }
@@ -224,18 +229,40 @@ section{ position: relative; }
    ════════════════════════════════════════════════════════════════════════ */
 .board{ position: relative; }
 .cards{ position: relative; height: 620px; }
-/* Below the pile breakpoint the cards fall into a plain column. */
-.cards.stack{ height: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
 .card-slot{ position: absolute; width: clamp(250px, 25vw, 330px); will-change: transform; }
-.cards.stack .card-slot{ position: relative; left: auto; top: auto; width: min(100%, 380px); }
 .card{
   position: relative; width: 100%; background: var(--card);
   border: 1px solid var(--line); border-radius: 3px; cursor: grab; will-change: transform;
   box-shadow: 0 18px 40px -14px rgba(34,30,24,0.42), 0 2px 5px rgba(34,30,24,0.12);
-  touch-action: none;
 }
 .card:active{ cursor: grabbing; }
-.cards.stack .card{ cursor: default; touch-action: auto; }
+
+/* touch-action:none is what lets a finger drag a card — and what stops the
+   page scrolling underneath it. So it exists only on wide pointer screens,
+   where the draggable pile exists. Anywhere else the cards scroll like
+   ordinary content. */
+@media (min-width: 901px){
+  .cards:not(.stack) .card{ touch-action: none; }
+}
+
+/* Stacked column, applied two independent ways: by the JS `stack` class, and
+   by the viewport alone. The second is what matters on a phone — before
+   hydration the class isn't there yet, and the prerendered pile would overflow
+   the viewport and (previously) kill scrolling over a 620px stretch of page.
+   These rules follow the base ones deliberately, and left/top carry
+   !important because React prerenders them as inline styles. */
+.cards.stack{ height: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.cards.stack .card-slot{ position: relative; left: auto; top: auto; width: min(100%, 380px); }
+.cards.stack .card{ cursor: default; }
+
+@media (max-width: 900px){
+  .cards{ height: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .cards .card-slot{
+    position: relative; left: auto !important; top: auto !important;
+    width: min(100%, 380px);
+  }
+  .cards .card{ cursor: default; }
+}
 .card .punch{ position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 30px; height: 14px;
   border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; background: var(--paper); }
 .card .chead{ display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px dashed var(--line); }
@@ -421,6 +448,20 @@ section{ position: relative; }
 .da-foot .nav .t{ font-family: var(--sans); font-weight: 700; font-size: clamp(1.2rem,2vw,1.6rem); letter-spacing: -0.02em; }
 .da-foot .nav:hover .t{ color: var(--accent-d); }
 @media (max-width: 720px){ .da-cols{ grid-template-columns: 1fr; } .da-side{ position: static; } .da-foot{ grid-template-columns: 1fr; } .da-foot .nav.next{ text-align: left; align-items: flex-start; } }
+
+/* ════════════════════════════════════════════════════════════════════════
+   TOUCH / SMALL SCREENS
+   The velocity effects rewrite --vel every scroll frame, and each reader of
+   it costs real work: the grain is a full-viewport fixed layer with
+   mix-blend-mode, the section skew re-transforms eight large elements, and the
+   ledger riffle re-transforms twenty-one rows. That's affordable on a desktop
+   GPU and janks badly on a phone, so none of it runs here.
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px), (hover: none){
+  body::before{ display: none; }
+  .sec > .wrap{ transform: none; }
+  .lrow{ transform: none; }
+}
 
 /* ════════════════════════════════════════════════════════════════════════
    REDUCED MOTION — every scanner mechanism resolves to its final state

@@ -17,26 +17,33 @@ export function getLenis() {
  */
 export default function LenisProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (prefersReduced) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Touch devices already scroll natively, with momentum the browser tunes
+    // per-platform. Running Lenis on top of that adds a per-frame rAF loop and
+    // a second opinion about scroll position for no visible gain, and it's a
+    // reliable source of iOS scroll misbehaviour.
+    const coarse = window.matchMedia("(hover: none), (max-width: 900px)").matches;
+    const useLenis = !reduced && !coarse;
 
-    const lenis = new Lenis({
-      duration: 1.05,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      touchMultiplier: 1.6,
-    });
-    instance = lenis;
-
+    let lenis: Lenis | null = null;
     let rafId = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    };
-    rafId = requestAnimationFrame(raf);
 
+    if (useLenis) {
+      lenis = new Lenis({
+        duration: 1.05,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+      instance = lenis;
+      const raf = (time: number) => {
+        lenis!.raf(time);
+        rafId = requestAnimationFrame(raf);
+      };
+      rafId = requestAnimationFrame(raf);
+    }
+
+    // Anchors get smooth scrolling either way — through Lenis when it's
+    // running, natively when it isn't.
     const onClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement)?.closest?.(
         'a[href^="#"]'
@@ -47,14 +54,21 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
       const el = document.querySelector(href);
       if (!el) return;
       e.preventDefault();
-      lenis.scrollTo(el as HTMLElement, { offset: -10, duration: 1.1 });
+      if (lenis) {
+        lenis.scrollTo(el as HTMLElement, { offset: -10, duration: 1.1 });
+      } else {
+        (el as HTMLElement).scrollIntoView({
+          behavior: reduced ? "auto" : "smooth",
+          block: "start",
+        });
+      }
     };
     document.addEventListener("click", onClick);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
       document.removeEventListener("click", onClick);
-      lenis.destroy();
+      lenis?.destroy();
       instance = null;
     };
   }, []);

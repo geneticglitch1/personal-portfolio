@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useScroll, useVelocity, useSpring, useMotionValueEvent } from "motion/react";
 
 /**
@@ -15,8 +15,20 @@ export default function ScrollVelocityProvider() {
   // Heavy damping so the value trails the scroll rather than tracking it
   // exactly — that lag is what reads as physical weight.
   const smooth = useSpring(velocity, { stiffness: 180, damping: 40, mass: 0.6 });
+  // Nothing reads --vel on touch or small screens (see globals.css), so don't
+  // pay to compute and write it there either.
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px), (hover: none)");
+    const sync = () => setEnabled(!mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useMotionValueEvent(smooth, "change", (v) => {
+    if (!enabled) return;
     // ~2000 px/s saturates the effect.
     const norm = Math.max(-1, Math.min(1, v / 2000));
     const root = document.documentElement;
