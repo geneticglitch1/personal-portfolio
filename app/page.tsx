@@ -1,32 +1,30 @@
-import Nav from "@/components/Nav";
-import Hero from "@/components/Hero";
-import Work from "@/components/Work";
-import Ledger from "@/components/Ledger";
-import Experience from "@/components/Experience";
-import Skills from "@/components/Skills";
-import Recognition from "@/components/Recognition";
-import About from "@/components/About";
-import Contact from "@/components/Contact";
-import DossierProvider from "@/components/DossierProvider";
-import InkSpine from "@/components/motion/InkSpine";
+import { SPREADS } from "@/content/spreads";
+import Spread from "@/components/spreads/Spread";
+import {
+  TopBar,
+  Opening,
+  IndexList,
+  Experience,
+  About,
+  Contact,
+} from "@/components/spreads/Sections";
 
 export default function Page() {
   return (
     <>
-      <Nav />
-      <DossierProvider>
-        <main>
-          <InkSpine />
-          <Hero />
-          <Work />
-          <Ledger />
-          <Experience />
-          <Skills />
-          <Recognition />
-          <About />
-          <Contact />
-        </main>
-      </DossierProvider>
+      <TopBar />
+      <main>
+        <Opening />
+        <div id="work">
+          {SPREADS.map((s, i) => (
+            <Spread key={s.slug} meta={s} n={i + 1} />
+          ))}
+        </div>
+        <IndexList />
+        <Experience />
+        <About />
+        <Contact />
+      </main>
     </>
   );
 }
