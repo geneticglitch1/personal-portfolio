@@ -26,8 +26,12 @@
 
 *{ box-sizing: border-box; }
 html, body{ margin: 0; padding: 0; }
+/* clip, not hidden: overflow-x:hidden on body makes it a scroll container,
+   which breaks scroll propagation and momentum on iOS. */
 html, body{ overflow-x: hidden; }
 @supports (overflow: clip){ html, body{ overflow-x: clip; } }
+/* Stop iOS inflating body text in the narrow single-column layout. */
+html{ -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body{
   background: var(--paper); color: var(--ink);
@@ -175,14 +179,14 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
   font-family: var(--serif); font-style: italic; font-size: clamp(1.2rem, 2vw, 1.6rem);
   line-height: 1.35; color: var(--ink); max-width: 40ch;
 }
-.prose aside .blk{ margin-bottom: 22px; }
-.prose aside .k{ display: block; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
-.prose aside .stack{ display: flex; flex-wrap: wrap; gap: 5px; }
-.prose aside .stack span{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.04em; color: var(--ink-2); border: 1px solid var(--rule); padding: 3px 7px; border-radius: 2px; }
-.prose aside .links{ display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
-.prose aside .links a{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
-.prose aside .links a:hover{ color: var(--accent); border-color: var(--accent); }
-.prose aside .note{ font-family: var(--mono); font-size: 0.62rem; line-height: 1.65; color: var(--faint); }
+.prose aside .blk, .idx-body aside .blk{ margin-bottom: 22px; }
+.prose aside .k, .idx-body aside .k{ display: block; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
+.prose aside .stack, .idx-body aside .stack{ display: flex; flex-wrap: wrap; gap: 5px; }
+.prose aside .stack span, .idx-body aside .stack span{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.04em; color: var(--ink-2); border: 1px solid var(--rule); padding: 3px 7px; border-radius: 2px; }
+.prose aside .links, .idx-body aside .links{ display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.prose aside .links a, .idx-body aside .links a{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+.prose aside .links a:hover, .idx-body aside .links a:hover{ color: var(--accent); border-color: var(--accent); }
+.prose aside .note, .idx-body aside .note{ font-family: var(--mono); font-size: 0.62rem; line-height: 1.65; color: var(--faint); }
 
 /* ── index of the rest ─────────────────────────────────────────────────── */
 .section-head{
@@ -192,7 +196,7 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
 .section-head h2{ font-family: var(--sans); font-weight: 800; font-size: clamp(1.5rem, 3.2vw, 2.4rem); letter-spacing: -0.03em; margin: 0; }
 .idx{ border-top: 1px solid var(--rule); }
 .idx-row{
-  display: grid; grid-template-columns: 46px 1fr 190px 92px; gap: 20px; align-items: baseline;
+  display: grid; grid-template-columns: 46px minmax(0, 1fr) 170px 84px 18px; gap: 20px; align-items: baseline;
   width: 100%; text-align: left; padding: 17px 4px; border-bottom: 1px solid var(--rule-2);
   transition: background 0.25s var(--ease), padding-left 0.35s var(--ease);
 }
@@ -205,7 +209,7 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
 .idx-row .yr{ font-family: var(--mono); font-size: 0.64rem; color: var(--faint); justify-self: end; }
 .idx-row:hover .nm{ color: var(--accent); }
 @media (max-width: 820px){
-  .idx-row{ grid-template-columns: 34px 1fr; gap: 12px; }
+  .idx-row{ grid-template-columns: 30px minmax(0, 1fr) 16px; gap: 10px; }
   .idx-row .ct, .idx-row .yr{ display: none; }
 }
 
@@ -230,8 +234,19 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
 .awards{ margin-top: clamp(30px, 5vh, 56px); border-top: 1px solid var(--rule); }
 .awards .a{ display: grid; grid-template-columns: 56px 1fr auto; gap: 18px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid var(--rule-2); }
 .awards .a .r{ font-family: var(--mono); font-size: 0.66rem; font-weight: 700; color: var(--accent); }
-.awards .a .t{ font-family: var(--sans); font-weight: 600; font-size: 1rem; }
-.awards .a .d{ font-size: 0.86rem; color: var(--dim); margin-top: 4px; }
+.awards .a > span{ min-width: 0; }
+.awards .a .t{ display: block; font-family: var(--sans); font-weight: 600; font-size: 1rem; }
+.awards .a .d{ display: block; font-size: 0.86rem; color: var(--dim); margin-top: 4px; }
+
+/* skills — its own row rather than borrowing .idx-row, which is now a
+   five-column summary and doesn't collapse the same way on a phone */
+.skill-row{
+  display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 18px; align-items: baseline;
+  padding: 13px 2px; border-bottom: 1px solid var(--rule-2);
+}
+.skill-row .k{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+.skill-row .v{ font-size: 0.86rem; color: var(--dim); line-height: 1.65; }
+@media (max-width: 700px){ .skill-row{ grid-template-columns: 1fr; gap: 5px; } }
 .awards .a .y{ font-family: var(--mono); font-size: 0.64rem; color: var(--faint); }
 
 .contact-links{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: clamp(24px, 4vh, 44px); }
@@ -243,6 +258,105 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
 
 .footline{ display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: clamp(34px, 6vh, 70px); padding-top: 18px; border-top: 1px solid var(--rule); }
 
+/* ════════════════════════════════════════════════════════════════════════
+   MOTION
+   All of it is CSS scroll-driven animation — no JS, no hydration dependency,
+   nothing that can leave the page blank if a script fails. Browsers without
+   animation-timeline simply get the finished state, which is the correct one.
+   ════════════════════════════════════════════════════════════════════════ */
+@keyframes rise{
+  from{ opacity: 0; transform: translateY(22px); }
+  to{ opacity: 1; transform: none; }
+}
+@keyframes wipe{
+  from{ clip-path: inset(0 100% 0 0); }
+  to{ clip-path: inset(0 0 0 0); }
+}
+@keyframes progress{
+  from{ transform: scaleX(0); }
+  to{ transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: view()){
+    .r-up{
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 16%;
+    }
+    /* Children sit at different heights, so their view() timelines stagger on
+       their own — no delays to keep in sync. */
+    .r-stagger > *{
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 20%;
+    }
+    /* The drawing plots itself in as it arrives, like a pen plotter. */
+    .plate{
+      animation: wipe linear both;
+      animation-timeline: view();
+      animation-range: entry 12% cover 34%;
+    }
+  }
+}
+
+/* Reading progress. Decorative, so an unsupported browser just gets no bar. */
+.progress{ position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; pointer-events: none; }
+.progress i{ display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: scroll()){
+    .progress i{ animation: progress linear both; animation-timeline: scroll(root block); }
+  }
+}
+
+/* ── expandable index rows ─────────────────────────────────────────────── */
+:root{ interpolate-size: allow-keywords; }
+.idx-item{ border-bottom: 1px solid var(--rule-2); }
+.idx-item > summary{ list-style: none; cursor: pointer; }
+.idx-item > summary::-webkit-details-marker{ display: none; }
+.idx-item > summary{ border-bottom: 0; }
+.idx-row .chev{ font-family: var(--mono); font-size: 0.7rem; color: var(--faint); justify-self: end; transition: transform 0.3s var(--ease), color 0.25s var(--ease); }
+.idx-item[open] .chev{ transform: rotate(90deg); color: var(--accent); }
+.idx-item[open] .nm{ color: var(--accent); }
+
+.idx-body{ padding: 2px 4px 30px 66px; display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: clamp(20px, 4vw, 48px); }
+.idx-body > *{ min-width: 0; }
+.idx-body blockquote{
+  margin: 0 0 18px; padding-left: 15px; border-left: 2px solid var(--ink);
+  font-family: var(--serif); font-style: italic; font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.38; max-width: 44ch;
+}
+.idx-body p{ margin: 0 0 14px; color: var(--ink-2); font-size: 0.94rem; line-height: 1.7; max-width: 70ch; }
+.idx-body p:last-child{ margin-bottom: 0; }
+@media (max-width: 820px){ .idx-body{ grid-template-columns: 1fr; padding-left: 34px; } }
+
+@supports (interpolate-size: allow-keywords){
+  .idx-item::details-content{
+    block-size: 0; overflow: hidden;
+    transition: block-size 0.45s var(--ease), content-visibility 0.45s allow-discrete;
+  }
+  .idx-item[open]::details-content{ block-size: auto; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   PHONE
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 760px){
+  /* The plate is a horizontal scroller here, so the plot-in wipe fights the
+     pan and leaves the drawing looking half-empty. Diagram arrives whole. */
+  .plate{ animation: none; clip-path: none; }
+  .topbar .row{ flex-wrap: wrap; gap: 8px 16px; padding: 11px 0 9px; }
+  .topbar nav{ margin-left: 0; width: 100%; gap: 14px; }
+  .spread{ padding-block: clamp(34px, 6vh, 60px); }
+  .closing{ padding-block: clamp(36px, 6vh, 70px); }
+  .prose{ margin-top: 30px; }
+  .spread-head .metric{ margin-top: 20px; }
+  .idx-row{ padding: 15px 2px; }
+  .idx-row .ln{ font-size: 0.82rem; }
+  .contact-links a{ padding: 15px; }
+}
+
 @media (prefers-reduced-motion: reduce){
   *{ animation: none !important; transition-duration: 0.01ms !important; }
+  .plate{ clip-path: none !important; }
 }

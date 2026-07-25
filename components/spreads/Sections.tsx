@@ -10,6 +10,18 @@ import {
 
 export function TopBar() {
   return (
+    <>
+      {/* Reading progress, driven by scroll() in CSS. */}
+      <div className="progress" aria-hidden="true">
+        <i />
+      </div>
+      <TopBarInner />
+    </>
+  );
+}
+
+function TopBarInner() {
+  return (
     <header className="topbar">
       <div className="row">
         <span className="who">
@@ -37,7 +49,7 @@ export function Opening() {
           <br />
           {PROFILE.name.last}
         </h1>
-        <div className="opening-foot">
+        <div className="opening-foot r-stagger">
           <p className="thesis">{PROFILE.lead}</p>
           <div className="facts">
             {PROFILE.specs.map((s) => (
@@ -53,20 +65,27 @@ export function Opening() {
   );
 }
 
-/** Everything that doesn't get a spread. */
+/**
+ * Everything that doesn't get a spread. Each row expands to the full write-up
+ * — these sixteen projects have the same prose the featured five do, and
+ * leaving it at a one-liner made it unreachable.
+ *
+ * <details> rather than React state: no JS, keyboard and screen-reader
+ * behaviour for free, and it still works if the bundle never loads.
+ */
 export function IndexList() {
   const rest = PROJECTS.filter((p) => !FEATURED_SLUGS.includes(p.slug));
   return (
     <section className="closing" id="more">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head r-up">
           <h2>Everything else</h2>
-          <span className="lbl">{rest.length} more</span>
+          <span className="lbl">{rest.length} more · click to open</span>
         </div>
-        <div className="idx">
-          {rest.map((p, i) => {
-            const inner = (
-              <>
+        <div className="idx r-stagger">
+          {rest.map((p, i) => (
+            <details className="idx-item" key={p.slug}>
+              <summary className="idx-row">
                 <span className="n">{String(i + 1).padStart(2, "0")}</span>
                 <span>
                   <span className="nm">{p.name}</span>
@@ -74,25 +93,50 @@ export function IndexList() {
                 </span>
                 <span className="ct">{p.cat}</span>
                 <span className="yr">{p.year}</span>
-              </>
-            );
-            const href = p.links.live ?? p.links.github;
-            return href ? (
-              <a
-                className="idx-row"
-                key={p.slug}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {inner}
-              </a>
-            ) : (
-              <div className="idx-row" key={p.slug}>
-                {inner}
+                <span className="chev" aria-hidden="true">
+                  ›
+                </span>
+              </summary>
+
+              <div className="idx-body">
+                <div>
+                  <blockquote>{p.quote}</blockquote>
+                  <p>{p.intro}</p>
+                  {p.body.map((para, j) => (
+                    <p key={j}>{para}</p>
+                  ))}
+                </div>
+                <aside>
+                  <div className="blk">
+                    <span className="k">Stack</span>
+                    <div className="stack">
+                      {p.stack.map((s) => (
+                        <span key={s}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="blk">
+                    <span className="k">Source</span>
+                    {p.links.github || p.links.live ? (
+                      <div className="links">
+                        {p.links.github && (
+                          <a href={p.links.github} target="_blank" rel="noopener noreferrer">
+                            GitHub →
+                          </a>
+                        )}
+                        {p.links.live && (
+                          <a href={p.links.live} target="_blank" rel="noopener noreferrer">
+                            Live →
+                          </a>
+                        )}
+                      </div>
+                    ) : null}
+                    {p.links.note && <p className="note">{p.links.note}</p>}
+                  </div>
+                </aside>
               </div>
-            );
-          })}
+            </details>
+          ))}
         </div>
       </div>
     </section>
@@ -103,11 +147,11 @@ export function Experience() {
   return (
     <section className="closing" id="experience">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head r-up">
           <h2>Experience</h2>
         </div>
         {EXPERIENCE.map((r) => (
-          <div className="role-card" key={r.org}>
+          <div className="role-card r-up" key={r.org}>
             <div className="side">
               <span className="k">Organisation</span>
               <span className="v">{r.org}</span>
@@ -140,10 +184,10 @@ export function About() {
   return (
     <section className="closing" id="about">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head r-up">
           <h2>About</h2>
         </div>
-        <div className="about-body">
+        <div className="about-body r-up">
           <p className="say">{PROFILE.about}</p>
           <div>
             <div className="facts">
@@ -157,21 +201,19 @@ export function About() {
           </div>
         </div>
 
-        <div className="section-head" style={{ marginTop: "clamp(36px,6vh,72px)" }}>
+        <div className="section-head r-up" style={{ marginTop: "clamp(36px,6vh,72px)" }}>
           <h2>What I work with</h2>
         </div>
-        <div className="about-body" style={{ display: "block" }}>
+        <div className="r-stagger">
           {SKILLS.map((g) => (
-            <div className="idx-row" key={g.label} style={{ gridTemplateColumns: "180px 1fr" }}>
-              <span className="ct">{g.label}</span>
-              <span className="ln" style={{ marginTop: 0, maxWidth: "none" }}>
-                {g.tags.join(" · ")}
-              </span>
+            <div className="skill-row" key={g.label}>
+              <span className="k">{g.label}</span>
+              <span className="v">{g.tags.join(" · ")}</span>
             </div>
           ))}
         </div>
 
-        <div className="awards">
+        <div className="awards r-stagger">
           {AWARDS.map((a) => (
             <div className="a" key={a.title}>
               <span className="r">{a.rank}</span>
@@ -192,11 +234,11 @@ export function Contact() {
   return (
     <section className="closing" id="contact">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head r-up">
           <h2>Get in touch</h2>
           <span className="lbl">Open to 2026 internships</span>
         </div>
-        <div className="contact-links">
+        <div className="contact-links r-stagger">
           {CONTACT_LINKS.map((l) => (
             <a
               key={l.key}

@@ -18,7 +18,7 @@ export default function Spread({ meta, n }: { meta: SpreadMeta; n: number }) {
     <section className="spread" id={p.slug}>
       <div className="wrap">
         <div className="spread-grid">
-          <div className="spread-head">
+          <div className="spread-head r-stagger">
             <span className="num">
               {String(n).padStart(2, "0")} — {p.cat} · {p.year}
             </span>
@@ -47,7 +47,7 @@ export default function Spread({ meta, n }: { meta: SpreadMeta; n: number }) {
           </figure>
         </div>
 
-        <div className="prose">
+        <div className="prose r-up">
           <div className="col">
             <blockquote>{p.quote}</blockquote>
             <p>{p.intro}</p>
