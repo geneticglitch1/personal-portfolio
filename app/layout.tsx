@@ -30,6 +30,14 @@ export const metadata: Metadata = {
   title: "Aryan Singh — Systems Engineer",
   description:
     "Systems engineer working on CUDA kernels, allocators, FPGA offload, and the infrastructure that keeps them fed. CS and Math at UIUC.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {
