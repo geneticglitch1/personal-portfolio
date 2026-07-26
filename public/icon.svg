@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Aryan Singh">
+  <rect width="512" height="512" rx="104" fill="#111214"/>
+  <!-- A, built from two legs so the letterform is geometry rather than a font
+       reference — the shipped file must not depend on the viewer's fonts. -->
+  <path d="M214 100 H298 L160 412 H76 Z" fill="#F4F3F0"/>
+  <path d="M214 100 H298 L436 412 H352 Z" fill="#F4F3F0"/>
+  <!-- the crossbar carries the accent -->
+  <rect x="150" y="300" width="212" height="46" rx="6" fill="#2547FF"/>
+</svg>

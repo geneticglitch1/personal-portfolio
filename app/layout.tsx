@@ -28,6 +28,14 @@ export const metadata: Metadata = {
   title: "Aryan Singh — Systems Engineer",
   description:
     "Five projects explained properly: the dry-run gate, the nightly risk pipeline, IO-aware attention tiling, the PCIe copy that vanished, and O(1) coalescing. CS and Math at UIUC.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {
