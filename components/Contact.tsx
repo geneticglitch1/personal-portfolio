@@ -29,7 +29,7 @@ export default function Contact() {
   return (
     <section className="contact" id="contact">
       <div className="wrap">
-        <span className="lbl red">07 / Contact</span>
+        <span className="lbl red">06 / Contact</span>
 
         <div className="contact-headwrap" ref={ref}>
           <h2 className="contact-head">

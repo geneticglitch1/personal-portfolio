@@ -216,30 +216,38 @@ export function Fpga() {
 
 /* ── Media stack — no route but the tunnel ─────────────────────────────── */
 export function MediaStack() {
+  const live = "M 216 62 L 268 62";
   return (
-    <svg viewBox={VB} role="img" aria-label="The download client has no route to the internet except the VPN tunnel">
-      <rect className="d-accent-box d-pop" x="18" y="14" width="324" height="86" rx="3" />
-      <text className="d-t-accent" x="180" y="32" textAnchor="middle">GLUETUN — WIREGUARD + KILL-SWITCH</text>
+    <svg viewBox={VB} role="img" aria-label="Two routes out: the tunnel, and one that is cut">
+      {/* a compose key, so it can't take the uppercase of d-t-head */}
+      <text className="d-t-sm" x="4" y="13">network_mode: service:gluetun</text>
 
-      <rect className="d-box" x="52" y="42" width="256" height="28" rx="2" />
-      <text className="d-t-sm" x="180" y="60" textAnchor="middle">qBittorrent · network_mode: service:gluetun</text>
-      <text className="d-t-sm d-beat" x="180" y="88" textAnchor="middle">no interface of its own — no route of its own</text>
+      {/* everything that downloads lives inside one namespace */}
+      <rect className="d-accent-box d-pop" x="4" y="20" width="212" height="100" rx="3" />
+      <text className="d-t-accent" x="110" y="38" textAnchor="middle">GLUETUN — KILL-SWITCH</text>
+      <rect className="d-box" x="18" y="48" width="184" height="28" rx="2" />
+      <text className="d-t-sm" x="110" y="66" textAnchor="middle">qBittorrent</text>
+      <rect className="d-box" x="18" y="82" width="184" height="28" rx="2" />
+      <text className="d-t-sm" x="110" y="100" textAnchor="middle">*arr automation</text>
 
-      <path className="d-line d-flow" pathLength={1} d="M 180 100 L 180 118" markerEnd={A} />
-      <text className="d-t-sm" x="188" y="113">tunnel up</text>
+      {/* the one route that exists */}
+      <path className="d-accent-line d-flow" pathLength={1} d={live} markerEnd={AA} />
+      <circle className="d-fill-accent d-travel" r="3.4" style={{ offsetPath: `path("${live}")` }} />
+      <rect className="d-box" x="270" y="44" width="86" height="36" rx="2" />
+      <text className="d-t-sm" x="313" y="61" textAnchor="middle">wireguard</text>
+      <text className="d-t-sm" x="313" y="73" textAnchor="middle">exit</text>
 
-      <rect className="d-box-soft" x="4" y="120" width="108" height="30" rx="2" />
-      <text className="d-t-sm" x="58" y="139" textAnchor="middle">indexer</text>
-      <path className="d-line d-flow" pathLength={1} d="M 114 135 L 130 135" markerEnd={A} />
-      <rect className="d-box-soft" x="132" y="120" width="96" height="30" rx="2" />
-      <text className="d-t-sm" x="180" y="139" textAnchor="middle">grabber</text>
-      <path className="d-line d-flow" pathLength={1} d="M 230 135 L 246 135" markerEnd={A} />
-      <rect className="d-box-soft" x="248" y="120" width="108" height="30" rx="2" />
-      <text className="d-t-sm" x="302" y="139" textAnchor="middle">organiser</text>
+      {/* and the one that doesn't */}
+      <path className="d-line-dim d-dash" d="M 216 96 L 268 96" />
+      <path className="d-accent-line d-cut" pathLength={1} d="M 233 85 L 251 107" />
+      <path className="d-accent-line d-cut" pathLength={1} d="M 251 85 L 233 107" />
+      <rect className="d-box-soft" x="270" y="80" width="86" height="32" rx="2" />
+      <text className="d-t-sm" x="313" y="100" textAnchor="middle">home WAN</text>
 
-      <line className="d-line-dim d-dash" x1="4" y1="168" x2="356" y2="168" />
-      <text className="d-t-accent" x="180" y="188" textAnchor="middle">tunnel drops ⇒ the interface goes with it</text>
-      <text className="d-t-sm" x="180" y="204" textAnchor="middle">nothing falls back to the home connection</text>
+      <line className="d-line-dim d-dash" x1="4" y1="138" x2="356" y2="138" />
+      <text className="d-t-accent d-late d-beat" x="180" y="162" textAnchor="middle">no interface of their own</text>
+      <text className="d-t-sm" x="180" y="184" textAnchor="middle">the tunnel is the only one in the namespace —</text>
+      <text className="d-t-sm" x="180" y="202" textAnchor="middle">it drops, and there is nothing left to route over</text>
     </svg>
   );
 }
@@ -259,7 +267,7 @@ export function Malloc() {
       <path className="d-accent-line d-flow" pathLength={1} d="M 176 40 L 176 26 L 111 26 L 111 38" markerEnd={AA} />
       <path className="d-accent-line d-flow" pathLength={1} d="M 176 26 L 243 26 L 243 38" markerEnd={AA} />
 
-      <text className="d-t-sm" x="4" y="60">before</text>
+      <text className="d-t-head" x="4" y="36">before</text>
       {before.map((b) => (
         <g key={b.x}>
           <rect className={b.s === "free(p)" ? "d-accent-box" : "d-box"} x={b.x} y="40" width={b.w} height="34" rx="2" />
@@ -272,7 +280,7 @@ export function Malloc() {
       <path className="d-line d-flow" pathLength={1} d="M 180 96 L 180 116" markerEnd={A} />
       <text className="d-t-sm" x="190" y="110">merge in place</text>
 
-      <text className="d-t-sm" x="4" y="140">after</text>
+      <text className="d-t-head" x="4" y="116">after</text>
       <rect className="d-box" x="22" y="120" width="62" height="34" rx="2" />
       <rect className="d-box-soft" x="22" y="120" width="8" height="34" />
       <text className="d-t-sm" x="57" y="141" textAnchor="middle">used</text>

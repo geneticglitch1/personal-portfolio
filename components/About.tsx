@@ -11,7 +11,7 @@ export default function About() {
   return (
     <section className="sec" id="about">
       <div className="wrap">
-        <SectionHead n="06" eyebrow="About" title="About" />
+        <SectionHead n="05" eyebrow="About" title="About" />
 
         <div className="about-grid">
           {/* One observer on the paragraph staggers every word, rather than an

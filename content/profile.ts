@@ -43,7 +43,7 @@ export const PROFILE = {
     { k: "Focus", v: "Systems engineering" },
     { k: "Depth", v: "CUDA · FPGA · Infrastructure · Full stack" },
     { k: "Location", v: "Champaign · Chicago, IL" },
-    { k: "Status", v: "Open to 2026 internships" },
+    { k: "Status", v: "Open to 2027 internships" },
   ],
 
   about:
@@ -202,12 +202,14 @@ export const CONTACT_LINKS: ContactLink[] = [
   { key: "Résumé", value: "resume.pdf", href: "/resume.pdf", external: true },
 ];
 
+/* The nav renders straight from this, so every entry has to name a section
+   that exists. `index` used to point at the ledger, which the card grid
+   replaced — the tab survived it and scrolled nowhere. */
 export const SECTIONS = [
   { n: "01", id: "work", label: "Work" },
-  { n: "02", id: "index", label: "Index" },
-  { n: "03", id: "experience", label: "Experience" },
-  { n: "04", id: "skills", label: "Skills" },
-  { n: "05", id: "recognition", label: "Recognition" },
-  { n: "06", id: "about", label: "About" },
-  { n: "07", id: "contact", label: "Contact" },
+  { n: "02", id: "experience", label: "Experience" },
+  { n: "03", id: "skills", label: "Skills" },
+  { n: "04", id: "recognition", label: "Recognition" },
+  { n: "05", id: "about", label: "About" },
+  { n: "06", id: "contact", label: "Contact" },
 ] as const;

@@ -6,7 +6,7 @@ import Skills from "@/components/Skills";
 import Recognition from "@/components/Recognition";
 import About from "@/components/About";
 import Contact from "@/components/Contact";
-import InkSpine from "@/components/motion/InkSpine";
+import Rail from "@/components/motion/Rail";
 import { DiagramDefs } from "@/components/diagrams";
 
 export default function Page() {
@@ -16,7 +16,7 @@ export default function Page() {
       {/* Arrowheads for all 23 drawings, defined once. */}
       <DiagramDefs />
       <main>
-        <InkSpine />
+        <Rail />
         <Hero />
         <ProjectGrid />
         <Experience />

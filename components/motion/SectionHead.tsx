@@ -34,6 +34,8 @@ export default function SectionHead({ n, eyebrow, title, right }: SectionHeadPro
         <h2>{title}</h2>
       </div>
       {right ? <div className="h-right">{right}</div> : null}
+      {/* the tick this section puts across the margin rule */}
+      <i className="secmark" aria-hidden="true" />
       <motion.i
         className="rule"
         aria-hidden="true"

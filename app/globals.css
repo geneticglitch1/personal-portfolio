@@ -59,7 +59,7 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
 ::selection{ background: var(--accent); color: var(--card); }
 :focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
-/* The ink spine is absolutely positioned against main, so it spans the
+/* The margin rule is absolutely positioned against main, so it spans the
    document rather than the viewport. */
 main{ position: relative; }
 .wrap{ position: relative; z-index: 1; width: min(100% - 2*var(--mx), var(--maxw)); margin-inline: auto; }
@@ -119,20 +119,44 @@ html:not(.motion) .hero-stamp{ transform: rotate(-8deg) !important; }
   will-change: transform, opacity; z-index: 3;
 }
 
-/* Ink spine — one continuous stroke drawn down the left margin of the page.
-   Absolutely positioned against <main>, so it spans the whole document rather
-   than the viewport: the stroke grows past the sections as they're read. */
-.spine{
-  position: absolute; left: calc((100% - min(100% - 2*var(--mx), var(--maxw))) / 2 - 28px);
-  top: 0; bottom: 0; width: 22px; z-index: 3; pointer-events: none;
+/* Margin rule — the ruled edge of the document, running the full height of
+   <main> rather than the viewport. The ticks are static texture; the only
+   moving part is the ink column, and it is driven by the scroll timeline, so
+   nothing here depends on script. Where the timeline isn't supported the
+   ruled edge simply sits there unfilled, which is a finished-looking state.
+
+   Section heads put an accent tick across it (.secmark), which is what ties
+   the rule to the document instead of leaving it a stray line in the margin. */
+.rail{
+  position: absolute; left: calc((100% - min(100% - 2*var(--mx), var(--maxw))) / 2 - 30px);
+  top: 0; bottom: 0; width: 9px; z-index: 2; pointer-events: none;
 }
-.spine svg{ display: block; width: 100%; height: 100%; }
-.spine path{ fill: none; stroke: var(--ink); stroke-width: 1.25; opacity: 0.42; }
-.spine .spine-head{
-  position: absolute; left: 50%; width: 7px; height: 7px; margin-left: -3.5px; margin-top: -3.5px;
-  border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(190,58,43,0.16);
+/* unread: faint ticks */
+.rail::before{
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(to bottom, var(--line) 0 3px, transparent 3px 10px);
 }
-@media (max-width: 900px){ .spine{ display: none; } }
+/* read: the same ticks in ink. The mask lives on the parent so the growing
+   child scales underneath a tick pattern that stays put. */
+.rail i{
+  position: absolute; inset: 0; display: block;
+  -webkit-mask-image: repeating-linear-gradient(to bottom, #000 0 3px, transparent 3px 10px);
+  mask-image: repeating-linear-gradient(to bottom, #000 0 3px, transparent 3px 10px);
+}
+.rail i b{
+  position: absolute; inset: 0; display: block; background: var(--ink); opacity: 0.6;
+  transform: scaleY(0); transform-origin: top center;
+}
+@keyframes rail-ink{ from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
+@supports (animation-timeline: scroll()){
+  .rail i b{ animation: rail-ink linear both; animation-timeline: scroll(root block); }
+}
+/* the accent tick a section head puts across the rule */
+.sechead .secmark{
+  position: absolute; left: -36px; top: 7px; width: 26px; height: 2px;
+  background: var(--accent); border-radius: 1px;
+}
+@media (max-width: 1080px){ .rail, .sechead .secmark{ display: none; } }
 
 /* Section rules are drawn rather than painted, so the static border comes off
    the element and lives on a motion-scaled child instead. */
@@ -338,10 +362,54 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
 .record-field .k{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
 .record-field .v{ font-family: var(--mono); font-size: 0.8rem; color: var(--ink); }
 .record-head-line{ font-family: var(--serif); font-size: clamp(1.3rem,2.4vw,1.95rem); line-height: 1.18; letter-spacing: -0.01em; margin: 0 0 18px; max-width: 26ch; }
-.record-bullets{ list-style: none; margin: 0; padding: 0; }
+/* The bullets run against their own rule, which inks in behind them as the
+   list is read — the same idea as the margin rule, at paragraph scale. */
+.record-bullets{ list-style: none; margin: 0; padding: 0 0 0 18px; position: relative; }
+.record-bullets::before,
+.record-bullets::after{ content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; }
+.record-bullets::before{ background: var(--line); }
+.record-bullets::after{ background: var(--accent); transform: scaleY(0); transform-origin: top center; }
 .record-bullets li{ display: grid; grid-template-columns: 2.2em 1fr; gap: 8px; padding-block: 12px; border-top: 1px solid var(--line-2); color: var(--ink-2); max-width: 64ch; }
 .record-bullets li .bn{ font-family: var(--mono); font-size: 0.66rem; color: var(--accent-d); padding-top: 0.3em; }
 @media (max-width: 720px){ .record-body{ grid-template-columns: 1fr; } }
+
+/* The offload strip. Same 362-unit viewBox as the card drawings so the type
+   lands at the same size on a phone; capped here so a wide column can't scale
+   it into a billboard. */
+.offload{
+  max-width: 560px; margin: 0 0 clamp(20px, 3.5vh, 34px);
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: 3px; padding: 10px;
+}
+.offload svg{ display: block; width: 100%; height: auto; }
+/* On a phone the strip has to claw back the record's own padding, or the
+   labels land under the legibility floor the card drawings are sized to. */
+@media (max-width: 680px){
+  .offload{ padding: 5px; margin-inline: -10px; }
+}
+
+/* The two result plates. Both resolve to their finished value with no
+   animation at all, so an unsupported browser reads the right number. */
+.statplate{ border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
+.statplate .v{
+  display: block; font-family: var(--mono); font-weight: 700; line-height: 1;
+  font-size: clamp(1.5rem, 3vw, 2.3rem); color: var(--accent-d); font-variant-numeric: tabular-nums;
+}
+.statplate .l{
+  display: block; margin-top: 7px; font-family: var(--mono); font-size: 0.58rem;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--dim); line-height: 1.55;
+}
+/* Counting is done by animating a registered integer and printing it through
+   a counter — the only way to animate text content without script. */
+@property --thr{ syntax: "<integer>"; inherits: false; initial-value: 200; }
+.stat-thr{ counter-reset: thr var(--thr); }
+.stat-thr .v::after{ content: counter(thr) "%"; }
+@keyframes count-thr{ from{ --thr: 100; } to{ --thr: 200; } }
+
+.stat-lat s{ text-decoration: none; position: relative; color: var(--faint); }
+.stat-lat s::after{
+  content: ""; position: absolute; left: -2px; right: -2px; top: 52%; height: 2px;
+  background: var(--accent); transform-origin: left center;
+}
 
 /* ════════════════════════════════════════════════════════════════════════
    04 — SKILLS (drawers)
@@ -429,6 +497,12 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
 @keyframes draw{ from{ stroke-dashoffset: 1; } to{ stroke-dashoffset: 0; } }
 @keyframes pop{ from{ opacity: 0; transform: scale(0.72); } to{ opacity: 1; transform: none; } }
 @keyframes beat{ 0%,100%{ opacity: 1; } 45%{ opacity: 0.28; } }
+@keyframes fade-up{ from{ opacity: 0; transform: translateY(7px); } to{ opacity: 1; transform: none; } }
+@keyframes travel{
+  from{ offset-distance: 0%; opacity: 0; }
+  14%{ opacity: 1; } 86%{ opacity: 1; }
+  to{ offset-distance: 100%; opacity: 0; }
+}
 
 @media (prefers-reduced-motion: no-preference){
   @supports (animation-timeline: view()){
@@ -454,6 +528,66 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
       animation-range: entry 24% cover 44%;
       transform-box: fill-box; transform-origin: center;
     }
+    /* The severing stroke — drawn after the path it cancels, so you see the
+       route exist and then get cut. */
+    .d-cut{
+      stroke-dasharray: 1;
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: entry 38% cover 54%;
+    }
+    /* The verdict line. Lands last, once the drawing it summarises is there. */
+    .d-late{
+      animation: fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 58%;
+      transform-box: fill-box;
+    }
+
+    /* ── 02 Experience ───────────────────────────────────────────────────
+       The second CPU lane arrives a slot at a time. A scroll timeline has no
+       notion of delay, so the stagger is a per-slot animation-range, set
+       inline on each rect. */
+    .x-slot{
+      animation: pop linear both;
+      animation-timeline: view();
+      transform-box: fill-box; transform-origin: center;
+    }
+    .record-bullets li{
+      animation: fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 20%;
+    }
+    .record-bullets::after{
+      animation: rail-ink linear both;
+      animation-timeline: view();
+      animation-range: cover 18% cover 82%;
+    }
+    .stat-thr{
+      animation: count-thr linear both;
+      animation-timeline: view();
+      animation-range: entry 26% cover 60%;
+    }
+    .stat-lat s::after{
+      animation: strike linear both;
+      animation-timeline: view();
+      animation-range: entry 26% cover 48%;
+    }
+  }
+}
+@keyframes strike{ from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
+
+/* A payload running the path it was just given. Purely decorative, so it is
+   invisible unless the browser can drive it — no stray dot parked at a path
+   start on anything that can't animate it. */
+.d-travel{ opacity: 0; }
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: view()) and (offset-distance: 0%){
+    .d-travel{
+      animation: travel linear both;
+      animation-timeline: view();
+      animation-range: entry 26% cover 52%;
+    }
   }
 }
 
@@ -461,20 +595,22 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
    cost for an effect nobody is looking at. */
 @media (hover: hover) and (prefers-reduced-motion: no-preference){
   .pcard:hover .d-beat{ animation: beat 1.5s var(--ease) 2; }
+  @supports (offset-distance: 0%){
+    .pcard:hover .d-travel{ animation: travel 1.9s linear infinite; animation-timeline: auto; }
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════════════
    TOUCH / SMALL SCREENS
    The velocity effects rewrite --vel every scroll frame, and each reader of
    it costs real work: the grain is a full-viewport fixed layer with
-   mix-blend-mode, the section skew re-transforms eight large elements, and the
-   ledger riffle re-transforms twenty-one rows. That's affordable on a desktop
-   GPU and janks badly on a phone, so none of it runs here.
+   mix-blend-mode and the section skew re-transforms every large element on the
+   page. That's affordable on a desktop GPU and janks badly on a phone, so
+   neither runs here.
    ════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 900px), (hover: none){
   body::before{ display: none; }
   .sec > .wrap{ transform: none; }
-  .lrow{ transform: none; }
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -484,10 +620,10 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
   *{ animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
   html [data-readhead]{ clip-path: none !important; }
   .rh-line{ display: none !important; }
-  .spine{ display: none !important; }
+  .rail i b{ animation: none !important; transform: none !important; opacity: 0.28 !important; }
   .sec > .wrap{ transform: none !important; }
-  .lrow{ transform: none !important; }
   body::before{ opacity: 0.55 !important; }
   .about-para .w{ opacity: 1 !important; }
-  .card-slot{ transform: none !important; }
+  /* both rules read as complete rather than empty */
+  .record-bullets::after{ transform: none !important; }
 }
