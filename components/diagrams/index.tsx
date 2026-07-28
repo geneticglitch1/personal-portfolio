@@ -1,0 +1,56 @@
+import {
+  Periscope,
+  Sentinel,
+  Trading,
+  Cuda,
+  Fpga,
+  MediaStack,
+  Malloc,
+} from "./featured";
+import {
+  CraftDeck,
+  K3s,
+  Socratic,
+  Stint,
+  EnvSync,
+  Schema,
+  Journaling,
+  Urban,
+  Epoll,
+  Make,
+  Shell,
+  Ext2,
+  Pico,
+  XRay,
+  Mtls,
+  Mnist,
+} from "./compact";
+
+/** Keyed by `diagram` on each project. Every project has one. */
+export const DIAGRAMS: Record<string, () => React.JSX.Element> = {
+  periscope: Periscope,
+  sentinel: Sentinel,
+  trading: Trading,
+  cuda: Cuda,
+  fpga: Fpga,
+  mediastack: MediaStack,
+  malloc: Malloc,
+  craftdeck: CraftDeck,
+  k3s: K3s,
+  socratic: Socratic,
+  stint: Stint,
+  envsync: EnvSync,
+  schema: Schema,
+  journaling: Journaling,
+  urban: Urban,
+  epoll: Epoll,
+  make: Make,
+  shell: Shell,
+  ext2: Ext2,
+  pico: Pico,
+  xray: XRay,
+  mtls: Mtls,
+  mnist: Mnist,
+};
+
+export { default as DiagramDefs } from "./defs";

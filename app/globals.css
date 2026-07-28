@@ -94,11 +94,9 @@ html.motion [data-readhead]{ clip-path: inset(0 0 100% 0); }
    gets `.motion` when scripting is on and reduced motion is off — so when it
    isn't there, force every animated element to its final state. Without this,
    a visitor with JS disabled gets a mostly blank page. */
-html:not(.motion) .card-slot,
 html:not(.motion) .drawer,
 html:not(.motion) .seal-ico,
 html:not(.motion) .award,
-html:not(.motion) .ledger > div,
 html:not(.motion) .about-para .w,
 html:not(.motion) .hero-name .ln > span,
 html:not(.motion) .folder,
@@ -225,89 +223,106 @@ section{ position: relative; }
 .scrollcue .arw{ color: var(--accent); display: inline-block; }
 
 /* ════════════════════════════════════════════════════════════════════════
-   01 — SELECTED WORK (draggable card board)
+   DIAGRAM KIT
+   One visual language for all 23 drawings, in the paper palette: ink strokes
+   on manila, stamp red reserved for the thing the drawing is actually about.
+   Diagrams use a 360×220 viewBox, so type is sized for that, not for CSS px.
    ════════════════════════════════════════════════════════════════════════ */
-.board{ position: relative; }
-.cards{ position: relative; height: 620px; }
-.card-slot{ position: absolute; width: clamp(250px, 25vw, 330px); will-change: transform; }
-.card{
-  position: relative; width: 100%; background: var(--card);
-  border: 1px solid var(--line); border-radius: 3px; cursor: grab; will-change: transform;
-  box-shadow: 0 18px 40px -14px rgba(34,30,24,0.42), 0 2px 5px rgba(34,30,24,0.12);
-}
-.card:active{ cursor: grabbing; }
-
-/* touch-action:none is what lets a finger drag a card — and what stops the
-   page scrolling underneath it. So it exists only on wide pointer screens,
-   where the draggable pile exists. Anywhere else the cards scroll like
-   ordinary content. */
-@media (min-width: 901px){
-  .cards:not(.stack) .card{ touch-action: none; }
-}
-
-/* Stacked column, applied two independent ways: by the JS `stack` class, and
-   by the viewport alone. The second is what matters on a phone — before
-   hydration the class isn't there yet, and the prerendered pile would overflow
-   the viewport and (previously) kill scrolling over a 620px stretch of page.
-   These rules follow the base ones deliberately, and left/top carry
-   !important because React prerenders them as inline styles. */
-.cards.stack{ height: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-.cards.stack .card-slot{ position: relative; left: auto; top: auto; width: min(100%, 380px); }
-.cards.stack .card{ cursor: default; }
-
-@media (max-width: 900px){
-  .cards{ height: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-  .cards .card-slot{
-    position: relative; left: auto !important; top: auto !important;
-    width: min(100%, 380px);
-  }
-  .cards .card{ cursor: default; }
-}
-.card .punch{ position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 30px; height: 14px;
-  border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; background: var(--paper); }
-.card .chead{ display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px dashed var(--line); }
-.card .chead .cno{ font-family: var(--mono); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.1em; }
-.card .chead .cyear{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; color: var(--dim); }
-.card .cbody{ padding: 16px 15px 18px; }
-.card .ctitle{ font-family: var(--sans); font-weight: 700; font-size: 1.5rem; line-height: 1.02; letter-spacing: -0.025em; margin: 0 0 12px; }
-.card .cdesc{ font-size: 0.86rem; line-height: 1.45; color: var(--ink-2); margin: 0 0 16px; }
-.card .cmetric{ display: inline-flex; align-items: baseline; gap: 7px; white-space: nowrap; border: 1.5px solid var(--accent); color: var(--accent);
-  padding: 5px 10px; transform: rotate(-2deg); border-radius: 3px; margin-bottom: 16px; box-shadow: inset 0 0 0 1px rgba(190,58,43,0.16); }
-.card .cmetric .v{ font-family: var(--mono); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
-.card .cmetric .l{ font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.card .ctags{ display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
-.card .ctags span{ font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--line); padding: 3px 7px; border-radius: 2px; color: var(--dim); }
-.card .cfoot{ border-top: 1px solid var(--line-2); padding-top: 12px; }
-.card .openbtn{ display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 2px; transition: gap 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease); }
-.card .openbtn:hover{ color: var(--accent-d); border-color: var(--accent); gap: 12px; }
+.d-box{ fill: var(--card); stroke: var(--ink); stroke-width: 1.4; }
+.d-box-soft{ fill: rgba(34,30,24,0.05); stroke: var(--line); stroke-width: 1.2; }
+.d-accent-box{ fill: rgba(190,58,43,0.10); stroke: var(--accent); stroke-width: 1.7; }
+.d-line{ stroke: var(--ink); stroke-width: 1.4; fill: none; }
+.d-line-dim{ stroke: var(--faint); stroke-width: 1.2; fill: none; }
+.d-accent-line{ stroke: var(--accent); stroke-width: 1.9; fill: none; }
+.d-dash{ stroke-dasharray: 4 4; }
+.d-fill{ fill: var(--ink); }
+.d-fill-accent{ fill: var(--accent); }
+/* Sized up from the first pass: a 360-unit viewBox scaled into a ~320px card
+   on a phone renders 9.5 units at about 7.9px, which is under the floor for
+   comfortable reading. These land near 9.3px there and 12px on desktop. */
+.d-t{ font-family: var(--mono); font-size: 12px; fill: var(--ink); letter-spacing: 0.01em; }
+.d-t-sm{ font-family: var(--mono); font-size: 10.5px; fill: var(--dim); letter-spacing: 0.02em; }
+.d-t-accent{ font-family: var(--mono); font-size: 11px; fill: var(--accent-d); font-weight: 700; letter-spacing: 0.03em; }
+.d-t-head{ font-family: var(--mono); font-size: 10px; fill: var(--faint); letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* ════════════════════════════════════════════════════════════════════════
-   02 — INDEX (ledger)
+   01 — WORK: the card grid
    ════════════════════════════════════════════════════════════════════════ */
-.ledger{ border-top: 1.5px solid var(--ink); }
-.lrow{
-  display: block; border-bottom: 1px solid var(--line); cursor: pointer; width: 100%; text-align: left;
-  /* riffle: rows lag behind the scroll by a per-row amount */
-  transform: translateX(calc(clamp(-1, var(--vel), 1) * var(--phase, 0) * 1px));
+.filters{ display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: clamp(18px,3vh,30px); }
+.chip{
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--dim); border: 1px solid var(--line); background: transparent;
+  padding: 7px 13px; border-radius: 100px;
+  transition: color 0.22s var(--ease), border-color 0.22s var(--ease), background 0.22s var(--ease);
 }
-.lhead{ display: grid; grid-template-columns: 120px 90px 1fr 180px 40px; gap: 18px; align-items: center;
-  padding-block: clamp(14px,2.2vh,22px); transition: padding-left 0.45s var(--ease), background 0.4s var(--ease); }
-.lrow:hover .lhead{ padding-left: clamp(10px,1.4vw,20px); background: rgba(34,30,24,0.03); }
-.lacc{ font-family: var(--mono); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--accent-d); }
-.lyear{ font-family: var(--mono); font-size: 0.72rem; color: var(--dim); }
-.lname{ font-family: var(--sans); font-weight: 600; font-size: clamp(1.1rem,2vw,1.55rem); letter-spacing: -0.02em; transition: color 0.35s var(--ease); }
-.lrow:hover .lname{ color: var(--accent-d); }
-.lcat{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
-.larr{ justify-self: end; color: var(--faint); transition: transform 0.4s var(--ease), color 0.35s var(--ease); }
-.lrow:hover .larr{ color: var(--accent); transform: translateX(4px); }
-.lmore{ display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease); }
-.lmore > div{ overflow: hidden; }
-.lrow:hover .lmore, .lrow:focus-within .lmore{ grid-template-rows: 1fr; }
-.lmore-in{ display: grid; grid-template-columns: 210px 1fr; gap: 18px; padding-bottom: clamp(16px,2.4vh,24px); }
-.lmore-in p{ margin: 0; color: var(--ink-2); max-width: 60ch; }
-.lmore-in .lt{ display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-.lmore-in .lt span{ font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--line); padding: 3px 7px; border-radius: 2px; color: var(--dim); }
-@media (max-width: 720px){ .lhead{ grid-template-columns: 84px 1fr; } .lyear,.lcat,.larr{ display: none; } .lmore-in{ grid-template-columns: 1fr; } }
+.chip:hover{ color: var(--ink); border-color: var(--ink); }
+.chip[aria-pressed="true"]{ background: var(--ink); color: var(--card); border-color: var(--ink); }
+.chip .n{ opacity: 0.55; margin-left: 6px; }
+
+.grid{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
+@media (max-width: 1080px){ .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px){ .grid{ grid-template-columns: minmax(0, 1fr); } }
+
+.pcard{
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--card); border: 1px solid var(--line); border-radius: 3px;
+  box-shadow: 0 12px 30px -18px rgba(34,30,24,0.42), 0 1px 3px rgba(34,30,24,0.08);
+  transition: transform 0.32s var(--ease), box-shadow 0.32s var(--ease), border-color 0.32s var(--ease);
+}
+a.pcard:hover{
+  transform: translateY(-4px); border-color: var(--ink);
+  box-shadow: 0 22px 44px -18px rgba(34,30,24,0.5), 0 1px 3px rgba(34,30,24,0.1);
+}
+.pcard .punch{
+  position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 30px; height: 14px;
+  border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; background: var(--paper);
+}
+.pmeta{
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  padding: 14px 15px 0; font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint);
+}
+.pmeta .pcat{ color: var(--accent-d); }
+.ptitle{
+  font-family: var(--sans); font-weight: 700; font-size: 1.18rem; line-height: 1.1;
+  letter-spacing: -0.025em; margin: 9px 0 0; padding: 0 15px;
+}
+.pdesc{ font-size: 0.83rem; line-height: 1.5; color: var(--ink-2); margin: 8px 0 14px; padding: 0 15px; }
+
+/* the drawing sits on a recessed plate so it reads as a figure, not decoration */
+.pfig{
+  margin: 0 15px; background: var(--paper); border: 1px solid var(--line-2); border-radius: 2px;
+  padding: 8px; overflow: hidden;
+}
+.pfig svg{ display: block; width: 100%; height: auto; }
+/* Claw back what horizontal room there is on a phone — every pixel here is a
+   pixel of diagram legibility. */
+@media (max-width: 680px){
+  .pfig{ margin: 0 9px; padding: 5px; }
+}
+
+.pfoot{
+  margin-top: auto; padding: 13px 15px 14px; display: flex; align-items: center;
+  gap: 10px; flex-wrap: wrap;
+}
+.pmetric{
+  display: inline-flex; align-items: baseline; gap: 7px; white-space: nowrap;
+  border-left: 2.5px solid var(--accent); padding-left: 9px;
+}
+.pmetric .v{ font-family: var(--mono); font-weight: 700; font-size: 1.05rem; color: var(--accent-d); font-variant-numeric: tabular-nums; }
+.pmetric .l{ font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); max-width: 17ch; line-height: 1.35; white-space: normal; }
+.ptags{ display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto; }
+.ptags span{
+  font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.05em; text-transform: uppercase;
+  border: 1px solid var(--line); padding: 3px 6px; border-radius: 2px; color: var(--dim);
+}
+.parrow{
+  position: absolute; top: 12px; right: 13px; font-family: var(--mono); font-size: 0.8rem;
+  color: var(--faint); transition: transform 0.3s var(--ease), color 0.3s var(--ease);
+}
+a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
+/* private-source cards say so instead of pretending to be clickable */
+.pnote{ font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.05em; color: var(--faint); }
 
 /* ════════════════════════════════════════════════════════════════════════
    03 — EXPERIENCE
@@ -405,49 +420,48 @@ section{ position: relative; }
 @media (max-width: 720px){ .maillabel .ml-rows{ grid-template-columns: 1fr; } }
 
 /* ════════════════════════════════════════════════════════════════════════
-   DOSSIER — detail overlay
+   CARD + DIAGRAM MOTION
+   CSS scroll-driven throughout: no JS in the path, so there is no state where
+   a card renders blank because a script didn't run. Browsers without
+   animation-timeline get the finished state, which is the correct one.
    ════════════════════════════════════════════════════════════════════════ */
-.dossier{ position: fixed; inset: 0; z-index: 200; background: rgba(34,30,24,0.46); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-  display: grid; place-items: end center; }
-.dossier-sheet{ position: relative; width: min(100%, 1100px); height: min(94vh, 100%); background: var(--card); border: 1px solid var(--line);
-  border-radius: 10px 10px 0 0; box-shadow: 0 -30px 80px -20px rgba(0,0,0,0.5); overflow-y: auto; will-change: transform; }
-.dossier-tab{ position: absolute; top: -28px; left: 40px; height: 30px; padding: 0 24px 0 20px; background: var(--kraft); border: 1px solid var(--line); border-bottom: 0; border-radius: 9px 9px 0 0; display: flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
-.dossier-bar{ position: sticky; top: 0; z-index: 4; display: flex; justify-content: space-between; align-items: center;
-  padding: 16px clamp(22px,4vw,46px); background: color-mix(in srgb, var(--card) 90%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.dossier-bar .closebtn{ display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
-.dossier-bar .closebtn:hover{ color: var(--accent-d); }
-.dossier-bar .pn{ display: flex; gap: 18px; }
-.dossier-bar .pn button{ font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
-.dossier-bar .pn button:hover{ color: var(--ink); }
-.dossier-body{ padding: clamp(28px,5vw,60px) clamp(22px,4vw,46px) clamp(50px,8vh,100px); }
-.da-top{ display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: baseline; padding-bottom: 18px; border-bottom: 1px dashed var(--line); margin-bottom: clamp(22px,3.5vh,40px); }
-.da-title{ font-family: var(--sans); font-weight: 700; font-size: clamp(2.2rem,5.5vw,4.4rem); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; margin: 0 0 clamp(18px,3vh,30px); }
-.da-metricrow{ display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: clamp(26px,4vh,48px); }
-.da-metric{ display: inline-flex; align-items: baseline; gap: 9px; border: 2.5px solid var(--accent); color: var(--accent); padding: 9px 14px; border-radius: 4px; transform: rotate(-1.5deg); box-shadow: inset 0 0 0 1px rgba(190,58,43,0.18); }
-.da-metric .v{ font-family: var(--mono); font-weight: 700; font-size: clamp(1.4rem,2.6vw,2.1rem); font-variant-numeric: tabular-nums; }
-.da-metric .l{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.da-intro{ font-family: var(--serif); font-size: clamp(1.2rem,2vw,1.55rem); line-height: 1.4; color: var(--ink); max-width: 60ch; margin: 0 0 clamp(30px,5vh,56px); }
-.da-quote{ margin: clamp(30px,5vh,56px) 0; padding-left: clamp(18px,3vw,34px); border-left: 3px solid var(--accent); }
-.da-quote blockquote{ margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(1.5rem,3.4vw,2.6rem); line-height: 1.22; letter-spacing: -0.01em; text-wrap: balance; }
-.da-quote cite{ display: block; margin-top: 16px; font-family: var(--mono); font-style: normal; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
-.da-cols{ display: grid; grid-template-columns: 1fr 240px; gap: clamp(24px,4vw,56px); align-items: start; }
-.da-body{ display: flex; flex-direction: column; gap: 20px; color: var(--ink-2); font-size: 1.06rem; line-height: 1.62; }
-.da-body p{ margin: 0; }
-.da-side{ display: flex; flex-direction: column; gap: 22px; position: sticky; top: 80px; }
-.da-side .blk .k{ font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); display: block; margin-bottom: 9px; }
-.da-stack{ display: flex; flex-wrap: wrap; gap: 6px; }
-.da-stack span{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid var(--line); padding: 4px 9px; border-radius: 2px; color: var(--ink-2); }
-.da-links{ display: flex; flex-direction: column; gap: 8px; }
-.da-links a{ font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; width: fit-content; }
-.da-links a:hover{ color: var(--accent-d); border-color: var(--accent); }
-.da-note{ font-family: var(--mono); font-size: 0.62rem; line-height: 1.6; letter-spacing: 0.04em; color: var(--dim); }
-.da-foot{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: clamp(40px,6vh,70px); padding-top: 22px; border-top: 1px solid var(--line); }
-.da-foot .nav{ cursor: pointer; display: flex; flex-direction: column; gap: 6px; text-align: left; }
-.da-foot .nav.next{ text-align: right; align-items: flex-end; }
-.da-foot .nav .k{ font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
-.da-foot .nav .t{ font-family: var(--sans); font-weight: 700; font-size: clamp(1.2rem,2vw,1.6rem); letter-spacing: -0.02em; }
-.da-foot .nav:hover .t{ color: var(--accent-d); }
-@media (max-width: 720px){ .da-cols{ grid-template-columns: 1fr; } .da-side{ position: static; } .da-foot{ grid-template-columns: 1fr; } .da-foot .nav.next{ text-align: left; align-items: flex-start; } }
+@keyframes card-rise{ from{ opacity: 0; transform: translateY(20px); } to{ opacity: 1; transform: none; } }
+@keyframes draw{ from{ stroke-dashoffset: 1; } to{ stroke-dashoffset: 0; } }
+@keyframes pop{ from{ opacity: 0; transform: scale(0.72); } to{ opacity: 1; transform: none; } }
+@keyframes beat{ 0%,100%{ opacity: 1; } 45%{ opacity: 0.28; } }
+
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: view()){
+    .grid > *{
+      animation: card-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 18%;
+    }
+    /* Flow lines plot themselves along their own path as the card arrives.
+       pathLength="1" on the element makes one dash unit equal the whole path,
+       so this needs no real lengths. dasharray is introduced only inside this
+       block — everywhere else the stroke is plainly solid and fully drawn. */
+    .d-flow{
+      stroke-dasharray: 1;
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: entry 16% cover 40%;
+    }
+    /* The one element each drawing is actually about. */
+    .d-pop{
+      animation: pop linear both;
+      animation-timeline: view();
+      animation-range: entry 24% cover 44%;
+      transform-box: fill-box; transform-origin: center;
+    }
+  }
+}
+
+/* Alive on hover rather than always: 23 diagrams looping forever is a battery
+   cost for an effect nobody is looking at. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference){
+  .pcard:hover .d-beat{ animation: beat 1.5s var(--ease) 2; }
+}
 
 /* ════════════════════════════════════════════════════════════════════════
    TOUCH / SMALL SCREENS

@@ -37,7 +37,7 @@ export const PROFILE = {
   role: "Systems Engineer",
 
   lead:
-    "I work under the abstraction — CUDA kernels, allocators, a job scheduler I moved onto an FPGA — and on the infrastructure that keeps all of it fed. Everything on this site is built and deployed from a cluster in my apartment.",
+    "I work under the abstraction — CUDA kernels, allocators, a job scheduler I moved onto an FPGA — and on the infrastructure that keeps all of it fed.",
 
   specs: [
     { k: "Focus", v: "Systems engineering" },
