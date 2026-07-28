@@ -11,25 +11,29 @@ const AA = "url(#arw-a)";
 
 export function CraftDeck() {
   return (
-    <svg viewBox={VB} role="img" aria-label="An ops panel drives the game server over RCON">
-      <rect className="d-accent-box d-pop" x="70" y="18" width="220" height="38" rx="3" />
-      <text className="d-t-accent" x="180" y="35" textAnchor="middle">CRAFTDECK PANEL</text>
-      <text className="d-t-sm" x="180" y="48" textAnchor="middle">console · mods · backups · schedules</text>
+    <svg viewBox={VB} role="img" aria-label="An ops panel drives the game server, bound to the LAN">
+      <rect className="d-accent-box d-pop" x="64" y="14" width="232" height="42" rx="3" />
+      <text className="d-t-accent" x="180" y="32" textAnchor="middle">CRAFTDECK PANEL</text>
+      <text className="d-t-sm" x="180" y="47" textAnchor="middle">console · mods · backups</text>
 
-      <path className="d-line d-flow" pathLength={1} d="M 130 56 L 130 78 L 92 78 L 92 96" markerEnd={A} />
-      <path className="d-line d-flow" pathLength={1} d="M 230 56 L 230 78 L 268 78 L 268 96" markerEnd={A} />
-      <text className="d-t-sm" x="150" y="74">RCON</text>
+      <path className="d-line d-flow" pathLength={1} d="M 150 58 L 100 88" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 210 58 L 260 88" markerEnd={A} />
+      <text className="d-t-sm" x="4" y="82">RCON</text>
+      <text className="d-t-sm" x="356" y="82" textAnchor="end">docker socket</text>
 
-      <rect className="d-box" x="14" y="98" width="156" height="38" rx="2" />
-      <text className="d-t-sm" x="92" y="116" textAnchor="middle">Fabric server</text>
-      <text className="d-t-sm" x="92" y="128" textAnchor="middle">whitelist + EasyAuth</text>
+      <rect className="d-box" x="8" y="90" width="156" height="42" rx="2" />
+      <text className="d-t-sm" x="86" y="110" textAnchor="middle">Fabric server</text>
+      <text className="d-t-sm" x="86" y="124" textAnchor="middle">whitelist + EasyAuth</text>
 
-      <rect className="d-box-soft" x="190" y="98" width="156" height="38" rx="2" />
-      <text className="d-t-sm" x="268" y="116" textAnchor="middle">backup sidecar</text>
-      <text className="d-t-sm" x="268" y="128" textAnchor="middle">tar + retention</text>
+      <rect className="d-box-soft" x="196" y="90" width="156" height="42" rx="2" />
+      <text className="d-t-sm" x="274" y="110" textAnchor="middle">backup sidecar</text>
+      <text className="d-t-sm" x="274" y="124" textAnchor="middle">tar + retention</text>
 
-      <text className="d-t-accent d-beat" x="180" y="170" textAnchor="middle">the panel holds the Docker socket</text>
-      <text className="d-t-sm" x="180" y="188" textAnchor="middle">so it binds to the LAN and never the internet</text>
+      <line className="d-accent-line d-dash" x1="4" y1="152" x2="356" y2="152" />
+      <text className="d-t-head" x="4" y="147">lan</text>
+      <text className="d-t-accent d-late d-beat" x="180" y="174" textAnchor="middle">nothing crosses this line</text>
+      <text className="d-t-sm" x="180" y="194" textAnchor="middle">the panel holds the Docker socket, so it binds</text>
+      <text className="d-t-sm" x="180" y="210" textAnchor="middle">to the LAN and is never port-forwarded</text>
     </svg>
   );
 }
@@ -115,57 +119,69 @@ export function Stint() {
 }
 
 export function EnvSync() {
+  /* The order is the whole point: plaintext never reaches the boundary — it is
+     already ciphertext by the time anything crosses. */
+  const cross = "M 166 101 L 208 101";
   return (
-    <svg viewBox={VB} role="img" aria-label="Secrets are encrypted on the client; the server only ever holds ciphertext">
-      <rect className="d-box" x="4" y="30" width="150" height="92" rx="3" />
-      <text className="d-t-head" x="79" y="48" textAnchor="middle">your machine</text>
-      <rect className="d-box-soft" x="18" y="56" width="122" height="26" rx="2" />
-      <text className="d-t-sm" x="79" y="73" textAnchor="middle">plaintext .env</text>
-      <rect className="d-accent-box d-pop" x="18" y="88" width="122" height="26" rx="2" />
-      <text className="d-t-accent" x="79" y="105" textAnchor="middle">Argon2id + AES-GCM</text>
+    <svg viewBox={VB} role="img" aria-label="Secrets are encrypted before the boundary; the server only ever holds ciphertext">
+      <text className="d-t-head" x="6" y="14">your machine</text>
+      <text className="d-t-head" x="354" y="14" textAnchor="end">the server</text>
 
+      <rect className="d-box" x="4" y="22" width="160" height="112" rx="3" />
+      <rect className="d-box-soft" x="16" y="36" width="136" height="28" rx="2" />
+      <text className="d-t-sm" x="84" y="54" textAnchor="middle">plaintext .env</text>
+      <path className="d-line d-flow" pathLength={1} d="M 84 66 L 84 82" markerEnd={A} />
+      <rect className="d-accent-box d-pop" x="14" y="84" width="140" height="34" rx="3" />
+      <text className="d-t-accent" x="84" y="99" textAnchor="middle">Argon2id</text>
+      <text className="d-t-accent" x="84" y="112" textAnchor="middle">AES-256-GCM</text>
+
+      <text className="d-t-accent" x="180" y="14" textAnchor="middle">boundary</text>
       <line className="d-accent-line d-dash" x1="180" y1="20" x2="180" y2="140" />
-      <path className="d-line d-flow" pathLength={1} d="M 156 76 L 204 76" markerEnd={A} />
-      <text className="d-t-accent d-beat" x="180" y="16" textAnchor="middle">boundary</text>
+      <path className="d-accent-line d-flow" pathLength={1} d={cross} markerEnd={AA} />
+      <circle className="d-fill-accent d-travel" r="3.2" style={{ offsetPath: `path("${cross}")` }} />
 
-      <rect className="d-box" x="206" y="30" width="150" height="92" rx="3" />
-      <text className="d-t-head" x="281" y="48" textAnchor="middle">the server</text>
-      <rect className="d-box-soft" x="220" y="62" width="122" height="40" rx="2" />
-      <text className="d-t-sm" x="281" y="79" textAnchor="middle">ciphertext</text>
-      <text className="d-t-sm" x="281" y="92" textAnchor="middle">and nothing else</text>
+      <rect className="d-box" x="196" y="22" width="160" height="112" rx="3" />
+      <text className="d-t-sm" x="276" y="52" textAnchor="middle">no key</text>
+      <text className="d-t-sm" x="276" y="68" textAnchor="middle">no recovery path</text>
+      <rect className="d-box-soft" x="210" y="84" width="132" height="34" rx="2" />
+      <text className="d-t-sm" x="276" y="105" textAnchor="middle">ciphertext</text>
 
-      <text className="d-t-sm" x="180" y="170" textAnchor="middle">no admin override, no password reset</text>
-      <text className="d-t-sm" x="180" y="188" textAnchor="middle">lose the passphrase and the vault is gone</text>
+      <text className="d-t-accent d-late d-beat" x="180" y="164" textAnchor="middle">it is encrypted before it crosses</text>
+      <text className="d-t-sm" x="180" y="186" textAnchor="middle">no admin override, no password reset —</text>
+      <text className="d-t-sm" x="180" y="204" textAnchor="middle">lose the passphrase and the vault is gone</text>
     </svg>
   );
 }
 
 export function Schema() {
-  const steps = ["chunk", "embed", "rerank"];
   return (
     <svg viewBox={VB} role="img" aria-label="PDFs are routed by type, embedded, then reranked so answers cite real passages">
-      <rect className="d-box" x="4" y="30" width="76" height="60" rx="2" />
-      <text className="d-t-sm" x="42" y="55" textAnchor="middle">PDF</text>
-      <text className="d-t-sm" x="42" y="68" textAnchor="middle">in</text>
+      <text className="d-t-head" x="4" y="13">pdf in</text>
 
-      <path className="d-line d-flow" pathLength={1} d="M 82 46 L 104 46" markerEnd={A} />
-      <path className="d-line d-flow" pathLength={1} d="M 82 74 L 104 74" markerEnd={A} />
-      <rect className="d-box-soft" x="106" y="32" width="94" height="26" rx="2" />
-      <text className="d-t-sm" x="153" y="49" textAnchor="middle">typed · PyMuPDF</text>
-      <rect className="d-box-soft" x="106" y="62" width="94" height="26" rx="2" />
-      <text className="d-t-sm" x="153" y="79" textAnchor="middle">written · TrOCR</text>
+      <rect className="d-box" x="4" y="30" width="58" height="52" rx="2" />
+      <text className="d-t-sm" x="33" y="52" textAnchor="middle">PDF</text>
+      <text className="d-t-sm" x="33" y="66" textAnchor="middle">pages</text>
 
-      {steps.map((s, i) => (
-        <g key={s}>
-          <rect className={i === 2 ? "d-accent-box d-pop" : "d-box"} x="228" y={26 + i * 34} width="124" height="28" rx="2" />
-          <text className={i === 2 ? "d-t-accent" : "d-t-sm"} x="290" y={44 + i * 34} textAnchor="middle">{s}</text>
-        </g>
-      ))}
-      <path className="d-line d-flow" pathLength={1} d="M 202 60 L 224 46" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 64 46 L 84 34" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 64 66 L 84 78" markerEnd={A} />
+      <rect className="d-box-soft" x="86" y="22" width="118" height="26" rx="2" />
+      <text className="d-t-sm" x="145" y="39" textAnchor="middle">typed · PyMuPDF</text>
+      <rect className="d-box-soft" x="86" y="66" width="118" height="26" rx="2" />
+      <text className="d-t-sm" x="145" y="83" textAnchor="middle">written · TrOCR</text>
 
-      <text className="d-t-accent d-beat" x="180" y="150" textAnchor="middle">retrieval is reranked, not just nearest</text>
-      <text className="d-t-sm" x="180" y="172" textAnchor="middle">so what reaches the model is actually relevant</text>
-      <text className="d-t-sm" x="180" y="194" textAnchor="middle">and the answer quotes a real passage</text>
+      <path className="d-line d-flow" pathLength={1} d="M 206 35 L 226 50" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 206 79 L 226 64" markerEnd={A} />
+      <rect className="d-box" x="228" y="38" width="128" height="38" rx="2" />
+      <text className="d-t-sm" x="292" y="54" textAnchor="middle">chunk → embed</text>
+      <text className="d-t-sm" x="292" y="68" textAnchor="middle">pgvector</text>
+
+      <path className="d-line d-flow" pathLength={1} d="M 292 78 L 292 96" markerEnd={A} />
+      <rect className="d-accent-box d-pop" x="76" y="98" width="280" height="34" rx="3" />
+      <text className="d-t-accent" x="216" y="119" textAnchor="middle">CROSS-ENCODER RERANK</text>
+
+      <text className="d-t-accent d-late d-beat" x="180" y="158" textAnchor="middle">nearest is not the same as relevant</text>
+      <text className="d-t-sm" x="180" y="180" textAnchor="middle">so the passage that reaches the model is the one</text>
+      <text className="d-t-sm" x="180" y="198" textAnchor="middle">the answer actually quotes</text>
     </svg>
   );
 }
@@ -226,20 +242,21 @@ export function Urban() {
 export function Epoll() {
   return (
     <svg viewBox={VB} role="img" aria-label="One epoll thread holds every connection, one state machine per socket">
-      <rect className="d-accent-box d-pop" x="4" y="60" width="112" height="72" rx="3" />
-      <text className="d-t-accent" x="60" y="88" textAnchor="middle">ONE THREAD</text>
-      <text className="d-t-sm" x="60" y="102" textAnchor="middle">epoll_wait</text>
-      <text className="d-t-sm d-beat" x="60" y="116" textAnchor="middle">no thread per conn</text>
+      <text className="d-t-head" x="4" y="13">one thread, every connection</text>
+
+      <rect className="d-accent-box d-pop" x="4" y="58" width="112" height="76" rx="3" />
+      <text className="d-t-accent" x="60" y="82" textAnchor="middle">ONE THREAD</text>
+      <text className="d-t-sm" x="60" y="98" textAnchor="middle">epoll_wait</text>
+      <text className="d-t-sm d-beat" x="60" y="114" textAnchor="middle">non-blocking</text>
 
       {[0, 1, 2, 3].map((i) => (
         <g key={i}>
-          <path className="d-line d-flow" pathLength={1} d={`M 118 96 L 168 ${34 + i * 42}`} markerEnd={A} />
-          <rect className="d-box" x="170" y={20 + i * 42} width="186" height="30" rx="2" />
-          <text className="d-t-sm" x="182" y={39 + i * 42}>socket {i + 1}</text>
-          <text className="d-t-sm" x="262" y={39 + i * 42}>· state machine</text>
+          <path className="d-line d-flow" pathLength={1} d={`M 118 96 L 144 ${39 + i * 44}`} markerEnd={A} />
+          <rect className="d-box" x="148" y={24 + i * 44} width="208" height="30" rx="2" />
+          <text className="d-t-sm" x="158" y={43 + i * 44}>socket {i + 1} · state machine</text>
         </g>
       ))}
-      <text className="d-t-sm" x="180" y="204" textAnchor="middle">a partial read resumes where the last EAGAIN left off</text>
+      <text className="d-t-accent d-late" x="180" y="208" textAnchor="middle">a partial read resumes at the last EAGAIN</text>
     </svg>
   );
 }
@@ -247,27 +264,31 @@ export function Epoll() {
 export function Make() {
   return (
     <svg viewBox={VB} role="img" aria-label="The Makefile becomes a DAG so independent rules run at once">
-      <rect className="d-box" x="140" y="16" width="80" height="30" rx="2" />
-      <text className="d-t-sm" x="180" y="35" textAnchor="middle">target</text>
+      <text className="d-t-head" x="4" y="13">makefile → dag</text>
+      <text className="d-t-sm" x="356" y="13" textAnchor="end">-j 4</text>
 
-      <path className="d-line d-flow" pathLength={1} d="M 160 46 L 92 78" markerEnd={A} />
-      <path className="d-line d-flow" pathLength={1} d="M 180 46 L 180 78" markerEnd={A} />
-      <path className="d-line d-flow" pathLength={1} d="M 200 46 L 268 78" markerEnd={A} />
+      <rect className="d-box" x="138" y="20" width="84" height="28" rx="2" />
+      <text className="d-t-sm" x="180" y="39" textAnchor="middle">target</text>
+
+      <path className="d-line d-flow" pathLength={1} d="M 168 48 L 96 70" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 180 48 L 180 70" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 192 48 L 264 70" markerEnd={A} />
 
       {[52, 140, 228].map((x, i) => (
         <g key={x}>
-          <rect className="d-accent-box d-pop" x={x} y="80" width="80" height="30" rx="2" />
-          <text className="d-t-accent" x={x + 40} y="99" textAnchor="middle">rule {i + 1}</text>
+          <rect className="d-accent-box d-pop" x={x} y="72" width="80" height="30" rx="2" />
+          <text className="d-t-accent" x={x + 40} y="91" textAnchor="middle">rule {i + 1}</text>
         </g>
       ))}
-      <text className="d-t-accent d-beat" x="180" y="130" textAnchor="middle">nothing waits on anything — all three at once</text>
 
-      <path className="d-line d-flow" pathLength={1} d="M 92 112 L 160 142" markerEnd={A} />
-      <path className="d-line d-flow" pathLength={1} d="M 180 112 L 180 142" markerEnd={A} />
-      <path className="d-line d-flow" pathLength={1} d="M 268 112 L 200 142" markerEnd={A} />
-      <rect className="d-box" x="130" y="144" width="100" height="30" rx="2" />
-      <text className="d-t-sm" x="180" y="163" textAnchor="middle">leaf deps</text>
-      <text className="d-t-sm" x="180" y="200" textAnchor="middle">workers sleep on a condvar until a rule is runnable</text>
+      <path className="d-line d-flow" pathLength={1} d="M 92 102 L 150 124" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 180 102 L 180 124" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 268 102 L 210 124" markerEnd={A} />
+      <rect className="d-box" x="124" y="126" width="112" height="28" rx="2" />
+      <text className="d-t-sm" x="180" y="145" textAnchor="middle">leaf deps</text>
+
+      <text className="d-t-accent d-late d-beat" x="180" y="180" textAnchor="middle">nothing connects the three rules</text>
+      <text className="d-t-sm" x="180" y="202" textAnchor="middle">so they run at once — workers sleep on a condvar</text>
     </svg>
   );
 }
@@ -275,26 +296,30 @@ export function Make() {
 export function Shell() {
   return (
     <svg viewBox={VB} role="img" aria-label="A hand-written parser builds a pipeline of forked processes">
-      <rect className="d-box-soft" x="4" y="22" width="352" height="28" rx="2" />
-      <text className="d-t-sm" x="180" y="40" textAnchor="middle">cat f.txt | grep err | wc -l &gt; out</text>
-      <path className="d-line d-flow" pathLength={1} d="M 180 50 L 180 68" markerEnd={A} />
-      <text className="d-t-accent d-beat" x="356" y="64" textAnchor="end">tokenizer + parser, by hand</text>
+      <rect className="d-box-soft" x="4" y="14" width="352" height="28" rx="2" />
+      <text className="d-t" x="180" y="33" textAnchor="middle">cat f.txt | grep err | wc -l &gt; out</text>
+
+      <path className="d-line d-flow" pathLength={1} d="M 180 42 L 180 56" markerEnd={A} />
+      <rect className="d-accent-box d-pop" x="96" y="58" width="168" height="28" rx="3" />
+      <text className="d-t-accent" x="180" y="76" textAnchor="middle">TOKENIZER + PARSER</text>
+      <path className="d-line d-flow" pathLength={1} d="M 180 86 L 180 100" markerEnd={A} />
 
       {["cat", "grep", "wc"].map((c, i) => (
         <g key={c}>
-          <rect className={i === 1 ? "d-accent-box d-pop" : "d-box"} x={16 + i * 116} y="72" width="94" height="34" rx="2" />
-          <text className={i === 1 ? "d-t-accent" : "d-t-sm"} x={63 + i * 116} y="93" textAnchor="middle">{c}</text>
+          <rect className="d-box" x={8 + i * 122} y="102" width="100" height="32" rx="2" />
+          <text className="d-t-sm" x={58 + i * 122} y="122" textAnchor="middle">{c}</text>
           {i < 2 && (
-            <path className="d-accent-line d-flow" pathLength={1} d={`M ${112 + i * 116} 89 L ${130 + i * 116} 89`} markerEnd={AA} />
+            <path className="d-accent-line d-flow" pathLength={1} d={`M ${110 + i * 122} 118 L ${126 + i * 122} 118`} markerEnd={AA} />
           )}
         </g>
       ))}
-      <text className="d-t-sm" x="180" y="126" textAnchor="middle">pipe(2) between each pair</text>
+      <text className="d-t-sm" x="180" y="150" textAnchor="middle">pipe(2) between each pair</text>
 
-      <path className="d-line d-flow" pathLength={1} d="M 285 106 L 285 142" markerEnd={A} />
-      <rect className="d-box-soft" x="228" y="144" width="116" height="28" rx="2" />
-      <text className="d-t-sm" x="286" y="162" textAnchor="middle">out</text>
-      <text className="d-t-sm" x="180" y="200" textAnchor="middle">fork · execvp · waitpid, with signals handled</text>
+      <path className="d-line d-flow" pathLength={1} d="M 302 134 L 302 156" markerEnd={A} />
+      <rect className="d-box-soft" x="246" y="158" width="110" height="26" rx="2" />
+      <text className="d-t-sm" x="301" y="176" textAnchor="middle">out</text>
+      <text className="d-t-accent d-late d-beat" x="4" y="176">written by hand —</text>
+      <text className="d-t-sm" x="4" y="204">fork · execvp · waitpid, with signals handled</text>
     </svg>
   );
 }

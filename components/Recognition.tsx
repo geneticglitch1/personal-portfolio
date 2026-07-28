@@ -9,7 +9,7 @@ export default function Recognition() {
     <section className="sec" id="recognition">
       <div className="wrap">
         <SectionHead
-          n="05"
+          n="04"
           eyebrow="Recognition"
           title="Recognition"
           right={<span className="lbl">{AWARDS.length} entries</span>}

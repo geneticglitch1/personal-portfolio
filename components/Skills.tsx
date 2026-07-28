@@ -9,7 +9,7 @@ export default function Skills() {
     <section className="sec" id="skills">
       <div className="wrap">
         <SectionHead
-          n="04"
+          n="03"
           eyebrow="Skills"
           title="What I work with"
           right={<span className="lbl">{SKILLS.length} groups</span>}
