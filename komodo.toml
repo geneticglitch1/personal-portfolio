@@ -1,0 +1,143 @@
+# Komodo pipeline for aryan-singh.dev. Replaces the old Jenkinsfile.
+#
+# Point a ResourceSync at this file (repo geneticglitch1/personal-portfolio,
+# branch main, path komodo.toml) and Komodo reconciles everything below by
+# diffing it against what already exists — no config lives only in the UI.
+#
+# The push webhook goes on the GitHub repo (Settings > Webhooks):
+#   Payload URL   https://komodo.aryan-singh.dev/listener/github/action/portfolio-release/main
+#   Content type  application/json
+#   Secret        KOMODO_WEBHOOK_SECRET
+#   Events        Just the push event
+#
+# It points at the Action rather than the Build directly, because the Action is
+# what reports back to GitHub. Komodo's listener only reads the branch out of
+# the payload, so the resource never sees the commit — see the script below.
+
+[[build]]
+name = "portfolio"
+description = "Next.js static export baked into an nginx image"
+tags = ["portfolio"]
+[build.config]
+builder = "builder"          # your Builder resource
+repo = "geneticglitch1/personal-portfolio"
+branch = "main"
+git_account = "geneticglitch1"
+dockerfile_path = "Dockerfile"
+include_commit_tag = true
+image_registry = [{ domain = "ghcr.io", account = "geneticglitch1" }]
+# The Action drives builds. Leaving this on would double-fire on every push.
+webhook_enabled = false
+links = ["https://aryan-singh.dev"]
+labels = """
+org.opencontainers.image.source = https://github.com/geneticglitch1/personal-portfolio
+org.opencontainers.image.description = aryan-singh.dev
+"""
+
+[[deployment]]
+name = "portfolio"
+description = "nginx serving out/ on the edge node"
+tags = ["portfolio"]
+deploy = true
+[deployment.config]
+server = "r"            # your Server resource
+image.type = "Build"
+image.params.build = "portfolio"
+# Host 3999 -> container 80, same mapping the Jenkins pipeline used.
+ports = "3999:80"
+restart = "unless-stopped"
+links = ["https://aryan-singh.dev"]
+
+# Build, deploy, and tell GitHub what happened. Komodo has no native commit
+# status integration, so the reporting is explicit here.
+#
+# Needs a Komodo Variable named GITHUB_STATUS_TOKEN, marked secret, holding a
+# fine-grained PAT scoped to this repo with:
+#   Contents: read-only   Commit statuses: read+write   Deployments: read+write
+[[action]]
+name = "portfolio-release"
+description = "Build, deploy, and report status back to GitHub"
+tags = ["portfolio"]
+[action.config]
+webhook_enabled = true
+failure_alert = true
+file_contents = '''
+const REPO = "geneticglitch1/personal-portfolio";
+const SITE = "https://aryan-singh.dev";
+const KOMODO = "https://komodo.aryan-singh.dev";
+const TOKEN = "[[GITHUB_STATUS_TOKEN]]";
+
+const api = async (path: string, init: RequestInit = {}) => {
+  const res = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      // flash/ant-man cover the in_progress and inactive deployment states on
+      // older GitHub Enterprise; github.com ignores them.
+      Accept:
+        "application/vnd.github+json, application/vnd.github.flash-preview+json, application/vnd.github.ant-man-preview+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      ...(init.body ? { "Content-Type": "application/json" } : {}),
+    },
+  });
+  if (!res.ok) {
+    throw new Error(`${path} -> ${res.status} ${await res.text()}`);
+  }
+  return res.json();
+};
+
+const post = (path: string, body: unknown) =>
+  api(path, { method: "POST", body: JSON.stringify(body) });
+
+// The listener only forwards the branch, not the commit, so resolve the head
+// of main before anything reports against it.
+const { sha } = await api(`/commits/${BRANCH}`);
+console.log(`Releasing ${sha.slice(0, 7)}`);
+
+// The check next to the commit.
+const status = (state: string, description: string, target_url = `${KOMODO}/builds`) =>
+  post(`/statuses/${sha}`, {
+    state,
+    context: "komodo/portfolio",
+    description: description.slice(0, 140),
+    target_url,
+  });
+
+// The "Deployed to production / View deployment" box. Vercel uses this same
+// pair of endpoints; environment_url is what the button links to.
+const deployment = await post("/deployments", {
+  ref: sha,
+  environment: "production",
+  description: "aryan-singh.dev",
+  auto_merge: false,
+  required_contexts: [],
+});
+const deployStatus = (state: string, extra: Record<string, unknown> = {}) =>
+  post(`/deployments/${deployment.id}/statuses`, {
+    state,
+    environment: "production",
+    log_url: `${KOMODO}/builds`,
+    ...extra,
+  });
+
+await status("pending", "Building image");
+await deployStatus("in_progress");
+
+try {
+  const build = await komodo.execute("RunBuild", { build: "portfolio" });
+  if (!build.success) throw new Error("Image build failed");
+
+  const deploy = await komodo.execute("Deploy", { deployment: "portfolio" });
+  if (!deploy.success) throw new Error("Deploy failed");
+
+  const url = `${KOMODO}/updates/${deploy.id}`;
+  await status("success", `Deployed ${build.version.major}.${build.version.minor}.${build.version.patch}`, url);
+  await deployStatus("success", { environment_url: SITE, log_url: url });
+  console.log(`Live at ${SITE}`);
+} catch (e) {
+  const message = e instanceof Error ? e.message : String(e);
+  await status("failure", message);
+  await deployStatus("failure");
+  throw e;
+}
+'''

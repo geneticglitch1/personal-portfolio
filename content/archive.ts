@@ -324,7 +324,7 @@ export const ARCHIVE: ArchiveEntry[] = [
       "Six VMs on Proxmox, K3s on top. It runs LLM inference, Postgres, vector stores, CI runners, photo and document storage, and this page.",
       "Nothing has a public IP. The only way in is a Cloudflare mTLS tunnel, with OPNsense at the edge, Suricata for IDS, and CrowdSec for adaptive blocking. WireGuard handles remote access when I need to be on the network rather than in front of one service.",
       "Longhorn replicates persistent volumes synchronously across three nodes, so a node dying overnight is something I read about the next morning instead of getting paged for.",
-      "The CI side is Jenkins: build a Docker image, push to GHCR, roll it out with zero downtime. I almost never touch a deploy by hand.",
+      "The CI side is Komodo: build a Docker image, push to GHCR, roll it out with zero downtime. I almost never touch a deploy by hand.",
     ],
     stack: [
       "K3s",
@@ -337,7 +337,7 @@ export const ARCHIVE: ArchiveEntry[] = [
       "Longhorn",
       "Traefik",
       "Fleet",
-      "Jenkins",
+      "Komodo",
     ],
     links: {},
   },
@@ -356,7 +356,7 @@ export const ARCHIVE: ArchiveEntry[] = [
     body: [
       "Everything is encrypted client-side before it leaves. A passphrase runs through Argon2id (tuned to ~250 ms — slow enough to make brute force miserable), then AES-GCM seals the secrets. The server sees ciphertext and nothing else. No admin override, no password reset: lose the passphrase and the vault is gone, on purpose.",
       "The Rust CLI behaves like git: envsync push, pull, diff, rollback. Login is OAuth2 device-code with auto-refresh, so the CLI never touches the password. Each project keeps its own snapshot history, which makes a bad rotation a one-command undo.",
-      "Conflict resolution is deterministic, so two people editing the same vault never diverge. Scopes are per-project, so a leaked token costs you one vault, not all of them. Every push builds, tests, and deploys to K3s through a Jenkins pipeline.",
+      "Conflict resolution is deterministic, so two people editing the same vault never diverge. Scopes are per-project, so a leaked token costs you one vault, not all of them. Every push builds, tests, and deploys to K3s through a Komodo pipeline.",
     ],
     stack: [
       "Rust",
@@ -368,7 +368,7 @@ export const ARCHIVE: ArchiveEntry[] = [
       "AES-GCM",
       "Keycloak",
       "MinIO",
-      "Jenkins",
+      "Komodo",
     ],
     links: { github: "https://github.com/geneticglitch1/EnvSync" },
   },
@@ -419,7 +419,7 @@ export const ARCHIVE: ArchiveEntry[] = [
       "I owned the AI layer end to end: pulling the right context together, shaping it into a prompt the model could actually use, and getting the response back to the UI before it felt slow.",
       "The prompts come out of a RAG pipeline on Claude 3.5 Sonnet. It pulls together mood ratings, what the webcam saw during the day, and what was on the calendar, then asks Claude for something grounded in all of that — not a generic 'reflect on your day.'",
       "Vision runs in its own FastAPI service on MediaPipe and OpenCV, under 100 ms a frame, so the UI can show what the model thinks it sees without stalling the loop.",
-      "CI/CD is Jenkins: every push builds the Next.js frontend, the vision service, and the backend, then rolls them out to K3s as Docker images.",
+      "CI/CD is Komodo: every push builds the Next.js frontend, the vision service, and the backend, then rolls them out to K3s as Docker images.",
     ],
     stack: [
       "TypeScript",
@@ -431,7 +431,7 @@ export const ARCHIVE: ArchiveEntry[] = [
       "Claude 3.5 Sonnet",
       "PostgreSQL",
       "Docker",
-      "Jenkins",
+      "Komodo",
       "K3s",
     ],
     links: {},

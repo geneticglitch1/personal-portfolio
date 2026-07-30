@@ -118,7 +118,7 @@ export const SKILLS: SkillGroup[] = [
       "K3s",
       "Docker",
       "Proxmox",
-      "Jenkins",
+      "Komodo",
       "OPNsense",
       "WireGuard",
       "Traefik",

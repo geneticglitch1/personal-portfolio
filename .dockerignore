@@ -11,4 +11,4 @@ k8s
 *.log
 Dockerfile
 .dockerignore
-Jenkinsfile
+komodo.toml

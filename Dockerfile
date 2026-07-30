@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 # Next.js static export (out/) served by nginx. The build happens inside the
-# image, so the Jenkins host needs Docker and nothing else.
+# image, so the Komodo builder needs Docker and nothing else.
 
 # ── deps: install from lockfile ────────────────────────────────────
 FROM node:22-alpine AS deps
