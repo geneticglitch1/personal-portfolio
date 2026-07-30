@@ -63,6 +63,7 @@ webhook_enabled = true
 failure_alert = true
 file_contents = '''
 const REPO = "geneticglitch1/personal-portfolio";
+const BRANCH = "main";
 const SITE = "https://aryan-singh.dev";
 const KOMODO = "https://komodo.aryan-singh.dev";
 const TOKEN = "[[GITHUB_STATUS_TOKEN]]";
