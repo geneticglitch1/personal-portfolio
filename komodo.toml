@@ -52,6 +52,11 @@ deploy = true
 server = "orion"
 image.type = "Build"
 image.params.build = "aryans-portfolio"
+# Komodo defaults deployments to network = "host", which makes Docker ignore
+# port mappings entirely and puts nginx straight onto the host's :80 — where it
+# fights whatever already terminates TLS there. Bridge keeps it in its own
+# namespace so the mapping below is what actually decides the host port.
+network = "bridge"
 # Host 3999 -> container 80, same mapping the Jenkins pipeline used.
 ports = "3999:80"
 restart = "unless-stopped"
