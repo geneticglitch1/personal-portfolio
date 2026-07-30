@@ -5,7 +5,7 @@
 # diffing it against what already exists — no config lives only in the UI.
 #
 # The push webhook goes on the GitHub repo (Settings > Webhooks):
-#   Payload URL   https://komodo.aryan-singh.dev/listener/github/action/portfolio-release/main
+#   Payload URL   https://komodo.aryan-singh.dev/listener/github/action/aryans-portfolio-release/main
 #   Content type  application/json
 #   Secret        KOMODO_WEBHOOK_SECRET
 #   Events        Just the push event
@@ -14,12 +14,21 @@
 # what reports back to GitHub. Komodo's listener only reads the branch out of
 # the payload, so the resource never sees the commit — see the script below.
 
+# Builds run on orion itself. Sync creates Builders before Builds, so declaring
+# it here means the Build below always has something to attach to.
+[[builder]]
+name = "builder"
+description = "orion, building in place"
+[builder.config]
+type = "Server"
+params.servers = ["orion"]
+
 [[build]]
 name = "aryans-portfolio"
 description = "Next.js static export baked into an nginx image"
 tags = ["portfolio"]
 [build.config]
-builder = "builder"          # your Builder resource
+builder = "builder"
 repo = "geneticglitch1/personal-portfolio"
 branch = "main"
 git_account = "geneticglitch1"
@@ -40,9 +49,9 @@ description = "nginx serving out/ on the edge node"
 tags = ["portfolio"]
 deploy = true
 [deployment.config]
-server = "r"            # your Server resource
+server = "orion"
 image.type = "Build"
-image.params.build = "portfolio"
+image.params.build = "aryans-portfolio"
 # Host 3999 -> container 80, same mapping the Jenkins pipeline used.
 ports = "3999:80"
 restart = "unless-stopped"
@@ -125,10 +134,10 @@ await status("pending", "Building image");
 await deployStatus("in_progress");
 
 try {
-  const build = await komodo.execute("RunBuild", { build: "portfolio" });
+  const build = await komodo.execute("RunBuild", { build: "aryans-portfolio" });
   if (!build.success) throw new Error("Image build failed");
 
-  const deploy = await komodo.execute("Deploy", { deployment: "portfolio" });
+  const deploy = await komodo.execute("Deploy", { deployment: "aryans-portfolio" });
   if (!deploy.success) throw new Error("Deploy failed");
 
   const url = `${KOMODO}/updates/${deploy.id}`;
