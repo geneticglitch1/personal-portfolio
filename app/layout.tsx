@@ -2,6 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, JetBrains_Mono, Newsreader } from "next/font/google";
 import LenisProvider from "@/components/motion/LenisProvider";
 import ScrollVelocityProvider from "@/components/motion/ScrollVelocityProvider";
+import StructuredData from "@/components/StructuredData";
+import {
+  OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  SITE_URL,
+} from "@/content/site";
 import "./globals.css";
 
 const sans = Space_Grotesk({
@@ -27,9 +34,79 @@ const serif = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "Aryan Singh — Systems Engineer",
-  description:
-    "Systems engineer working on CUDA kernels, allocators, FPGA offload, and the infrastructure that keeps them fed. CS and Math at UIUC.",
+  // Every relative URL below — canonical, og:image, the icons — resolves
+  // against this. Without it Next emits them as paths, and OG scrapers that
+  // don't resolve relative to the document silently drop the card.
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  applicationName: "Aryan Singh",
+  authors: [{ name: "Aryan Singh", url: SITE_URL }],
+  creator: "Aryan Singh",
+  publisher: "Aryan Singh",
+  category: "technology",
+  keywords: [
+    "Aryan Singh",
+    "systems engineer",
+    "CUDA",
+    "GPU programming",
+    "FPGA",
+    "high performance computing",
+    "memory allocator",
+    "C++",
+    "Rust",
+    "homelab",
+    "Kubernetes",
+    "UIUC",
+    "University of Illinois",
+    "software engineering internship 2027",
+    "portfolio",
+  ],
+  alternates: {
+    canonical: "/",
+    // Discovery hint for anything that prefers the plain-text summary to
+    // parsing a page made mostly of inline SVG.
+    types: { "text/plain": `${SITE_URL}/llms.txt` },
+  },
+  openGraph: {
+    type: "profile",
+    firstName: "Aryan",
+    lastName: "Singh",
+    username: "geneticglitch1",
+    url: SITE_URL,
+    siteName: "Aryan Singh",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Aryan Singh — systems engineer. CUDA, FPGA offload, infrastructure.",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      // Let Google use the full snippet and a large thumbnail instead of the
+      // conservative defaults it picks on its own.
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "16x16 32x32" },
@@ -66,6 +143,10 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
+
+        {/* Person / ProfilePage / WebSite, built from content/ so it can't
+            drift from the page. */}
+        <StructuredData />
 
         {/* Umami: pageviews plus session recording. `async` rather than
             `defer` — React 19 hoists and executes async scripts natively, so

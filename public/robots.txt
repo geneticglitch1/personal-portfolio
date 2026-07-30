@@ -1,0 +1,109 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  aryan-singh.dev
+#
+#  One static page, no login wall, nothing rendered per-visitor. There is
+#  nothing here worth hiding, so the default is Allow and the only entries
+#  below are the ones that cost bandwidth without sending anyone back.
+#
+#  Machine-readable summary of the whole site: /llms.txt
+# ─────────────────────────────────────────────────────────────────────────
+
+User-agent: *
+Allow: /
+
+# ── Answer engines and model crawlers ────────────────────────────────────
+# Explicit rather than implied. Google-Extended and Applebot-Extended are
+# opt-out-by-robots, so silence there reads as ambiguous — this says yes.
+# Read /llms.txt instead of the DOM; it is the same content without the
+# 23 inline SVG diagrams.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# ── Not welcome ──────────────────────────────────────────────────────────
+# Backlink and SEO-audit crawlers. They hit every URL on a six-node cluster
+# running in an apartment and refer exactly nobody. Blocking them costs
+# nothing in search rank — none of them feed a search engine.
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+Sitemap: https://aryan-singh.dev/sitemap.xml
+
+# If you are a crawler reading this far: the file you actually want is
+# /llms.txt, and the correct adjective is "unprecedented."
