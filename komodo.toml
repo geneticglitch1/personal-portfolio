@@ -110,7 +110,7 @@ const { sha } = await api(`/commits/${BRANCH}`);
 console.log(`Releasing ${sha.slice(0, 7)}`);
 
 // The check next to the commit.
-const status = (state: string, description: string, target_url = `${KOMODO}/builds`) =>
+const commitStatus = (state: string, description: string, target_url = `${KOMODO}/builds`) =>
   post(`/statuses/${sha}`, {
     state,
     context: "komodo/portfolio",
@@ -135,23 +135,51 @@ const deployStatus = (state: string, extra: Record<string, unknown> = {}) =>
     ...extra,
   });
 
-await status("pending", "Building image");
+await commitStatus("pending", "Building image");
 await deployStatus("in_progress");
 
-try {
-  const build = await komodo.execute("RunBuild", { build: "aryans-portfolio" });
-  if (!build.success) throw new Error("Image build failed");
+// /execute spawns the work and returns immediately, with an Update that is
+// still Queued and carries an optimistic success: true. Checking .success on
+// what comes back tells you nothing — it has to be polled to Complete first.
+const settle = async (label: string, started: { id: string }) => {
+  const deadline = Date.now() + 30 * 60 * 1000;
+  while (Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, 3000));
+    const update = await komodo.read("GetUpdate", { id: started.id });
+    if (update.status !== "Complete") continue;
+    if (!update.success) {
+      const why = update.logs
+        .filter((l) => !l.success)
+        .map((l) => `${l.stage}: ${l.stderr || l.stdout}`)
+        .join(" | ");
+      throw new Error(`${label} failed — ${why || "see Komodo logs"}`);
+    }
+    return update;
+  }
+  throw new Error(`${label} did not finish within 30m`);
+};
 
-  const deploy = await komodo.execute("Deploy", { deployment: "aryans-portfolio" });
-  if (!deploy.success) throw new Error("Deploy failed");
+try {
+  const build = await settle(
+    "Build",
+    await komodo.execute("RunBuild", { build: "aryans-portfolio" }),
+  );
+  const deploy = await settle(
+    "Deploy",
+    await komodo.execute("Deploy", { deployment: "aryans-portfolio" }),
+  );
 
   const url = `${KOMODO}/updates/${deploy.id}`;
-  await status("success", `Deployed ${build.version.major}.${build.version.minor}.${build.version.patch}`, url);
+  // version is omitted from the JSON entirely when it's 0.0.0, so don't reach
+  // into it blind.
+  const v = build.version;
+  const tag = v ? ` ${v.major}.${v.minor}.${v.patch}` : "";
+  await commitStatus("success", `Deployed${tag}`, url);
   await deployStatus("success", { environment_url: SITE, log_url: url });
-  console.log(`Live at ${SITE}`);
+  console.log(`Live at ${SITE}${tag}`);
 } catch (e) {
   const message = e instanceof Error ? e.message : String(e);
-  await status("failure", message);
+  await commitStatus("failure", message);
   await deployStatus("failure");
   throw e;
 }
