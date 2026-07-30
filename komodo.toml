@@ -15,7 +15,7 @@
 # the payload, so the resource never sees the commit — see the script below.
 
 [[build]]
-name = "portfolio"
+name = "aryans-portfolio"
 description = "Next.js static export baked into an nginx image"
 tags = ["portfolio"]
 [build.config]
