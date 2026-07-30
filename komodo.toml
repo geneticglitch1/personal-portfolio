@@ -35,7 +35,7 @@ org.opencontainers.image.description = aryan-singh.dev
 """
 
 [[deployment]]
-name = "portfolio"
+name = "aryans-portfolio"
 description = "nginx serving out/ on the edge node"
 tags = ["portfolio"]
 deploy = true
@@ -55,7 +55,7 @@ links = ["https://aryan-singh.dev"]
 # fine-grained PAT scoped to this repo with:
 #   Contents: read-only   Commit statuses: read+write   Deployments: read+write
 [[action]]
-name = "portfolio-release"
+name = "aryans-portfolio-release"
 description = "Build, deploy, and report status back to GitHub"
 tags = ["portfolio"]
 [action.config]
