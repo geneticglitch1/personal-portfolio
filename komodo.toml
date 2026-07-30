@@ -141,11 +141,18 @@ await deployStatus("in_progress");
 // /execute spawns the work and returns immediately, with an Update that is
 // still Queued and carries an optimistic success: true. Checking .success on
 // what comes back tells you nothing — it has to be polled to Complete first.
-const settle = async (label: string, started: { id: string }) => {
+//
+// Update.id is serde(rename = "_id") and goes over the wire as
+// { "_id": { "$oid": "..." } } — there is no `id` key on the JSON at all.
+const updateId = (u: any): string => u?._id?.$oid ?? u?.id ?? "";
+
+const settle = async (label: string, started: any) => {
+  const id = updateId(started);
+  if (!id) throw new Error(`${label}: no update id in ${JSON.stringify(started)}`);
   const deadline = Date.now() + 30 * 60 * 1000;
   while (Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, 3000));
-    const update = await komodo.read("GetUpdate", { id: started.id });
+    const update = await komodo.read("GetUpdate", { id });
     if (update.status !== "Complete") continue;
     if (!update.success) {
       const why = update.logs
@@ -169,7 +176,7 @@ try {
     await komodo.execute("Deploy", { deployment: "aryans-portfolio" }),
   );
 
-  const url = `${KOMODO}/updates/${deploy.id}`;
+  const url = `${KOMODO}/updates/${updateId(deploy)}`;
   // version is omitted from the JSON entirely when it's 0.0.0, so don't reach
   // into it blind.
   const v = build.version;
