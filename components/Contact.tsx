@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { PROFILE, CONTACT_LINKS } from "@/content/profile";
+import { RESUME_PDF } from "@/content/resume";
 
 /**
  * Contact is the call to action, so nothing here is hidden by default.
@@ -57,6 +58,7 @@ export default function Contact() {
                   {...(l.external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
+                  {...(l.href === RESUME_PDF ? { "data-resume": "" } : {})}
                 >
                   <span className="k">{l.key}</span>
                   <span className="v">{l.value} →</span>

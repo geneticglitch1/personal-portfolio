@@ -42,11 +42,13 @@ export default function Hero() {
             }}
           >
             <span className="filetab">Portfolio · 2026</span>
+            {/* ResumeViewer intercepts this; the href is the no-script path. */}
             <a
               className="filetab tab-cta"
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
+              data-resume=""
             >
               Résumé
               <span className="arw" aria-hidden="true">

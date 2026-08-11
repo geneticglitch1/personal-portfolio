@@ -7,6 +7,7 @@ import Recognition from "@/components/Recognition";
 import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Rail from "@/components/motion/Rail";
+import ResumeViewer from "@/components/ResumeViewer";
 import { DiagramDefs } from "@/components/diagrams";
 
 export default function Page() {
@@ -25,6 +26,8 @@ export default function Page() {
         <About />
         <Contact />
       </main>
+      {/* Opened by any <a data-resume> on the page. */}
+      <ResumeViewer />
     </>
   );
 }
