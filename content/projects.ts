@@ -88,8 +88,8 @@ export const PROJECTS: Project[] = [
     featured: true,
   },
   {
-    slug: "trading-agent",
-    name: "Overnight Trading Agent",
+    slug: "vega",
+    name: "Vega",
     year: "2026",
     cat: "AI / ML",
     desc: "Four LLM personas share one local model overnight; a risk layer in code decides what actually gets ordered.",

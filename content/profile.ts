@@ -63,7 +63,7 @@ export const PROFILE = {
 export const EXPERIENCE: ExperienceRecord[] = [
   {
     org: "University of Illinois Chicago",
-    role: "Systems Engineer",
+    role: "Software Engineering Intern",
     dates: "May 2025 — August 2025",
     location: "Chicago, IL",
     type: "Internship",
@@ -171,9 +171,9 @@ export const AWARDS: Award[] = [
     year: "2025",
   },
   {
-    rank: "4th",
+    rank: "3rd",
     title: "UIUC Capture-the-Flag (CTF)",
-    detail: "Binary exploitation, reversing, crypto, and web — 4th of 25+ teams.",
+    detail: "Binary exploitation, reversing, crypto, and web — 3rd of 25+ teams.",
     year: "2025",
   },
   {

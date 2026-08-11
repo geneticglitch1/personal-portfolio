@@ -90,8 +90,8 @@ export const ARCHIVE: ArchiveEntry[] = [
     },
   },
   {
-    slug: "trading-agent",
-    name: "Overnight Trading Agent",
+    slug: "vega",
+    name: "Vega — Multi-Agent Trading System",
     year: "2026",
     cat: "AI / ML",
     desc: "Four LLM personas share one local model overnight. A risk layer written in Python decides what actually gets ordered.",

@@ -34,7 +34,7 @@ K3s cluster in his apartment. No cloud host is involved.
 
 ## Experience
 
-### Systems Engineer — University of Illinois Chicago (May–August 2025, internship)
+### Software Engineering Intern — University of Illinois Chicago (May–August 2025, internship)
 
 Pulled the OS job scheduler off the CPU and onto an FPGA. Throughput doubled.
 
@@ -54,7 +54,7 @@ Pulled the OS job scheduler off the CPU and onto an FPGA. Throughput doubled.
 
 - 1st of ~400 submissions — CS 341 Malloc Performance Contest, 2025. Beat both
   stock and optimized glibc.
-- 4th of 25+ teams — UIUC Capture-the-Flag, 2025. Binary exploitation,
+- 3rd of 25+ teams — UIUC Capture-the-Flag, 2025. Binary exploitation,
   reversing, crypto, web.
 - 5th of 50 regional teams — Science Olympiad Robot Tour, 2024. Autonomous
   Raspberry Pi Pico maze robot.
@@ -114,7 +114,7 @@ Measured results are given only where a real measurement exists.
 
 ### AI and ML
 
-- **Overnight Trading Agent** (2026) — four LLM personas share one local model
+- **Vega** (2026) — four LLM personas share one local model
   overnight; a risk layer in code decides what actually gets ordered. Python,
   MLX, Alpaca. https://github.com/geneticglitch1/trading-agent
 - **Schema — Document Search** (2026) — RAG over your own PDFs so the model
