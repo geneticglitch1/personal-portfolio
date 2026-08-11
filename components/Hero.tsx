@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { PROFILE } from "@/content/profile";
+import HeroFigure from "./HeroFigure";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -30,20 +31,34 @@ export default function Hero() {
             show: { transition: { delayChildren: 0.12, staggerChildren: 0.06 } },
           }}
         >
+          {/* Two tabs on the folder. The second one is the résumé — pulling a
+              second document out of the same file, rather than a button
+              bolted onto a paper layout. */}
           <motion.div
-            className="filetab"
+            className="foldertabs"
             variants={{
               hidden: { y: 20, opacity: 0 },
               show: { y: 0, opacity: 1, transition: { duration: 0.6, ease: EASE } },
             }}
           >
-            Portfolio · 2026
+            <span className="filetab">Portfolio · 2026</span>
+            <a
+              className="filetab tab-cta"
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Résumé
+              <span className="arw" aria-hidden="true">
+                ↗
+              </span>
+            </a>
           </motion.div>
 
           <div className="hero-topmeta">
             {[
               ["CS + Math", "UIUC"],
-              ["Graduating", "May 2027"],
+              ["Graduating", "May 2028"],
               ["Based in", "Champaign · Chicago, IL"],
             ].map(([k, v]) => (
               <motion.span
@@ -59,36 +74,59 @@ export default function Hero() {
             ))}
           </div>
 
-          <h1 className="hero-name">
-            {[PROFILE.name.first, PROFILE.name.last].map((line) => (
-              <span className="ln" key={line}>
-                <motion.span
-                  variants={{
-                    hidden: { y: "110%" },
-                    show: { y: "0%", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
-                  }}
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
-            <motion.span
-              className="hero-stamp"
-              style={reduced ? undefined : { y: stampY }}
-              variants={{
-                hidden: { scale: 0, rotate: 22, opacity: 0 },
-                show: {
-                  scale: 1,
-                  rotate: -8,
-                  opacity: 1,
-                  transition: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
-                },
-              }}
-            >
-              Systems
-              <small>Engineer</small>
-            </motion.span>
-          </h1>
+          {/* Name on the left, stamp and figure filling the column that used to
+              be empty beside it. The columns match .hero-foot below, so the
+              figure sits directly above the spec table. */}
+          <div className="hero-mid">
+            <h1 className="hero-name">
+              {[PROFILE.name.first, PROFILE.name.last].map((line) => (
+                <span className="ln" key={line}>
+                  <motion.span
+                    variants={{
+                      hidden: { y: "110%" },
+                      show: { y: "0%", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
+            </h1>
+
+            <div className="hero-aside">
+              <motion.span
+                className="hero-stamp"
+                style={reduced ? undefined : { y: stampY }}
+                variants={{
+                  hidden: { scale: 0, rotate: 22, opacity: 0 },
+                  show: {
+                    scale: 1,
+                    rotate: -8,
+                    opacity: 1,
+                    transition: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+                  },
+                }}
+              >
+                Systems
+                <small>Engineer</small>
+              </motion.span>
+
+              <motion.div
+                className="herofig"
+                aria-hidden="true"
+                variants={{
+                  hidden: { opacity: 0, y: 16 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.8, ease: EASE },
+                  },
+                }}
+              >
+                <HeroFigure />
+              </motion.div>
+            </div>
+          </div>
 
           <div className="hero-foot">
             <motion.p

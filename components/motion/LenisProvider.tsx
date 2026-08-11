@@ -29,11 +29,11 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     let rafId = 0;
 
     if (useLenis) {
-      lenis = new Lenis({
-        duration: 1.05,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-      });
+      // `lerp` rather than `duration`: a duration-based ease runs a fixed
+      // ~1s animation for every wheel tick, so the page keeps arriving after
+      // you've stopped scrolling. Interpolating toward the target instead
+      // stays smooth but tracks the wheel closely enough not to read as lag.
+      lenis = new Lenis({ lerp: 0.14, smoothWheel: true });
       instance = lenis;
       const raf = (time: number) => {
         lenis!.raf(time);

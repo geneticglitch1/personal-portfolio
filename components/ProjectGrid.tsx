@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PROJECTS, CATEGORIES, type Category } from "@/content/projects";
+import { PROJECTS, ORDERED, CATEGORIES, type Category } from "@/content/projects";
 import SectionHead from "./motion/SectionHead";
 import ProjectCard from "./ProjectCard";
 
@@ -18,7 +18,7 @@ import ProjectCard from "./ProjectCard";
  */
 export default function ProjectGrid() {
   const [cat, setCat] = useState<Category | null>(null);
-  const shown = cat ? PROJECTS.filter((p) => p.cat === cat) : PROJECTS;
+  const shown = cat ? ORDERED.filter((p) => p.cat === cat) : ORDERED;
 
   const countFor = (c: Category) => PROJECTS.filter((p) => p.cat === c).length;
 
@@ -29,12 +29,7 @@ export default function ProjectGrid() {
           n="01"
           eyebrow="Work"
           title="What I've built"
-          right={
-            <>
-              <span className="lbl">{PROJECTS.length} projects</span>
-              <span className="lbl">Every one has a drawing</span>
-            </>
-          }
+          right={<span className="lbl">{PROJECTS.length} projects</span>}
         />
 
         <div className="filters">
@@ -60,7 +55,7 @@ export default function ProjectGrid() {
 
         <div className="grid" key={cat ?? "all"}>
           {shown.map((p) => (
-            <ProjectCard key={p.slug} p={p} n={PROJECTS.indexOf(p) + 1} />
+            <ProjectCard key={p.slug} p={p} n={ORDERED.indexOf(p) + 1} />
           ))}
         </div>
       </div>

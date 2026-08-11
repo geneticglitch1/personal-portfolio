@@ -2,22 +2,28 @@ import type { Project } from "@/content/projects";
 import { DIAGRAMS } from "./diagrams";
 
 /**
- * The card is the whole story. There is no detail view behind it, so
- * everything a reader gets is here: one line, the drawing, the metric, three
- * tags. When the project has a link the entire card is that link; when the
- * source is private it isn't clickable at all, so nothing invites a click that
- * leads nowhere.
+ * Two states, one card.
+ *
+ * Open — the six flagships — carries the drawing, which is the part that does
+ * the persuading. Closed carries the same facts without the figure, so the
+ * rest of the work is still readable without turning the grid into a wall of
+ * twenty-three diagrams.
+ *
+ * When the project has a link the entire card is that link; when the source is
+ * private it isn't clickable at all, so nothing invites a click that leads
+ * nowhere.
  *
  * Deliberately a server component — no state, no effects, nothing that has to
  * run for the card to render.
  */
 export default function ProjectCard({ p, n }: { p: Project; n: number }) {
-  const Diagram = DIAGRAMS[p.diagram];
+  const open = Boolean(p.featured);
+  const Diagram = open ? DIAGRAMS[p.diagram] : null;
   const href = p.links.live ?? p.links.github;
 
   const body = (
     <>
-      <span className="punch" aria-hidden="true" />
+      {open && <span className="punch" aria-hidden="true" />}
       <div className="pmeta">
         <span>
           {String(n).padStart(2, "0")} · <span className="pcat">{p.cat}</span>
@@ -28,7 +34,11 @@ export default function ProjectCard({ p, n }: { p: Project; n: number }) {
       <h3 className="ptitle">{p.name}</h3>
       <p className="pdesc">{p.desc}</p>
 
-      <div className="pfig">{Diagram ? <Diagram /> : null}</div>
+      {Diagram && (
+        <div className="pfig">
+          <Diagram />
+        </div>
+      )}
 
       <div className="pfoot">
         {p.metric && (
@@ -53,11 +63,13 @@ export default function ProjectCard({ p, n }: { p: Project; n: number }) {
     </>
   );
 
+  const cls = `pcard ${open ? "open" : "closed"}`;
+
   return href ? (
-    <a className="pcard" href={href} target="_blank" rel="noopener noreferrer">
+    <a className={cls} href={href} target="_blank" rel="noopener noreferrer">
       {body}
     </a>
   ) : (
-    <article className="pcard">{body}</article>
+    <article className={cls}>{body}</article>
   );
 }

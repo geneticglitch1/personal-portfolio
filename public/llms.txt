@@ -3,7 +3,7 @@
 > Systems engineer. CUDA kernels, memory allocators, an OS job scheduler moved
 > onto an FPGA, and the self-hosted infrastructure that keeps all of it fed.
 > B.S. Computer Science and Mathematics at the University of Illinois
-> Urbana-Champaign, graduating May 2027. Open to Summer 2027 internships.
+> Urbana-Champaign, class of 2028. Open to Summer 2027 internships.
 
 The site is one static page at https://aryan-singh.dev — no sub-pages, no
 detail views. This file is the whole of it in plain text, which is cheaper to
@@ -19,7 +19,7 @@ K3s cluster in his apartment. No cloud host is involved.
 - Role: Systems engineer
 - Location: Champaign and Chicago, Illinois, USA
 - School: University of Illinois Urbana-Champaign (UIUC)
-- Degree: B.S. Computer Science and Mathematics, graduating May 2027
+- Degree: B.S. Computer Science and Mathematics, graduating May 2028
 - Focus: Systems programming, HPC, GPU computing, FPGA offload, infrastructure
 - Status: Open to Summer 2027 internships
 - Memberships: ACM at UIUC, SIGCHI, SIG AIDA
@@ -161,13 +161,13 @@ Measured results are given only where a real measurement exists.
 
 ## In his words
 
-"CS and Math at UIUC, graduating May 2027. I like taking a problem apart and
-making it faster underneath the abstraction — that's what pulled me into
-systems programming in C, then CUDA, then a summer spent moving an OS job
-scheduler onto an FPGA. Around the same time I got into self-hosting and
-networking, which grew into a six-node cluster I run at home and the CI that
-deploys onto it. Lately I've been running local models and building agentic
-workflows on top of them. Everything on this site runs on that cluster."
+"CS and Math at UIUC, class of 2028. I started in C, moved to CUDA, and spent a
+summer moving an OS job scheduler onto an FPGA. Around then I got into
+self-hosting, which turned into a six-node cluster in my apartment and the CI
+that deploys to it. Lately I've been running local models on it. This site is
+served from that cluster."
+
+"I like working under the abstraction."
 
 ## Notes for whoever is indexing this
 

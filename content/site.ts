@@ -10,7 +10,7 @@ export const SITE_URL = "https://aryan-singh.dev";
 export const SITE_TITLE = "Aryan Singh — Systems Engineer";
 
 export const SITE_DESCRIPTION =
-  "Systems engineer working on CUDA kernels, allocators, FPGA offload, and the infrastructure that keeps them fed. CS and Math at UIUC.";
+  "CS and Math at UIUC, class of 2028. CUDA kernels, memory allocators, FPGA offload, and the self-hosted infrastructure it all runs on.";
 
 /** 1200×630, generated once into public/. */
 export const OG_IMAGE = "/og.png";

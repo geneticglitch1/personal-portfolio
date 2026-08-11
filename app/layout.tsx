@@ -1,7 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, JetBrains_Mono, Newsreader } from "next/font/google";
+import {
+  Space_Grotesk,
+  JetBrains_Mono,
+  Newsreader,
+  Instrument_Serif,
+} from "next/font/google";
 import LenisProvider from "@/components/motion/LenisProvider";
-import ScrollVelocityProvider from "@/components/motion/ScrollVelocityProvider";
+import Backdrop from "@/components/Backdrop";
 import StructuredData from "@/components/StructuredData";
 import {
   OG_IMAGE,
@@ -30,6 +35,15 @@ const serif = Newsreader({
   weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--serif",
+  display: "swap",
+});
+
+/* The landing page only. One weight, no italic — it sets the name and the one
+   line under it, and nothing else on the site uses it. */
+const display = Instrument_Serif({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--display",
   display: "swap",
 });
 
@@ -138,7 +152,7 @@ export default function RootLayout({
     // hydrates, so the class list is expected to differ from the server's.
     <html
       lang="en"
-      className={`${sans.variable} ${mono.variable} ${serif.variable}`}
+      className={`${sans.variable} ${mono.variable} ${serif.variable} ${display.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -163,10 +177,8 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <LenisProvider>
-          <ScrollVelocityProvider />
-          {children}
-        </LenisProvider>
+        <Backdrop />
+        <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
   );

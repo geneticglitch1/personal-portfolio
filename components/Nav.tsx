@@ -49,6 +49,13 @@ export default function Nav() {
               </a>
             ))}
           </div>
+
+          {/* Live status, not decoration: the page you're reading is served
+              from the cluster in the About section. */}
+          <span className="selfhost" title="Served from my own K3s cluster">
+            <i className="blip" aria-hidden="true" />
+            <b>Self-hosted</b>
+          </span>
         </div>
       </nav>
     </>

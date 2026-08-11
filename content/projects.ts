@@ -34,6 +34,11 @@ export interface Project {
   tags: [string, string, string];
   links: ProjectLinks;
   diagram: string;
+  /**
+   * Flagship. Renders as an open card — the drawing included. Everything else
+   * renders closed: the same facts, no figure.
+   */
+  featured?: true;
 }
 
 export type Category =
@@ -80,6 +85,7 @@ export const PROJECTS: Project[] = [
       live: "https://sentinel.aryan-singh.dev/",
     },
     diagram: "sentinel",
+    featured: true,
   },
   {
     slug: "trading-agent",
@@ -105,6 +111,7 @@ export const PROJECTS: Project[] = [
       note: "ECE 408 — source private per UIUC honor code",
     },
     diagram: "cuda",
+    featured: true,
   },
   {
     slug: "fpga-scheduler",
@@ -116,6 +123,7 @@ export const PROJECTS: Project[] = [
     tags: ["C++", "Alveo U55C", "FPGA"],
     links: { note: "UIC internship — source is private" },
     diagram: "fpga",
+    featured: true,
   },
   {
     slug: "media-stack",
@@ -138,6 +146,7 @@ export const PROJECTS: Project[] = [
     tags: ["C", "POSIX", "sbrk"],
     links: { note: "UIUC honor code — source is private" },
     diagram: "malloc",
+    featured: true,
   },
   {
     slug: "minecraft-craftdeck",
@@ -179,6 +188,7 @@ export const PROJECTS: Project[] = [
     tags: ["Swift", "SwiftData", "MapKit"],
     links: { github: "https://github.com/geneticglitch1/stint-studio" },
     diagram: "stint",
+    featured: true,
   },
   {
     slug: "envsync",
@@ -189,6 +199,7 @@ export const PROJECTS: Project[] = [
     tags: ["Rust", "Spring Boot", "AES-GCM"],
     links: { github: "https://github.com/geneticglitch1/EnvSync" },
     diagram: "envsync",
+    featured: true,
   },
   {
     slug: "schema",
@@ -303,3 +314,14 @@ export const PROJECTS: Project[] = [
     diagram: "mnist",
   },
 ];
+
+/**
+ * Display order: the six flagships first, then the rest in their authored
+ * order. `sort` is stable, so this only lifts the featured group — it doesn't
+ * shuffle anything inside either half.
+ */
+export const ORDERED: Project[] = [...PROJECTS].sort(
+  (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+);
+
+export const FEATURED_COUNT = PROJECTS.filter((p) => p.featured).length;

@@ -36,8 +36,7 @@ export const PROFILE = {
   name: { first: "Aryan", last: "Singh" },
   role: "Systems Engineer",
 
-  lead:
-    "I work under the abstraction — CUDA kernels, allocators, a job scheduler I moved onto an FPGA — and on the infrastructure that keeps all of it fed.",
+  lead: "I like working under the abstraction.",
 
   specs: [
     { k: "Focus", v: "Systems engineering" },
@@ -47,12 +46,12 @@ export const PROFILE = {
   ],
 
   about:
-    "CS and Math at UIUC, graduating May 2027. I like taking a problem apart and making it faster underneath the abstraction — that's what pulled me into systems programming in C, then CUDA, then a summer spent moving an OS job scheduler onto an FPGA. Around the same time I got into self-hosting and networking, which grew into a six-node cluster I run at home and the CI that deploys onto it. Lately I've been running local models and building agentic workflows on top of them. Everything on this site runs on that cluster.",
+    "CS and Math at UIUC, class of 2028. I started in C, moved to CUDA, and spent a summer moving an OS job scheduler onto an FPGA. Around then I got into self-hosting, which turned into a six-node cluster in my apartment and the CI that deploys to it. Lately I've been running local models on it. This site is served from that cluster.",
 
   education: [
     { k: "School", v: "UIUC" },
     { k: "Degree", v: "B.S. CS & Mathematics" },
-    { k: "Graduating", v: "May 2027" },
+    { k: "Graduating", v: "May 2028" },
     { k: "Focus", v: "Systems · HPC" },
   ],
 

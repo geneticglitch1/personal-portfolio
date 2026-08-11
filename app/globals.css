@@ -22,13 +22,6 @@
   --maxw: 1380px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Scroll velocity, written once per frame by ScrollVelocityProvider and
-     read by everything that reacts to how fast the page is moving.
-     --vel is signed (-1..1); --vel-abs is its magnitude, kept as its own
-     variable because CSS abs() isn't broadly supported yet. */
-  --vel: 0;
-  --vel-abs: 0;
 }
 *{ box-sizing: border-box; }
 html, body{ margin: 0; padding: 0; }
@@ -45,14 +38,63 @@ body{
   font-family: var(--sans); background: var(--paper); color: var(--ink);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   line-height: 1.55;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   BACKDROP — the paper layer behind every card
+   Three fixed layers under the whole document: a warm wash and a cool one
+   that travel as you scroll, the dot grid drifting against them, and grain
+   on top. Everything moves by transform on a scroll timeline, so the
+   compositor owns it — no scroll listener, no per-frame style work, and
+   nothing to recalculate when the page moves.
+   ════════════════════════════════════════════════════════════════════════ */
+.backdrop{
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  background: var(--paper);
+}
+/* No `display` here: absolute positioning already blockifies these, and
+   setting it would outrank the plain class selectors that switch layers off
+   on small screens. */
+.backdrop i{ position: absolute; will-change: transform; }
+
+.bd-warm, .bd-cool{ inset: -45% -20%; }
+.bd-warm{
+  background: radial-gradient(50% 44% at 50% 34%, rgba(190,58,43,0.22), transparent 70%);
+}
+.bd-cool{
+  background: radial-gradient(54% 48% at 42% 66%, rgba(46,94,78,0.19), transparent 72%);
+}
+.bd-dots{
+  inset: -12% 0;
   background-image: radial-gradient(rgba(34,30,24,0.055) 1px, transparent 1.4px);
   background-size: 22px 22px;
 }
-/* paper grain — leans a touch heavier while the page is moving fast */
-body::before{
-  content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: calc(0.55 + var(--vel-abs) * 0.2); mix-blend-mode: multiply;
+.bd-grain{
+  inset: 0; opacity: 0.5;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/></svg>");
+}
+
+/* The travel itself. Bound to document scroll rather than to a listener, so
+   it costs a compositor transform and nothing else. Browsers without scroll
+   timelines get the same layers, parked — which is a finished-looking state. */
+@supports (animation-timeline: scroll()){
+  @media (prefers-reduced-motion: no-preference){
+    .bd-warm{ animation: bd-warm linear both; animation-timeline: scroll(root block); }
+    .bd-cool{ animation: bd-cool linear both; animation-timeline: scroll(root block); }
+    .bd-dots{ animation: bd-dots linear both; animation-timeline: scroll(root block); }
+  }
+}
+@keyframes bd-warm{
+  from{ transform: translate3d(-6%, -18%, 0) scale(1); }
+  to{ transform: translate3d(8%, 26%, 0) scale(1.35); }
+}
+@keyframes bd-cool{
+  from{ transform: translate3d(10%, 34%, 0) scale(1.3); }
+  to{ transform: translate3d(-8%, -22%, 0) scale(1); }
+}
+@keyframes bd-dots{
+  from{ transform: translate3d(0, -4%, 0); }
+  to{ transform: translate3d(0, 4%, 0); }
 }
 a{ color: inherit; text-decoration: none; }
 button{ font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
@@ -100,7 +142,7 @@ html:not(.motion) .award,
 html:not(.motion) .about-para .w,
 html:not(.motion) .hero-name .ln > span,
 html:not(.motion) .folder,
-html:not(.motion) .folder .filetab,
+html:not(.motion) .folder .foldertabs,
 html:not(.motion) .hero-topmeta .lbl,
 html:not(.motion) .hero-foot .lead,
 html:not(.motion) .hero-foot .specs .r,
@@ -184,7 +226,24 @@ html:not(.motion) .hero-stamp{ transform: rotate(-8deg) !important; }
 .tabnav a.tab:hover{ color: var(--ink); background: rgba(34,30,24,0.04); }
 .tabnav a.tab[aria-current="true"]{ color: var(--accent-d); }
 .tabnav a.tab[aria-current="true"]::after{ content:""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); }
+/* Self-hosted status, pinned to the right of the bar. The blip is the only
+   thing on the page that never stops moving, which is the point — it reads as
+   a live indicator, not decoration. */
+.tabnav .selfhost{
+  display: flex; align-items: center; gap: 8px; padding-left: clamp(12px,1.6vw,20px);
+  border-left: 1px solid var(--line); white-space: nowrap; flex: none;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--dim);
+}
+.tabnav .selfhost .blip{
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none;
+  box-shadow: 0 0 0 3px rgba(190,58,43,0.14);
+}
+html.motion .tabnav .selfhost .blip{ animation: blip 1.9s var(--ease) infinite; }
+@keyframes blip{ 0%,100%{ opacity: 1; } 50%{ opacity: 0.2; } }
+
 @media (max-width: 720px){ .tabnav .home b{ display: none; } .tabnav a.tab .n{ display: none; } }
+@media (max-width: 900px){ .tabnav .selfhost b{ display: none; } }
 
 /* progress hairline */
 .progress{ position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 90; background: transparent; pointer-events: none; }
@@ -195,8 +254,6 @@ html:not(.motion) .hero-stamp{ transform: rotate(-8deg) !important; }
    ════════════════════════════════════════════════════════════════════════ */
 section{ position: relative; }
 .sec{ padding-block: clamp(64px, 11vh, 150px); }
-/* Paper flexes very slightly with scroll velocity. */
-.sec > .wrap{ transform: skewY(calc(clamp(-1, var(--vel), 1) * 0.5deg)); transform-origin: left center; }
 .sechead{ display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 18px;
   padding-bottom: 14px; margin-bottom: clamp(28px,5vh,56px); position: relative; }
 .sechead .rule{ position: absolute; left: 0; right: 0; bottom: 0; }
@@ -209,39 +266,96 @@ section{ position: relative; }
    ════════════════════════════════════════════════════════════════════════ */
 .hero{ padding-top: clamp(46px,7vh,80px); padding-bottom: clamp(40px,8vh,90px); }
 .folder{
-  position: relative; background: var(--card);
+  position: relative;
+  /* Drafting-paper grid under the whole panel. Faint enough to read as stock
+     rather than as a second diagram competing with the one on the right. */
+  background:
+    linear-gradient(rgba(34,30,24,0.045) 1px, transparent 1px) 0 0 / 100% 32px,
+    linear-gradient(90deg, rgba(34,30,24,0.045) 1px, transparent 1px) 0 0 / 32px 100%,
+    var(--card);
   border: 1px solid var(--line); border-radius: 4px;
   box-shadow: 0 30px 70px -30px rgba(34,30,24,0.4), 0 2px 0 rgba(255,255,255,0.5) inset;
   padding: clamp(26px,4vw,52px);
 }
+/* Tabs sit in a row above the folder: the label, then the résumé. */
+.folder .foldertabs{
+  position: absolute; bottom: 100%; left: clamp(24px,4vw,52px); right: clamp(24px,4vw,52px);
+  display: flex; align-items: flex-end; gap: 20px; transform-origin: bottom left;
+}
 .folder .filetab{
-  position: absolute; top: -26px; left: clamp(24px,4vw,52px); height: 28px; padding: 0 22px 0 18px;
+  position: relative; height: 28px; padding: 0 20px 0 16px;
   background: var(--kraft); border: 1px solid var(--line); border-bottom: 0;
-  border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 9px;
+  border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 8px;
   font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2);
-  transform-origin: bottom left;
+  white-space: nowrap;
 }
 .folder .filetab::after{ content:""; position: absolute; right: -14px; bottom: -1px; width: 14px; height: 28px;
-  background: var(--kraft); border-right: 1px solid var(--line); transform: skewX(22deg); transform-origin: bottom; border-radius: 0 6px 0 0; }
+  background: inherit; border-right: 1px solid var(--line); transform: skewX(22deg); transform-origin: bottom; border-radius: 0 6px 0 0; }
+
+/* The résumé tab. Reads as a second document in the same folder rather than a
+   button dropped on top of the layout. */
+.folder .tab-cta{
+  background: var(--accent); border-color: var(--accent); color: var(--card);
+  font-weight: 700; height: 32px; padding: 0 24px 0 20px;
+  transition: background 0.28s var(--ease), transform 0.28s var(--ease), box-shadow 0.28s var(--ease);
+}
+.folder .tab-cta::after{ height: 32px; border-right-color: var(--accent); }
+.folder .tab-cta .arw{ transition: transform 0.28s var(--ease); }
+.folder .tab-cta:hover{
+  background: var(--accent-d); transform: translateY(-3px);
+  box-shadow: 0 8px 18px -8px rgba(190,58,43,0.6);
+}
+.folder .tab-cta:hover .arw{ transform: translate(2px,-2px); }
+@media (max-width: 520px){ .folder .foldertabs{ gap: 14px; } .folder .filetab{ padding: 0 14px 0 12px; font-size: 0.58rem; } }
 .hero-topmeta{ display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: clamp(20px,3vh,34px); border-bottom: 1px dashed var(--line); margin-bottom: clamp(22px,3.5vh,40px); }
-.hero-name{ position: relative; font-family: var(--sans); font-weight: 700; line-height: 0.82;
-  font-size: clamp(3rem, 11vw, 9.5rem); letter-spacing: -0.04em; margin: 0; text-transform: uppercase; }
-.hero-name .ln{ display: block; overflow: hidden; }
+/* The landing page runs on its own face: a high-contrast display serif, set in
+   sentence case, against the mono labels everywhere else. */
+.hero-name{ position: relative; font-family: var(--display); font-weight: 400; line-height: 0.88;
+  font-size: clamp(3.2rem, 12vw, 10.5rem); letter-spacing: -0.02em; margin: 0; }
+/* The mask that hides each line before it rises needs `overflow: hidden`, and
+   a display serif set below single leading pushes its descenders (the y, the
+   g) past the line box. Overflow clips at the padding box, so the padding
+   below buys the descenders room and the negative margin gives the space back
+   to the layout — the leading stays as tight as it looks. */
+.hero-name .ln{ display: block; overflow: hidden; padding-bottom: 0.22em; margin-bottom: -0.18em; }
 .hero-name .ln > span{ display: inline-block; will-change: transform; }
+/* Name and the aside column beside it. Same track ratio as .hero-foot, so the
+   figure lines up over the spec table. */
+.hero-mid{ display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(20px,4vw,60px); align-items: center; }
+.hero-aside{ display: flex; flex-direction: column; align-items: flex-end; gap: clamp(16px,3vh,34px); min-width: 0; }
+
 .hero-stamp{
-  position: absolute; right: clamp(0px,2vw,30px); top: clamp(-6px,-1vh,-10px);
   font-family: var(--mono); font-weight: 700; font-size: clamp(0.7rem,1.1vw,0.92rem); letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--accent); border: 2.5px solid var(--accent);
-  padding: 9px 13px; border-radius: 4px;
+  padding: 9px 13px; border-radius: 4px; align-self: flex-end;
   box-shadow: inset 0 0 0 1px rgba(190,58,43,0.2); line-height: 1.1; text-align: center;
 }
+
+/* ── hero figure: the stack, cut by the abstraction line ─────────────────── */
+.herofig{ width: 100%; max-width: 300px; }
+.herofig svg{ display: block; width: 100%; height: auto; overflow: visible; }
+.hf-up{ fill: none; stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+.hf-down{ fill: rgba(34,30,24,0.05); stroke: var(--ink-2); stroke-width: 1.1; }
+.hf-t{ font-family: var(--mono); font-size: 10px; fill: var(--faint); letter-spacing: 0.08em; }
+.hf-t-down{ fill: var(--ink-2); }
+.hf-div{ stroke: var(--accent); stroke-width: 1.6; }
+.hf-cap{ font-family: var(--mono); font-weight: 700; font-size: 9px; fill: var(--accent-d); letter-spacing: 0.16em; }
+
+@media (max-width: 900px){
+  .hero-mid{ grid-template-columns: 1fr; gap: clamp(18px,3vh,30px); }
+  .hero-aside{ flex-direction: row; align-items: center; justify-content: space-between; gap: 20px; }
+  .herofig{ max-width: 210px; }
+}
+@media (max-width: 560px){ .herofig{ display: none; } }
 .hero-stamp small{ display: block; font-size: 0.78em; letter-spacing: 0.18em; opacity: 0.9; margin-top: 2px; }
 .hero-foot{ display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(20px,4vw,60px); align-items: end; margin-top: clamp(26px,4vh,48px); }
-.hero-foot .lead{ font-family: var(--serif); font-size: clamp(1.15rem,1.9vw,1.6rem); line-height: 1.32; color: var(--ink); max-width: 38ch; }
+.hero-foot .lead{ font-family: var(--display); font-size: clamp(1.5rem,2.6vw,2.3rem); line-height: 1.24; color: var(--ink); max-width: 24ch; }
 .hero-foot .specs{ display: flex; flex-direction: column; gap: 9px; }
 .hero-foot .specs .r{ display: flex; justify-content: space-between; gap: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line-2); font-family: var(--mono); font-size: 0.72rem; }
 .hero-foot .specs .r .k{ color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
 .hero-foot .specs .r .v{ color: var(--ink); font-weight: 500; text-align: right; }
+/* The one line in the spec table a recruiter is actually looking for. */
+.hero-foot .specs .r:last-child .v{ color: var(--accent-d); }
 @media (max-width: 820px){ .hero-foot{ grid-template-columns: 1fr; } }
 .scrollcue{ display: inline-flex; align-items: center; gap: 10px; margin-top: clamp(26px,4vh,46px); font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
 .scrollcue .arw{ color: var(--accent); display: inline-block; }
@@ -280,10 +394,13 @@ section{ position: relative; }
   transition: color 0.22s var(--ease), border-color 0.22s var(--ease), background 0.22s var(--ease);
 }
 .chip:hover{ color: var(--ink); border-color: var(--ink); }
-.chip[aria-pressed="true"]{ background: var(--ink); color: var(--card); border-color: var(--ink); }
+.chip[aria-pressed="true"]{ background: var(--accent); color: var(--card); border-color: var(--accent); }
 .chip .n{ opacity: 0.55; margin-left: 6px; }
 
-.grid{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
+/* `start` rather than the default stretch: open and closed cards have very
+   different natural heights, and stretching the short ones to match leaves a
+   dead gap above their footer. */
+.grid{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: start; }
 @media (max-width: 1080px){ .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 680px){ .grid{ grid-template-columns: minmax(0, 1fr); } }
 
@@ -294,9 +411,26 @@ section{ position: relative; }
   transition: transform 0.32s var(--ease), box-shadow 0.32s var(--ease), border-color 0.32s var(--ease);
 }
 a.pcard:hover{
-  transform: translateY(-4px); border-color: var(--ink);
+  transform: translateY(-4px); border-color: var(--accent);
   box-shadow: 0 22px 44px -18px rgba(34,30,24,0.5), 0 1px 3px rgba(34,30,24,0.1);
 }
+a.pcard:hover .ptitle{ color: var(--accent-d); }
+
+/* Flagship marker: a short stamp-red tick in the corner. Enough to rank the
+   grid at a glance without a badge or a second colour. */
+.pcard.open::before{
+  content: ""; position: absolute; top: 0; left: 0; width: 44px; height: 3px;
+  background: var(--accent); z-index: 2;
+}
+/* Closed cards carry the same facts, just no figure — so they read as the
+   index they are rather than as flagships with something missing. */
+.pcard.closed{ box-shadow: 0 6px 18px -14px rgba(34,30,24,0.36); }
+.pcard.closed .ptitle{ font-size: 1.02rem; }
+.pcard.closed .pdesc{
+  margin-bottom: 4px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pcard.closed .pfoot{ padding-top: 10px; }
 .pcard .punch{
   position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 30px; height: 14px;
   border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; background: var(--paper);
@@ -310,6 +444,7 @@ a.pcard:hover{
 .ptitle{
   font-family: var(--sans); font-weight: 700; font-size: 1.18rem; line-height: 1.1;
   letter-spacing: -0.025em; margin: 9px 0 0; padding: 0 15px;
+  transition: color 0.28s var(--ease);
 }
 .pdesc{ font-size: 0.83rem; line-height: 1.5; color: var(--ink-2); margin: 8px 0 14px; padding: 0 15px; }
 
@@ -434,8 +569,10 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
 .award{ display: grid; grid-template-columns: 56px 1fr auto 90px; gap: clamp(14px,2vw,28px); align-items: center;
   padding-block: clamp(18px,2.6vh,28px); border-bottom: 1px solid var(--line); transition: padding-left 0.4s var(--ease); }
 .award:hover{ padding-left: clamp(8px,1.2vw,18px); }
-.award .seal-ico{ width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--seal); display: grid; place-items: center;
-  font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.04em; color: var(--seal); text-align: center; line-height: 1; box-shadow: inset 0 0 0 3px rgba(46,94,78,0.1); }
+/* Stamp red rather than the old green second ink — one accent across the
+   whole page reads calmer than two, and puts the colour where the ranking is. */
+.award .seal-ico{ width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent); display: grid; place-items: center;
+  font-family: var(--mono); font-weight: 700; font-size: 0.5rem; letter-spacing: 0.04em; color: var(--accent-d); text-align: center; line-height: 1; box-shadow: inset 0 0 0 3px rgba(190,58,43,0.1); }
 .award .atitle{ font-family: var(--sans); font-weight: 600; font-size: clamp(1.15rem,2.2vw,1.7rem); letter-spacing: -0.02em; }
 .award .adetail{ font-family: var(--serif); color: var(--ink-2); max-width: 38ch; font-size: 0.98rem; }
 .award .ayear{ justify-self: end; font-family: var(--mono); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--accent-d); }
@@ -602,15 +739,11 @@ a.pcard:hover .parrow{ color: var(--accent); transform: translate(3px, -3px); }
 
 /* ════════════════════════════════════════════════════════════════════════
    TOUCH / SMALL SCREENS
-   The velocity effects rewrite --vel every scroll frame, and each reader of
-   it costs real work: the grain is a full-viewport fixed layer with
-   mix-blend-mode and the section skew re-transforms every large element on the
-   page. That's affordable on a desktop GPU and janks badly on a phone, so
-   neither runs here.
+   The backdrop washes are large blurred gradients. They cost a phone GPU more
+   than they're worth at that size, so only the flat paper and the grain stay.
    ════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 900px), (hover: none){
-  body::before{ display: none; }
-  .sec > .wrap{ transform: none; }
+  .bd-warm, .bd-cool{ display: none; }
 }
 
 /* ════════════════════════════════════════════════════════════════════════

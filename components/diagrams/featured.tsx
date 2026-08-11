@@ -164,7 +164,9 @@ export function Cuda() {
       <line className="d-accent-line d-flow" pathLength={1} x1="320" y1="80" x2="320" y2="116" markerEnd={AA} markerStart={AA} />
 
       <text className="d-t-accent" x="4" y="150">every step crosses HBM</text>
-      <text className="d-t-sm" x="4" y="163">the whole working set, each time</text>
+      {/* Kept short: at 10.5px mono anything past ~28 characters runs under
+          the right-hand column, which starts at x=184. */}
+      <text className="d-t-sm" x="4" y="163">the whole working set</text>
       <text className="d-t" x="184" y="150">the loop never leaves</text>
       <text className="d-t-sm" x="184" y="163">shared mem and registers</text>
       <text className="d-t-accent d-beat" x="184" y="178">one trip to HBM per tile</text>
