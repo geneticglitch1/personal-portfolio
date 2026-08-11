@@ -1,0 +1,58 @@
+# Dependabot.
+#
+# The previous version of this file was four lines of defaults, which meant one
+# pull request per package per week and no distinction between a patch bump and
+# a major one. It was deleted along with the old scaffold in 5f60b04, so since
+# then only GitHub's automatic security updates have been running.
+#
+# The shape here: routine minor and patch bumps arrive together in a single PR,
+# and anything major gets its own, because a major is a decision rather than a
+# chore.
+
+version: 2
+
+updates:
+  # ── the app ────────────────────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Chicago
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+      prefix-development: deps-dev
+    groups:
+      # One PR a week for everything routine. Without this every dependency
+      # opens its own, which is how seven of them ended up sitting unread.
+      routine:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # @types/node describes the runtime, and the runtime is pinned to
+      # node:22-alpine in the Dockerfile. A major bump here would type the
+      # build against a Node it never runs on, so this one moves by hand when
+      # the base image does.
+      - dependency-name: "@types/node"
+        update-types:
+          - version-update:semver-major
+
+  # ── the base images in the Dockerfile ──────────────────────────────────
+  # node:22-alpine for the build, nginx:1.27-alpine for the runtime. These
+  # carry most of the CVE surface of the deployed container and nothing was
+  # watching them before.
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Chicago
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: docker
