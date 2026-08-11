@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # ── runner: nginx only, no Node at runtime ─────────────────────────
-FROM nginx:1.27-alpine AS runner
+FROM nginx:1.31-alpine AS runner
 RUN rm -rf /usr/share/nginx/html/*
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/out/ /usr/share/nginx/html/
