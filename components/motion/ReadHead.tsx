@@ -1,7 +1,8 @@
 "use client";
 
 import { ReactNode, useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import usePrefersReducedMotion from "./usePrefersReducedMotion";
 
 interface ReadHeadProps {
   children: ReactNode;
@@ -31,7 +32,7 @@ export default function ReadHead({
   bare = false,
 }: ReadHeadProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = usePrefersReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -47,16 +48,12 @@ export default function ReadHead({
   // Fade the hairline out at both ends so it doesn't park at the block edges.
   const edgeOpacity = useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [0, 1, 1, 0]);
 
-  if (reduced) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
     <div ref={ref} className={`rh${className ? ` ${className}` : ""}`}>
-      <motion.div data-readhead style={{ clipPath }}>
+      <motion.div data-readhead style={reduced ? undefined : { clipPath }}>
         {children}
       </motion.div>
-      {!bare && (
+      {!bare && !reduced && (
         <motion.div
           className="rh-line"
           aria-hidden="true"

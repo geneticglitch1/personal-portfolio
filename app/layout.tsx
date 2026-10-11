@@ -62,6 +62,9 @@ export const metadata: Metadata = {
   keywords: [
     "Aryan Singh",
     "systems engineer",
+    "full stack developer",
+    "DevOps",
+    "Linux",
     "CUDA",
     "GPU programming",
     "FPGA",
@@ -97,7 +100,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "Aryan Singh — systems engineer. CUDA, FPGA offload, infrastructure.",
+        alt: "Aryan Singh — software and systems engineer. Full stack, DevOps, Linux, and FPGA research.",
         type: "image/png",
       },
     ],

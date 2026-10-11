@@ -16,6 +16,13 @@ export interface ExperienceRecord {
   type: string;
   headline: string;
   bullets: string[];
+  research?: {
+    title: string;
+    href: string;
+    citation: string;
+    summary: string;
+    results: { value: string; label: string }[];
+  };
 }
 
 export interface Award {
@@ -34,25 +41,25 @@ export interface ContactLink {
 
 export const PROFILE = {
   name: { first: "Aryan", last: "Singh" },
-  role: "Systems Engineer",
+  role: "Software & Systems Engineer",
 
-  lead: "I like working under the abstraction.",
+  lead: "Software, with the wiring in mind.",
 
   specs: [
-    { k: "Focus", v: "Systems engineering" },
-    { k: "Depth", v: "CUDA · FPGA · Infrastructure · Full stack" },
+    { k: "Focus", v: "Software & systems" },
+    { k: "Depth", v: "Full stack · Linux · FPGA · DevOps" },
     { k: "Location", v: "Champaign · Chicago, IL" },
     { k: "Status", v: "Open to 2027 internships" },
   ],
 
   about:
-    "CS and Math at UIUC, class of 2028. I started in C, moved to CUDA, and spent a summer moving an OS job scheduler onto an FPGA. Around then I got into self-hosting, which turned into a six-node cluster in my apartment and the CI that deploys to it. Lately I've been running local models on it. This site is served from that cluster.",
+    "I'm studying Computer Science and Mathematics at UIUC, graduating in 2028. I work on full stack applications, Linux infrastructure, and low level systems in C/C++, CUDA, and FPGA research. I also operate websites and projects serving 30K+ monthly unique visitors and over a million requests per month. I enjoy understanding how things work and making them reliable.",
 
   education: [
     { k: "School", v: "UIUC" },
     { k: "Degree", v: "B.S. CS & Mathematics" },
     { k: "Graduating", v: "May 2028" },
-    { k: "Focus", v: "Systems · HPC" },
+    { k: "Focus", v: "Software · Systems · HPC" },
   ],
 
   memberships: ["ACM at UIUC", "SIGCHI", "SIG AIDA"],
@@ -63,17 +70,42 @@ export const PROFILE = {
 export const EXPERIENCE: ExperienceRecord[] = [
   {
     org: "University of Illinois Chicago",
+    role: "Undergraduate Researcher",
+    dates: "August 2025 — Present",
+    location: "Chicago, IL",
+    type: "Research · Prof. Debjit Pal's group",
+    headline:
+      "HPC scheduling across software and FPGA hardware.",
+    bullets: [
+      "Coauthored BoostedSOSA, a dual-FPGA scheduler that uses ML predictions of job runtime. The team's evaluation reports up to 63.85% lower prediction error than user estimates and an average 17× speedup over an AVX-optimized software baseline.",
+      "Currently implementing two zero-copy, lock-free host–FPGA ring buffers to replace flag polling and reduce PCIe handoff overhead. The integration is still in progress.",
+    ],
+    research: {
+      title:
+        "BoostedSOSA: Accelerated Inferencing for Low Variance Stochastic Online Scheduling",
+      href: "https://arxiv.org/html/2608.25346v1",
+      citation:
+        "Adam H. Ross, Riccardo Revalor, Aryan Singh, Ayush Jain, and Debjit Pal · arXiv preprint, August 2026",
+      summary:
+        "The team's dual-FPGA architecture combines XGBoost runtime prediction with hardware scheduling for HPC workloads.",
+      results: [
+        { value: "17×", label: "average speedup over the AVX-optimized software baseline" },
+        { value: "63.85%", label: "lower prediction error than user estimates, at best" },
+      ],
+    },
+  },
+  {
+    org: "University of Illinois Chicago",
     role: "Software Engineering Intern",
     dates: "May 2025 — August 2025",
     location: "Chicago, IL",
     type: "Internship",
     headline:
-      "Pulled the OS job scheduler off the CPU and onto an FPGA. Throughput doubled.",
+      "From batch I/O to a continuous scheduling pipeline.",
     bullets: [
-      "Put the scheduler on a Xilinx Alveo U55C. Once the FPGA owned scheduling, the host CPU stopped burning cycles babysitting work it should have just been running.",
-      "The host and FPGA were copying the same data across the bus twice. Shared their physical memory instead, killed the redundant transfers, and throughput doubled.",
-      "Wrote a three-thread C++ pipeline — Writer, Reader, Logger — to keep two FPGA kernels fed without stalling. Lock-free ring buffers on the hot path; mutexes only where contention didn't matter.",
-      "Moved the task queue into hardware so urgent jobs skip the OS scheduler entirely. Latency dropped to microseconds.",
+      "Converted an FPGA scheduler from batch-oriented I/O into a free-running streaming pipeline, so jobs could be scheduled as they arrived.",
+      "Built nonblocking Vitis HLS Reader/Writer kernels and multithreaded C++/XRT host I/O for continuous job dispatch.",
+      "Designed and verified the systolic scheduling datapath, virtual FIFO, and cost calculator with roughly 1,100 lines of Monte Carlo-driven Vitis HLS tests on an Alveo U55C.",
     ],
   },
 ];
@@ -81,11 +113,27 @@ export const EXPERIENCE: ExperienceRecord[] = [
 export const SKILLS: SkillGroup[] = [
   {
     label: "Languages",
-    tags: ["C", "C++", "Rust", "Python", "Java", "TypeScript", "Swift", "CUDA", "SQL"],
+    tags: ["C", "C++", "Python", "TypeScript", "Bash", "Rust", "Java", "Swift", "CUDA", "SQL"],
   },
   {
-    label: "Systems & HPC",
+    label: "Full stack & data",
     tags: [
+      "Next.js",
+      "React",
+      "FastAPI",
+      "Spring Boot",
+      "PostgreSQL",
+      "Redis",
+      "pgvector",
+      "Supabase",
+      "NumPy",
+      "Pandas",
+    ],
+  },
+  {
+    label: "Linux & HPC",
+    tags: [
+      "Linux",
       "CUDA",
       "CUTLASS",
       "Tensor Cores",
@@ -103,8 +151,10 @@ export const SKILLS: SkillGroup[] = [
     label: "Hardware & FPGA",
     tags: [
       "Xilinx Alveo U55C",
+      "Vitis HLS",
+      "XRT",
       "FPGA offload",
-      "Shared physical memory",
+      "Zero-copy pipelines",
       "PCIe",
       "Raspberry Pi Pico",
       "Embedded C",
@@ -116,6 +166,11 @@ export const SKILLS: SkillGroup[] = [
     tags: [
       "K3s",
       "Docker",
+      "Ansible",
+      "Jenkins",
+      "CI/CD",
+      "Prometheus",
+      "Grafana",
       "Proxmox",
       "Komodo",
       "OPNsense",
@@ -132,6 +187,7 @@ export const SKILLS: SkillGroup[] = [
     label: "AI / ML",
     tags: [
       "PyTorch",
+      "XGBoost",
       "Transformers",
       "Hugging Face",
       "Claude Agent SDK",
@@ -145,60 +201,51 @@ export const SKILLS: SkillGroup[] = [
       "TrOCR",
     ],
   },
-  {
-    label: "Web & Data",
-    tags: [
-      "Next.js",
-      "React",
-      "FastAPI",
-      "Spring Boot",
-      "PostgreSQL",
-      "Redis",
-      "pgvector",
-      "Supabase",
-      "NumPy",
-      "Pandas",
-      "XGBoost",
-    ],
-  },
 ];
 
 export const AWARDS: Award[] = [
   {
     rank: "1st",
     title: "CS 341 Malloc Performance Contest",
-    detail: "Beat both stock and optimized glibc; first of roughly 400 submissions.",
+    detail: "Top-performing memory allocator among 400 students.",
     year: "2025",
+  },
+  {
+    rank: "4th",
+    title: "UIUC Capture-the-Flag — Advanced Track",
+    detail: "Fourth place in the advanced track of UIUC CTF.",
+    year: "2026",
   },
   {
     rank: "3rd",
     title: "UIUC Capture-the-Flag (CTF)",
-    detail: "Binary exploitation, reversing, crypto, and web — 3rd of 25+ teams.",
+    detail: "Third place at UIUC CTF.",
     year: "2025",
   },
   {
     rank: "5th",
     title: "Science Olympiad — Robot Tour",
-    detail: "Autonomous Pi Pico maze robot; 5th of 50 regional teams.",
+    detail: "Autonomous Pi Pico maze robot; 5th of 50 schools at UIUC State Science Olympiad.",
     year: "2024",
   },
 ];
 
 export const CONTACT_LINKS: ContactLink[] = [
-  { key: "Email", value: "asing271@illinois.edu", href: "mailto:asing271@illinois.edu" },
+  { key: "Email", value: "s.aryan0328@gmail.com", href: "mailto:s.aryan0328@gmail.com" },
+  { key: "University email", value: "asing271@illinois.edu", href: "mailto:asing271@illinois.edu" },
   {
     key: "GitHub",
-    value: "@geneticglitch1",
+    value: "github.com/geneticglitch1",
     href: "https://github.com/geneticglitch1",
     external: true,
   },
   {
     key: "LinkedIn",
-    value: "/in/aryan-singh06",
+    value: "linkedin.com/in/aryan-singh06",
     href: "https://linkedin.com/in/aryan-singh06",
     external: true,
   },
-  { key: "Résumé", value: "resume.pdf", href: "/resume.pdf", external: true },
+  { key: "Résumé", value: "View / download PDF", href: "/resume.pdf", external: true },
 ];
 
 /* The nav renders straight from this, so every entry has to name a section

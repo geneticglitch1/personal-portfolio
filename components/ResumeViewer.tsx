@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { RESUME_PAGES, RESUME_PDF } from "@/content/resume";
 import { getLenis } from "./motion/LenisProvider";
+import usePrefersReducedMotion from "./motion/usePrefersReducedMotion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -27,9 +28,11 @@ export default function ResumeViewer() {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const opener = useRef<HTMLElement | null>(null);
-  const reduced = useReducedMotion();
+  const requestedPage = useRef(1);
+  const reduced = usePrefersReducedMotion();
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -44,7 +47,9 @@ export default function ResumeViewer() {
       if (!link) return;
       e.preventDefault();
       opener.current = link;
-      setPage(1);
+      const selectedPage = Number(link.dataset.resumePage) || 1;
+      requestedPage.current = selectedPage;
+      setPage(selectedPage);
       setOpen(true);
     };
     document.addEventListener("click", onClick);
@@ -63,6 +68,21 @@ export default function ResumeViewer() {
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
+      if (e.key === "Tab") {
+        const controls = dialogRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])'
+        );
+        if (!controls?.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener("keydown", onKey);
     closeRef.current?.focus();
@@ -81,24 +101,51 @@ export default function ResumeViewer() {
     const root = bodyRef.current;
     if (!root) return;
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setPage(Number((entry.target as HTMLElement).dataset.page));
-          }
-        }
-      },
-      { root, threshold: 0.5 }
+    const selectedSheet = root.querySelector<HTMLElement>(
+      `[data-page="${requestedPage.current}"]`
     );
-    root.querySelectorAll<HTMLElement>("[data-page]").forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    if (selectedSheet) {
+      root.scrollTop = selectedSheet.offsetTop - root.offsetTop;
+    }
+
+    const sheets = root.querySelectorAll<HTMLElement>("[data-page]");
+    const updatePage = () => {
+        const viewport = root.getBoundingClientRect();
+        let currentPage = 1;
+        let mostVisible = 0;
+        sheets.forEach((sheet) => {
+          const bounds = sheet.getBoundingClientRect();
+          const visible = Math.max(0, Math.min(bounds.bottom, viewport.bottom) - Math.max(bounds.top, viewport.top));
+          if (visible > mostVisible) {
+            mostVisible = visible;
+            currentPage = Number(sheet.dataset.page);
+          }
+        });
+        setPage(currentPage);
+    };
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        updatePage();
+      });
+    };
+    const io = new IntersectionObserver(updatePage, { root, threshold: [0, 0.5, 1] });
+    sheets.forEach((sheet) => io.observe(sheet));
+    root.addEventListener("scroll", onScroll, { passive: true });
+    updatePage();
+    return () => {
+      io.disconnect();
+      root.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [open]);
 
   return (
     <AnimatePresence>
       {open && (
-        <div className="rv" role="dialog" aria-modal="true" aria-label="Résumé">
+        <div className="rv" role="dialog" aria-modal="true" aria-label="Résumé" ref={dialogRef}>
           <motion.button
             type="button"
             className="rv-scrim"

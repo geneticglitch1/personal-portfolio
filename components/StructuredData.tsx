@@ -1,4 +1,4 @@
-import { AWARDS, EXPERIENCE, PROFILE, SKILLS } from "@/content/profile";
+import { AWARDS, CONTACT_LINKS, EXPERIENCE, PROFILE, SKILLS } from "@/content/profile";
 import { PROJECTS } from "@/content/projects";
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/content/site";
 
@@ -21,7 +21,7 @@ const PAGE_ID = `${SITE_URL}/#webpage`;
 
 const GITHUB = "https://github.com/geneticglitch1";
 const LINKEDIN = "https://linkedin.com/in/aryan-singh06";
-const EMAIL = "asing271@illinois.edu";
+const EMAIL = CONTACT_LINKS.filter((link) => link.href.startsWith("mailto:")).map((link) => link.href);
 
 /** Every skill tag, deduped — SKILLS repeats CUDA across two groups. */
 const knowsAbout = [...new Set(SKILLS.flatMap((group) => group.tags))];
@@ -63,7 +63,7 @@ const graph = {
       description: PROFILE.lead,
       url: SITE_URL,
       image: `${SITE_URL}/icon-512.png`,
-      email: `mailto:${EMAIL}`,
+      email: EMAIL,
       sameAs: [GITHUB, LINKEDIN],
       knowsAbout,
       address: {

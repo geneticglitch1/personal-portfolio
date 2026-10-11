@@ -45,6 +45,7 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     // Anchors get smooth scrolling either way — through Lenis when it's
     // running, natively when it isn't.
     const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const anchor = (e.target as HTMLElement)?.closest?.(
         'a[href^="#"]'
       ) as HTMLAnchorElement | null;
@@ -55,7 +56,7 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
       if (!el) return;
       e.preventDefault();
       if (lenis) {
-        lenis.scrollTo(el as HTMLElement, { offset: -10, duration: 1.1 });
+        lenis.scrollTo(el as HTMLElement, { duration: 1.1 });
       } else {
         (el as HTMLElement).scrollIntoView({
           behavior: reduced ? "auto" : "smooth",

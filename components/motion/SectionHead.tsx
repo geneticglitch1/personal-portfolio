@@ -1,7 +1,8 @@
 "use client";
 
 import { ReactNode, useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import usePrefersReducedMotion from "./usePrefersReducedMotion";
 
 interface SectionHeadProps {
   n: string;
@@ -17,7 +18,7 @@ interface SectionHeadProps {
  */
 export default function SectionHead({ n, eyebrow, title, right }: SectionHeadProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = usePrefersReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,

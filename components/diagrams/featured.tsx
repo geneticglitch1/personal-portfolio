@@ -167,51 +167,45 @@ export function Cuda() {
       {/* Kept short: at 10.5px mono anything past ~28 characters runs under
           the right-hand column, which starts at x=184. */}
       <text className="d-t-sm" x="4" y="163">the whole working set</text>
-      <text className="d-t" x="184" y="150">the loop never leaves</text>
+      <text className="d-t" x="184" y="150">work on tiles in</text>
       <text className="d-t-sm" x="184" y="163">shared mem and registers</text>
       <text className="d-t-accent d-beat" x="184" y="178">one trip to HBM per tile</text>
-      <text className="d-t-sm" x="4" y="204">249.8 ms → 10.3 ms on one A40</text>
+      <text className="d-t-sm" x="4" y="204">249.8 ms → 10.3 ms · team on A40</text>
     </svg>
   );
 }
 
-/* ── FPGA — the copy that vanished ─────────────────────────────────────── */
+/* ── FPGA — host–accelerator interface under implementation ───────────── */
 export function Fpga() {
   return (
-    <svg viewBox={VB} role="img" aria-label="The same buffer crossed PCIe twice; one shared region removed both copies">
-      <text className="d-t-head" x="4" y="12">before</text>
-      <rect className="d-box" x="4" y="18" width="104" height="42" rx="2" />
-      <text className="d-t-sm" x="56" y="36" textAnchor="middle">host RAM</text>
-      <text className="d-t-sm" x="56" y="48" textAnchor="middle">buffer</text>
+    <svg viewBox={VB} role="img" aria-label="A host–FPGA ring-buffer interface for jobs and results, currently being implemented">
+      <text className="d-t-head" x="4" y="14">host–FPGA interface · in progress</text>
 
-      <rect className="d-box-soft" x="126" y="18" width="108" height="42" rx="2" />
-      <text className="d-t-sm" x="180" y="43" textAnchor="middle">PCIe</text>
+      <rect className="d-box" x="4" y="38" width="92" height="100" rx="3" />
+      <text className="d-t-sm" x="50" y="72" textAnchor="middle">C++ / XRT</text>
+      <text className="d-t-sm" x="50" y="90" textAnchor="middle">host runtime</text>
+      <text className="d-t-sm" x="50" y="118" textAnchor="middle">worker threads</text>
 
-      <rect className="d-box" x="252" y="18" width="104" height="42" rx="2" />
-      <text className="d-t-sm" x="304" y="36" textAnchor="middle">FPGA RAM</text>
-      <text className="d-t-sm" x="304" y="48" textAnchor="middle">same bytes again</text>
+      <rect className="d-accent-box d-pop" x="118" y="38" width="124" height="40" rx="3" />
+      <text className="d-t-accent" x="180" y="54" textAnchor="middle">JOB BUFFER</text>
+      <text className="d-t-sm" x="180" y="69" textAnchor="middle">producer → consumer</text>
+      <path className="d-accent-line d-flow" pathLength={1} d="M 98 58 L 116 58" markerEnd={AA} />
+      <path className="d-accent-line d-flow" pathLength={1} d="M 244 58 L 262 58" markerEnd={AA} />
 
-      <line className="d-accent-line d-flow" pathLength={1} x1="110" y1="30" x2="248" y2="30" markerEnd={AA} />
-      <line className="d-accent-line d-flow" pathLength={1} x1="248" y1="50" x2="110" y2="50" markerEnd={AA} />
-      <text className="d-t-accent d-beat" x="180" y="76" textAnchor="middle">the same bytes cross the bus twice</text>
+      <rect className="d-accent-box d-pop" x="118" y="98" width="124" height="40" rx="3" />
+      <text className="d-t-accent" x="180" y="114" textAnchor="middle">RESULT BUFFER</text>
+      <text className="d-t-sm" x="180" y="129" textAnchor="middle">consumer ← producer</text>
+      <path className="d-line d-flow" pathLength={1} d="M 262 118 L 244 118" markerEnd={A} />
+      <path className="d-line d-flow" pathLength={1} d="M 116 118 L 98 118" markerEnd={A} />
 
-      <line className="d-line-dim d-dash" x1="4" y1="92" x2="356" y2="92" />
+      <rect className="d-box" x="264" y="38" width="92" height="100" rx="3" />
+      <text className="d-t-sm" x="310" y="72" textAnchor="middle">Vitis HLS</text>
+      <text className="d-t-sm" x="310" y="90" textAnchor="middle">scheduler</text>
+      <text className="d-t-sm" x="310" y="118" textAnchor="middle">Alveo U55C</text>
 
-      <text className="d-t-head" x="4" y="112">after</text>
-      <rect className="d-box" x="4" y="118" width="88" height="42" rx="2" />
-      <text className="d-t-sm" x="48" y="143" textAnchor="middle">host</text>
-
-      <rect className="d-accent-box d-pop" x="106" y="118" width="148" height="42" rx="3" />
-      <text className="d-t-accent" x="180" y="136" textAnchor="middle">ONE PHYSICAL REGION</text>
-      <text className="d-t-sm" x="180" y="149" textAnchor="middle">mapped into both</text>
-
-      <rect className="d-box" x="268" y="118" width="88" height="42" rx="2" />
-      <text className="d-t-sm" x="312" y="143" textAnchor="middle">FPGA</text>
-
-      <line className="d-line d-flow" pathLength={1} x1="94" y1="139" x2="104" y2="139" markerEnd={A} markerStart={A} />
-      <line className="d-line d-flow" pathLength={1} x1="256" y1="139" x2="266" y2="139" markerEnd={A} markerStart={A} />
-      <text className="d-t" x="180" y="180" textAnchor="middle">no transfer left to make</text>
-      <text className="d-t-sm" x="180" y="204" textAnchor="middle">throughput doubled on that alone</text>
+      <text className="d-t-accent d-beat" x="180" y="169" textAnchor="middle">zero-copy ring-buffer interface</text>
+      <text className="d-t-sm" x="180" y="191" textAnchor="middle">replacing flag-polling communication</text>
+      <text className="d-t-sm" x="180" y="209" textAnchor="middle">implementation in progress</text>
     </svg>
   );
 }
@@ -254,7 +248,7 @@ export function MediaStack() {
   );
 }
 
-/* ── malloc — O(1) coalescing ──────────────────────────────────────────── */
+/* ── malloc — coalescing neighbouring free blocks ─────────────────────── */
 export function Malloc() {
   const before = [
     { x: 22, w: 62, s: "used" },
@@ -264,7 +258,7 @@ export function Malloc() {
     { x: 272, w: 66, s: "used" },
   ];
   return (
-    <svg viewBox={VB} role="img" aria-label="An address-ordered free list merges a freed block with both neighbours in constant time">
+    <svg viewBox={VB} role="img" aria-label="An address-sorted free list supports coalescing adjacent free blocks">
       <text className="d-t-accent" x="180" y="16" textAnchor="middle">free(p) reads both physical neighbours</text>
       <path className="d-accent-line d-flow" pathLength={1} d="M 176 40 L 176 26 L 111 26 L 111 38" markerEnd={AA} />
       <path className="d-accent-line d-flow" pathLength={1} d="M 176 26 L 243 26 L 243 38" markerEnd={AA} />
@@ -296,8 +290,8 @@ export function Malloc() {
       <rect className="d-box-soft" x="272" y="120" width="8" height="34" />
       <text className="d-t-sm" x="309" y="141" textAnchor="middle">used</text>
 
-      <text className="d-t" x="180" y="180" textAnchor="middle">the neighbours are already known</text>
-      <text className="d-t-accent" x="180" y="202" textAnchor="middle">so coalescing never walks the list</text>
+      <text className="d-t" x="180" y="180" textAnchor="middle">merge adjacent blocks for reuse</text>
+      <text className="d-t-accent" x="180" y="202" textAnchor="middle">address-sorted free list</text>
     </svg>
   );
 }

@@ -1,14 +1,9 @@
 import { EXPERIENCE } from "@/content/profile";
 import SectionHead from "./motion/SectionHead";
-import Offload from "./diagrams/offload";
 
 /**
- * The one record, treated as the centrepiece rather than a list item.
- *
- * All of the motion here is CSS scroll-driven — the strip draws itself, the
- * two plates resolve, the bullets arrive one at a time against a rule that
- * inks in behind them. No `ReadHead`, so nothing about this section depends
- * on script having run.
+ * Personal contributions and coauthored research results are presented
+ * separately so each measurement has a clear attribution and baseline.
  */
 export default function Experience() {
   return (
@@ -17,7 +12,7 @@ export default function Experience() {
         <SectionHead n="02" eyebrow="Experience" title="Experience" />
 
         {EXPERIENCE.map((r) => (
-          <article className="record" key={r.org}>
+          <article className="record" key={`${r.org}-${r.role}`}>
             <div className="record-top">
               <div className="ro">{r.org}</div>
               <div className="rmeta">
@@ -37,25 +32,10 @@ export default function Experience() {
                   <span className="k">Type</span>
                   <span className="v">{r.type}</span>
                 </div>
-
-                <div className="statplate stat-thr">
-                  <span className="v" />
-                  <span className="l">of the CPU baseline, same workload</span>
-                </div>
-                <div className="statplate stat-lat">
-                  <span className="v">
-                    <s>ms</s> µs
-                  </span>
-                  <span className="l">to dispatch an urgent job, once the queue was hardware</span>
-                </div>
               </div>
 
               <div className="rcol-r">
                 <p className="record-head-line">{r.headline}</p>
-
-                <div className="offload">
-                  <Offload />
-                </div>
 
                 <ul className="record-bullets">
                   {r.bullets.map((b, i) => (
@@ -65,6 +45,15 @@ export default function Experience() {
                     </li>
                   ))}
                 </ul>
+
+                {r.research && (
+                  <div className="record-publication">
+                    <span className="lbl">Coauthored research · BoostedSOSA</span>
+                    <a className="paper-link" href={r.research.href} target="_blank" rel="noopener noreferrer">
+                      Read paper <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </article>

@@ -1,20 +1,17 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { PROFILE } from "@/content/profile";
-import HeroFigure from "./HeroFigure";
+import { motion, useScroll, useTransform } from "motion/react";
+import { PROFILE, CONTACT_LINKS } from "@/content/profile";
+import { RESUME_PDF } from "@/content/resume";
+import usePrefersReducedMotion from "./motion/usePrefersReducedMotion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
+  const reduced = usePrefersReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const stampY = useTransform(scrollYProgress, [0, 1], ["0%", "45%"]);
 
   const show = reduced ? undefined : "show";
@@ -31,9 +28,7 @@ export default function Hero() {
             show: { transition: { delayChildren: 0.12, staggerChildren: 0.06 } },
           }}
         >
-          {/* Two tabs on the folder. The second one is the résumé — pulling a
-              second document out of the same file, rather than a button
-              bolted onto a paper layout. */}
+          {/* The second folder tab opens the résumé in place. */}
           <motion.div
             className="foldertabs"
             variants={{
@@ -42,10 +37,9 @@ export default function Hero() {
             }}
           >
             <span className="filetab">Portfolio · 2026</span>
-            {/* ResumeViewer intercepts this; the href is the no-script path. */}
             <a
               className="filetab tab-cta"
-              href="/resume.pdf"
+              href={RESUME_PDF}
               target="_blank"
               rel="noopener noreferrer"
               data-resume=""
@@ -76,9 +70,6 @@ export default function Hero() {
             ))}
           </div>
 
-          {/* Name on the left, stamp and figure filling the column that used to
-              be empty beside it. The columns match .hero-foot below, so the
-              figure sits directly above the spec table. */}
           <div className="hero-mid">
             <h1 className="hero-name">
               {[PROFILE.name.first, PROFILE.name.last].map((line) => (
@@ -109,24 +100,9 @@ export default function Hero() {
                   },
                 }}
               >
-                Systems
-                <small>Engineer</small>
+                Software
+                <small>&amp; Systems</small>
               </motion.span>
-
-              <motion.div
-                className="herofig"
-                aria-hidden="true"
-                variants={{
-                  hidden: { opacity: 0, y: 16 },
-                  show: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.8, ease: EASE },
-                  },
-                }}
-              >
-                <HeroFigure />
-              </motion.div>
             </div>
           </div>
 
@@ -155,6 +131,19 @@ export default function Hero() {
                 </motion.div>
               ))}
             </div>
+          </div>
+          <div className="hero-contactline" aria-label="Contact and résumé links">
+            <a className="contact-cue" href="#contact">Get in touch <span aria-hidden="true">↗</span></a>
+            {CONTACT_LINKS.filter((link) => link.key !== "University email").map((link) => (
+              <a
+                href={link.href}
+                key={link.key}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                {...(link.href === RESUME_PDF ? { "data-resume": "" } : {})}
+              >
+                {link.key === "Email" ? link.value : link.key}
+              </a>
+            ))}
           </div>
         </motion.div>
 

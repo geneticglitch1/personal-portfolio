@@ -39,13 +39,13 @@ export function CraftDeck() {
 }
 
 export function K3s() {
-  const nodes = [0, 1, 2, 3, 4, 5];
+  const nodes = [0, 1, 2];
   return (
-    <svg viewBox={VB} role="img" aria-label="Six cluster nodes reachable only through a tunnel">
-      <text className="d-t-head" x="4" y="14">six nodes on proxmox</text>
+    <svg viewBox={VB} role="img" aria-label="Three high-availability K3s nodes on Proxmox, with automated deployment and protected public services">
+      <text className="d-t-head" x="4" y="14">three HA nodes on proxmox</text>
       {nodes.map((i) => {
-        const x = 42 + (i % 3) * 96;
-        const y = 24 + Math.floor(i / 3) * 50;
+        const x = 42 + i * 96;
+        const y = 36;
         return (
           <g key={i}>
             <rect className="d-box" x={x} y={y} width="84" height="40" rx="2" />
@@ -53,10 +53,11 @@ export function K3s() {
           </g>
         );
       })}
-      <path className="d-line d-flow" pathLength={1} d="M 180 124 L 180 142" markerEnd={A} />
+      <text className="d-t-sm" x="180" y="106" textAnchor="middle">platform across two Linux hosts</text>
+      <path className="d-line d-flow" pathLength={1} d="M 180 116 L 180 142" markerEnd={A} />
       <rect className="d-accent-box d-pop" x="52" y="144" width="256" height="34" rx="3" />
-      <text className="d-t-accent d-beat" x="180" y="165" textAnchor="middle">CLOUDFLARE mTLS TUNNEL</text>
-      <text className="d-t-sm" x="180" y="200" textAnchor="middle">not one public IP among them</text>
+      <text className="d-t-accent d-beat" x="180" y="165" textAnchor="middle">CLOUDFLARE mTLS · SSO</text>
+      <text className="d-t-sm" x="180" y="200" textAnchor="middle">Ansible rebuilds · Jenkins deploys</text>
     </svg>
   );
 }
@@ -133,7 +134,7 @@ export function EnvSync() {
       <path className="d-line d-flow" pathLength={1} d="M 84 66 L 84 82" markerEnd={A} />
       <rect className="d-accent-box d-pop" x="14" y="84" width="140" height="34" rx="3" />
       <text className="d-t-accent" x="84" y="99" textAnchor="middle">Argon2id</text>
-      <text className="d-t-accent" x="84" y="112" textAnchor="middle">AES-256-GCM</text>
+      <text className="d-t-accent" x="84" y="112" textAnchor="middle">XSalsa20-Poly1305</text>
 
       <text className="d-t-accent" x="180" y="14" textAnchor="middle">boundary</text>
       <line className="d-accent-line d-dash" x1="180" y1="20" x2="180" y2="140" />
@@ -142,13 +143,13 @@ export function EnvSync() {
 
       <rect className="d-box" x="196" y="22" width="160" height="112" rx="3" />
       <text className="d-t-sm" x="276" y="52" textAnchor="middle">no key</text>
-      <text className="d-t-sm" x="276" y="68" textAnchor="middle">no recovery path</text>
+      <text className="d-t-sm" x="276" y="68" textAnchor="middle">version history</text>
       <rect className="d-box-soft" x="210" y="84" width="132" height="34" rx="2" />
       <text className="d-t-sm" x="276" y="105" textAnchor="middle">ciphertext</text>
 
       <text className="d-t-accent d-late d-beat" x="180" y="164" textAnchor="middle">it is encrypted before it crosses</text>
-      <text className="d-t-sm" x="180" y="186" textAnchor="middle">no admin override, no password reset —</text>
-      <text className="d-t-sm" x="180" y="204" textAnchor="middle">lose the passphrase and the vault is gone</text>
+      <text className="d-t-sm" x="180" y="186" textAnchor="middle">client-side encryption · OIDC sign-in</text>
+      <text className="d-t-sm" x="180" y="204" textAnchor="middle">masked diffs · conflict checks · rollback</text>
     </svg>
   );
 }
@@ -357,7 +358,7 @@ export function Ext2() {
 
 export function Pico() {
   return (
-    <svg viewBox={VB} role="img" aria-label="Splitting sensors onto the second core removed the interrupt contention">
+    <svg viewBox={VB} role="img" aria-label="A dual-core Raspberry Pi Pico separates the drive loop from sensor handling">
       <rect className="d-box" x="4" y="30" width="166" height="94" rx="3" />
       <text className="d-t-head" x="87" y="48" textAnchor="middle">core 0</text>
       <rect className="d-box-soft" x="18" y="58" width="138" height="52" rx="2" />
@@ -373,8 +374,8 @@ export function Pico() {
         </g>
       ))}
 
-      <text className="d-t-accent d-beat" x="180" y="158" textAnchor="middle">every sensor got its own core</text>
-      <text className="d-t-sm" x="180" y="182" textAnchor="middle">and the crashing under interrupt load stopped</text>
+      <text className="d-t-accent d-beat" x="180" y="158" textAnchor="middle">sensor handling on the second core</text>
+      <text className="d-t-sm" x="180" y="182" textAnchor="middle">separate sensing from the drive loop</text>
     </svg>
   );
 }

@@ -7,10 +7,10 @@
 export const SITE_URL = "https://aryan-singh.dev";
 
 /** Used verbatim as <title>, the OG title and the JSON-LD name. */
-export const SITE_TITLE = "Aryan Singh — Systems Engineer";
+export const SITE_TITLE = "Aryan Singh — Software & Systems Engineer";
 
 export const SITE_DESCRIPTION =
-  "CS and Math at UIUC, class of 2028. CUDA kernels, memory allocators, FPGA offload, and the self-hosted infrastructure it all runs on.";
+  "UIUC Computer Science and Mathematics student with experience in full stack development, DevOps, Linux infrastructure, C/C++, CUDA, and FPGA research.";
 
 /** 1200×630, generated once into public/. */
 export const OG_IMAGE = "/og.png";
