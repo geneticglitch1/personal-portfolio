@@ -43,8 +43,6 @@ export const PROFILE = {
   name: { first: "Aryan", last: "Singh" },
   role: "Software & Systems Engineer",
 
-  lead: "Software, with the wiring in mind.",
-
   specs: [
     { k: "Focus", v: "Software & systems" },
     { k: "Depth", v: "Full stack · Linux · FPGA · DevOps" },

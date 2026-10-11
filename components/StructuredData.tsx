@@ -60,7 +60,7 @@ const graph = {
       givenName: PROFILE.name.first,
       familyName: PROFILE.name.last,
       jobTitle: PROFILE.role,
-      description: PROFILE.lead,
+      description: PROFILE.about,
       url: SITE_URL,
       image: `${SITE_URL}/icon-512.png`,
       email: EMAIL,

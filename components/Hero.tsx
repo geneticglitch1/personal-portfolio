@@ -7,6 +7,9 @@ import { RESUME_PDF } from "@/content/resume";
 import usePrefersReducedMotion from "./motion/usePrefersReducedMotion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const HERO_LINKS = ["Résumé", "GitHub", "LinkedIn", "Email"]
+  .map((key) => CONTACT_LINKS.find((link) => link.key === key))
+  .filter((link) => link !== undefined);
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -107,15 +110,20 @@ export default function Hero() {
           </div>
 
           <div className="hero-foot">
-            <motion.p
-              className="lead"
-              variants={{
-                hidden: { y: 18, opacity: 0 },
-                show: { y: 0, opacity: 1, transition: { duration: 0.7, ease: EASE } },
-              }}
-            >
-              {PROFILE.lead}
-            </motion.p>
+            <div className="hero-actions" aria-label="Profile links">
+              {HERO_LINKS.map((link) => (
+                <a
+                  className={`hero-action${link.href === RESUME_PDF ? " hero-action-resume" : ""}`}
+                  href={link.href}
+                  key={link.key}
+                  {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(link.href === RESUME_PDF ? { "data-resume": "" } : {})}
+                >
+                  {link.key}
+                  <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </div>
             <div className="specs">
               {PROFILE.specs.map((s) => (
                 <motion.div
@@ -131,19 +139,6 @@ export default function Hero() {
                 </motion.div>
               ))}
             </div>
-          </div>
-          <div className="hero-contactline" aria-label="Contact and résumé links">
-            <a className="contact-cue" href="#contact">Get in touch <span aria-hidden="true">↗</span></a>
-            {CONTACT_LINKS.filter((link) => link.key !== "University email").map((link) => (
-              <a
-                href={link.href}
-                key={link.key}
-                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                {...(link.href === RESUME_PDF ? { "data-resume": "" } : {})}
-              >
-                {link.key === "Email" ? link.value : link.key}
-              </a>
-            ))}
           </div>
         </motion.div>
 
