@@ -3,6 +3,8 @@
  * for the hero, experience, skills, recognition, about and contact sections.
  */
 
+import { RESUME_PDF } from "@/content/resume";
+
 export interface SkillGroup {
   label: string;
   tags: string[];
@@ -243,7 +245,7 @@ export const CONTACT_LINKS: ContactLink[] = [
     href: "https://linkedin.com/in/aryan-singh06",
     external: true,
   },
-  { key: "Résumé", value: "View / download PDF", href: "/resume.pdf", external: true },
+  { key: "Résumé", value: "View / download PDF", href: RESUME_PDF, external: true },
 ];
 
 /* The nav renders straight from this, so every entry has to name a section

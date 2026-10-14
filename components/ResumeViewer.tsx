@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { RESUME_PAGES, RESUME_PDF } from "@/content/resume";
+import { RESUME_PAGES, RESUME_PDF, RESUME_VERSION } from "@/content/resume";
 import { getLenis } from "./motion/LenisProvider";
 import usePrefersReducedMotion from "./motion/usePrefersReducedMotion";
 
@@ -199,7 +199,7 @@ export default function ResumeViewer() {
                       only ever load once the viewer is open. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`/resume/page-${p.page}.webp`}
+                    src={`/resume/page-${p.page}.webp?v=${RESUME_VERSION}`}
                     width={p.w}
                     height={p.h}
                     alt={`Résumé, page ${p.page} of ${RESUME_PAGES.length}`}

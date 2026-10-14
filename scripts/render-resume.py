@@ -15,6 +15,7 @@ résumé can be read inside the page, on a phone, without the browser's PDF
 plugin — which on iOS renders a single unscrollable page in an iframe.
 """
 
+import hashlib
 import json
 import os
 import pathlib
@@ -39,6 +40,7 @@ def main() -> None:
     if not pdftoppm:
         raise SystemExit("Poppler is required: install pdftoppm or set PDFTOPPM.")
 
+    version = hashlib.sha256(PDF.read_bytes()).hexdigest()[:12]
     OUT.mkdir(parents=True, exist_ok=True)
     pages = []
     with tempfile.TemporaryDirectory(prefix="resume-pages-") as tmp:
@@ -75,7 +77,8 @@ export interface ResumePage {
   h: number;
 }
 
-export const RESUME_PDF = "/resume.pdf";
+export const RESUME_VERSION = "''' + version + '''";
+export const RESUME_PDF = `/resume.pdf?v=${RESUME_VERSION}`;
 
 export const RESUME_PAGES: ResumePage[] = [
 ''' + rows + "\n];\n")

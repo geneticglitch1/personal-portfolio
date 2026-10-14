@@ -10,7 +10,8 @@ export interface ResumePage {
   h: number;
 }
 
-export const RESUME_PDF = "/resume.pdf";
+export const RESUME_VERSION = "a86eec9effd9";
+export const RESUME_PDF = `/resume.pdf?v=${RESUME_VERSION}`;
 
 export const RESUME_PAGES: ResumePage[] = [
   { page: 1, w: 1224, h: 1584 },
