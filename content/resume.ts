@@ -8,12 +8,13 @@ export interface ResumePage {
   page: number;
   w: number;
   h: number;
+  version: string;
 }
 
 export const RESUME_VERSION = "a8e5c93d31a5";
 export const RESUME_PDF = `/resume.pdf?v=${RESUME_VERSION}`;
 
 export const RESUME_PAGES: ResumePage[] = [
-  { page: 1, w: 1224, h: 1584 },
-  { page: 2, w: 1224, h: 1584 },
+  { page: 1, w: 1224, h: 1584, version: "9ffd4ef89ee7" },
+  { page: 2, w: 1224, h: 1584, version: "4b9c9d3bad51" },
 ];
